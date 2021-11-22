@@ -1,0 +1,1 @@
+export const cisAspectRatio = ["512 512","<path fill='var(--ci-primary-color, currentColor)' d='M16,444.571H496V67.428H16ZM328,123H437V232H395V165H328ZM75,280h42v67h67v42H75Z' class='ci-primary'/>"]

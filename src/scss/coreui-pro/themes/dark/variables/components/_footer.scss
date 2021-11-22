@@ -1,0 +1,35 @@
+// Footer
+
+// Dark Theme
+// scss-docs-start footer-dark-theme
+$footer-dark-bg__dt:       $bg-elevation-3 !default;
+$footer-dark-color__dt:    $body-color__dt !default;
+$footer-dark-borders__dt:  ( top: 0 ) !default;
+// scss-docs-end footer-dark-theme
+
+$footer-variants-map__dt: () !default;
+// stylelint-disable-next-line scss/dollar-variable-default
+$footer-variants-map__dt: map-merge(
+  (
+    dark: (
+      "footer-bg":       $footer-dark-bg__dt,
+      "footer-color":    $footer-dark-color__dt,
+      "footer-borders":  $footer-dark-borders__dt
+    )
+  ),
+  $footer-variants-map__dt
+);
+
+$footer-default-variant__dt: "dark" !default;
+$footer-variants__dt: (
+  "default":  $footer-default-variant__dt,
+  "map":      $footer-variants-map__dt
+) !default;
+
+// stylelint-disable-next-line scss/dollar-variable-default
+$footer-theme-map: map-merge(
+  $footer-theme-map,
+  (
+    dark:  $footer-variants__dt
+  )
+);

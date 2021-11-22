@@ -1,0 +1,1 @@
+export declare const cidWifiSignalLock1: any[];

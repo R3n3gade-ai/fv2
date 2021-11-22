@@ -1,0 +1,5 @@
+:root {
+  @each $color, $value in $theme-colors__dt {
+    --#{$color}-dark-theme: #{$value};
+  }
+}

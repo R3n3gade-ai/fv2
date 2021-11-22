@@ -1,0 +1,40 @@
+// List group
+
+// Dark theme
+// scss-docs-start list-group-dark-theme
+$list-group-color__dt:                $body-color__dt !default;
+$list-group-bg__dt:                   inherit !default;
+$list-group-border-color__dt:         $border-color__dt !default;
+$list-group-hover-bg__dt:             rgba($white, .1) !default;
+$list-group-active-color__dt:         $component-active-color__dt !default;
+$list-group-active-bg__dt:            $component-active-bg__dt !default;
+$list-group-active-border-color__dt:  $list-group-active-bg__dt !default;
+$list-group-disabled-color__dt:       rgba($body-color__dt, .5) !default;
+$list-group-disabled-bg__dt:          rgba($border-color__dt, .8) !default;
+$list-group-action-color__dt:         $body-color__dt !default;
+$list-group-action-hover-color__dt:   $body-color__dt !default;
+$list-group-action-active-color__dt:  $body-color__dt !default;
+$list-group-action-active-bg__dt:     $gray-900 !default;
+// scss-docs-end list-group-dark-theme
+
+// stylelint-disable-next-line scss/dollar-variable-default
+$list-group-theme-map: map-merge(
+  $list-group-theme-map,
+  (
+    dark: (
+      "list-group-color":                $list-group-color__dt,
+      "list-group-bg":                   $list-group-bg__dt,
+      "list-group-border-color":         $list-group-border-color__dt,
+      "list-group-hover-bg":             $list-group-hover-bg__dt,
+      "list-group-active-color":         $list-group-active-color__dt,
+      "list-group-active-bg":            $list-group-active-bg__dt,
+      "list-group-active-border-color":  $list-group-active-border-color__dt,
+      "list-group-disabled-color":       $list-group-disabled-color__dt,
+      "list-group-disabled-bg":          $list-group-disabled-bg__dt,
+      "list-group-action-color":         $list-group-action-color__dt,
+      "list-group-action-hover-color":   $list-group-action-hover-color__dt,
+      "list-group-action-active-color":  $list-group-action-active-color__dt,
+      "list-group-action-active-bg":     $list-group-action-active-bg__dt
+    )
+  )
+);

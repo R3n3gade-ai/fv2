@@ -1,0 +1,1 @@
+export const cisViewRow = ["512 512","<rect width='480' height='108' x='16' y='202' fill='var(--ci-primary-color, currentColor)' class='ci-primary'/><rect width='480' height='102' x='16' y='64' fill='var(--ci-primary-color, currentColor)' class='ci-primary'/><rect width='480' height='102' x='16' y='346' fill='var(--ci-primary-color, currentColor)' class='ci-primary'/>"]

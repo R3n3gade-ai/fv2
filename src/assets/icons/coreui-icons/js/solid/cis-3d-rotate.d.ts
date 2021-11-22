@@ -1,0 +1,1 @@
+export declare const cis3dRotate: any[];

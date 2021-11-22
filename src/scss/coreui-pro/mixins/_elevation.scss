@@ -1,0 +1,57 @@
+@mixin add-elevation($level, $direction: false) {
+  border: 0;
+  @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    box-shadow: str-replace(unquote(map-get($elevations, $level)), "var(--elevation-base-color)", $elevation-base-color);
+  }
+  box-shadow: unquote(map-get($elevations, $level));
+
+  @if $direction == "bottom" {
+    clip-path: inset(0 0 -1000px 0);
+  }
+}
+
+@mixin add-elevation-before($level, $direction) {
+  border: 0;
+  &::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    content: "";
+    border-radius: inherit;
+    @include add-elevation($level, $direction);
+  }
+}
+
+@mixin elevation($level, $direction: false, $before: false) {
+  @if $enable-elevations {
+    $selector: selector-append(".c-app");
+    @each $theme in map-keys($options) {
+      @if map-has-key(map-get($options, $theme), "enable-elevations") {
+        @if (map-get((map-get($options, $theme)), "enable-elevations") == false) {
+          $selector: selector-append($selector, ":not(.c-#{$theme}#{$theme-suffix})");
+        }
+      }
+    }
+
+    @if ($selector != selector-append(".c-app")) {
+      #{$selector} & {
+        @if $before == true {
+          @include add-elevation-before($level, $direction);
+        } @else {
+          @include add-elevation($level, $direction);
+        }
+      }
+    } @else {
+      & {
+        @if $before == true {
+          @include add-elevation-before($level, $direction);
+        } @else {
+          @include add-elevation($level, $direction);
+        }
+      }
+    }
+  }
+}

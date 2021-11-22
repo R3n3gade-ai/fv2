@@ -1,0 +1,28 @@
+// Popovers
+
+// Dark Theme
+// scss-docs-start popover-dark-theme
+$popover-bg__dt:                 $bg-elevation-16 !default;
+$popover-border-color__dt:       $border-color__dt !default;
+$popover-header-bg__dt:          $bg-elevation-16 !default;
+$popover-header-color__dt:       $body-color__dt !default;
+$popover-body-color__dt:         $body-color__dt !default;
+$popover-arrow-color__dt:        $popover-bg__dt !default;
+$popover-arrow-outer-color__dt:  fade-in($popover-border-color__dt, .05) !default;
+// scss-docs-end popover-dark-theme
+
+// stylelint-disable-next-line scss/dollar-variable-default
+$popover-theme-map: map-merge(
+  $popover-theme-map,
+  (
+    dark: (
+      "popover-bg":                 $popover-bg__dt,
+      "popover-border-color":       $popover-border-color__dt,
+      "popover-header-bg":          $popover-header-bg__dt,
+      "popover-header-color":       $popover-header-color__dt,
+      "popover-body-color":         $popover-body-color__dt,
+      "popover-arrow-color":        $popover-arrow-color__dt,
+      "popover-arrow-outer-color":  $popover-arrow-outer-color__dt
+    )
+  )
+);

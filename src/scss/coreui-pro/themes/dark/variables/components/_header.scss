@@ -1,0 +1,67 @@
+// Header
+
+// Dark theme
+
+// scss-docs-start header-dark-theme
+$header-bg__dt:                     $bg-elevation-3 !default;
+$header-color__dt:                  rgba($white, .75) !default;
+$header-border__dt:                 ( bottom: 0 ) !default;
+$header-hover-color__dt:            rgba($white, .9) !default;
+$header-active-color__dt:           $white !default;
+$header-disabled-color__dt:         rgba($white, .25) !default;
+$header-toggler-icon-bg__dt:        str-replace(url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='#{$header-color__dt}' stroke-width='2.25' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E"), "#", "%23") !default;
+$header-toggler-hover-icon-bg__dt:  str-replace(url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='#{$header-hover-color__dt}' stroke-width='2.25' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E"), "#", "%23") !default;
+$header-toggler-border-color__dt:   rgba($white, .1) !default;
+
+$header-brand-bg__dt:                transparent !default;
+$header-brand-border__dt:            0 !default;
+$header-brand-color__dt:             $header-active-color__dt !default;
+$header-brand-hover-color__dt:       $header-active-color__dt !default;
+$header-brand-minimized-bg__dt:      transparent !default;
+$header-brand-minimized-border__dt:  0 !default;
+
+$subheader-separator__dt:            1px solid $border-color__dt !default;
+// scss-docs-end header-dark-theme
+
+
+$header-variants-map__dt: () !default;
+// stylelint-disable-next-line scss/dollar-variable-default
+$header-variants-map__dt: map-merge(
+  (
+    dark: (
+      "header-bg":                      $header-bg__dt,
+      "header-color":                   $header-color__dt,
+      "header-border":                  $header-border__dt,
+      "dark-theme-header-border":       0,
+      "header-hover-color":             $header-hover-color__dt,
+      "header-active-color":            $header-active-color__dt,
+      "header-disabled-color":          $header-disabled-color__dt,
+      "header-toggler-icon-bg":         $header-toggler-icon-bg__dt,
+      "header-toggler-hover-icon-bg":   $header-toggler-hover-icon-bg__dt,
+      "header-toggler-border-color":    $header-toggler-border-color__dt,
+      "header-brand-bg":                $header-brand-bg__dt,
+      "header-brand-border":            $header-brand-border__dt,
+      "header-brand-color":             $header-brand-color__dt,
+      "header-brand-hover-color":       $header-brand-hover-color__dt,
+      "header-brand-minimized-bg":      $header-brand-minimized-bg__dt,
+      "header-brand-minimized-border":  $header-brand-minimized-border__dt,
+      "subheader-separator":            $subheader-separator__dt
+    )
+  ),
+  $header-variants-map__dt
+);
+
+$header-default-variant__dt: "dark" !default;
+$header-variants__dt: (
+  default:  $header-default-variant__dt,
+  map:      $header-variants-map__dt
+) !default;
+
+// stylelint-disable-next-line scss/dollar-variable-default
+$header-theme-map: map-merge(
+  $header-theme-map,
+  (
+    dark:  $header-variants__dt
+  )
+);
+

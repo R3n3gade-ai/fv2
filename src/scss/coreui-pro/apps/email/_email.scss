@@ -1,0 +1,98 @@
+.c-email-app {
+  @include themes($email-app-theme-map) {
+    background-color: themes-get-value("email-app-bg");
+  }
+  @include media-breakpoint-down(md) {
+    .c-body {
+      // stylelint-disable-next-line declaration-no-important
+      display: block !important;
+    }
+    .c-sidebar {
+      border: 0;
+    }
+  }
+  .c-toolbar {
+    border-bottom: 1px solid;
+    @include themes($email-app-theme-map) {
+      border-color: themes-get-value("email-app-border-color");
+    }
+  }
+
+
+  // .c-messages {
+  //   padding: $spacer;
+  // }
+
+  .c-message {
+    display: flex;
+    margin-bottom: $spacer;
+    text-decoration: none;
+    @include themes($email-app-theme-map) {
+      color: themes-get-value("email-app-message-color");
+    }
+
+    &.c-message-read {
+      @include themes($email-app-theme-map) {
+        color: themes-get-value("email-app-message-read-color");
+      }
+    }
+
+    &:last-child .c-message-details {
+      border: 0;
+    }
+  }
+
+  .c-message-actions {
+    @include ltr {
+      margin-right: $spacer;
+    }
+    @include rtl {
+      margin-left: $spacer;
+    }
+  }
+
+  .c-message-details {
+    flex-wrap: wrap;
+    padding-bottom: $spacer;
+    border-bottom: 1px solid;
+    @include themes($email-app-theme-map) {
+      border-color: themes-get-value("email-app-border-color");
+    }
+  }
+
+  .c-message-headers {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .c-message-headers-from {
+    // font-weight: 600;
+  }
+
+  .c-message-headers-date {
+    @include ltr {
+      margin-left: auto;
+    }
+    @include rtl {
+      margin-right: auto;
+    }
+  }
+
+  .c-message-headers-subject {
+    width: 100%;
+    font-size: $font-size-lg;
+    font-weight: 600;
+  }
+
+  .c-message-body {
+    @include themes($email-app-theme-map) {
+      color: themes-get-value("email-app-message-body-color");
+    }
+  }
+
+  .c-message-attachment {
+    display: flex;
+    align-items: center;
+  }
+}

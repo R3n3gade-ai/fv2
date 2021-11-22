@@ -1,0 +1,1 @@
+export const cisMoveVertical = ["512 512","<polygon fill='var(--ci-primary-color, currentColor)' points='280.098 134.998 353.73 134.998 256.098 14.369 158.467 134.998 232.098 134.998 232.098 375.9 158.467 375.9 256.098 496.527 353.73 375.9 280.098 375.9 280.098 134.998' class='ci-primary'/>"]

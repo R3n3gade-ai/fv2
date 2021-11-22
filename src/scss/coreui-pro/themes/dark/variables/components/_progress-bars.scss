@@ -1,0 +1,20 @@
+// Progress bars
+
+// Dark theme
+// scss-docs-start progress-bar-dark-theme
+$progress-bg__dt:         rgba($white, .2) !default;
+$progress-bar-color__dt:  $white !default;
+$progress-bar-bg__dt:     $primary__dt !default;
+// scss-docs-end progress-bar-dark-theme
+
+// stylelint-disable-next-line scss/dollar-variable-default
+$progress-theme-map: map-merge(
+  $progress-theme-map,
+  (
+    dark: (
+      "progress-bg":         $progress-bg__dt,
+      "progress-bar-color":  $progress-bar-color__dt,
+      "progress-bar-bg":     $progress-bar-bg__dt
+    )
+  )
+);

@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "tradingproject19-f513b"
+  },
+  "targets": {
+    "tradingproject19-f513b": {
+      "hosting": {
+        "fv2": [
+          "flowtrade-v2"
+        ]
+      }
+    }
+  }
+}
