@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { firebaseConnect } from 'react-redux-firebase'
 import { updateProperty } from '../store/actions/StylesActions'
 import { EditWatchList, EditMarket, SearchSymbol } from '../store/actions/ChartActions'
+import { EditProfile } from '../store/actions/UserActions'
 import PerfectScrollbar from 'perfect-scrollbar'
 import {
   CNav,
@@ -39,10 +40,12 @@ const TheAside = props => {
     divergenceVerified,
     watchList,
     watchListChanged,
+    disableEvent,
     updateProperty,
     EditWatchList,
     EditMarket,
-    SearchSymbol
+    SearchSymbol,
+    EditProfile
   } = props;
 
   const [symbolFilters, setSymbolFilters] = useState([])
@@ -324,6 +327,8 @@ const TheAside = props => {
                     loadOptions={promiseOptions}
                     onChange={setSymbolFilters}
                     isMulti
+                    onFocus={() => updateProperty({disableEvent: true})}
+                    onBlur={() => updateProperty({disableEvent: false})}
                     theme={(theme) => ({
                       ...theme,
                       colors: {
@@ -411,7 +416,7 @@ const TheAside = props => {
               <h6>BETA FEATURE</h6>
               <p className='pl-3 pr-3'>The divergence tool is currently in Beta form as we develop the functionality. As such, it should not be used as a stand alone reference. You are solely responsible for confirming divergence exists manually. Only regular divergence is detected, not trend divergence. Click the button below only if you agree to use this tool at your own risk. Please submit any issues or feedback for this tool in the '#divergence-tool' channel of the Discord server.</p>
               <CButton 
-              onClick={() => updateProperty({divergenceVerified: !divergenceVerified})}
+              onClick={() => EditProfile({divergenceVerified: !divergenceVerified})}
               className='font-weight-bold' shape='pill' color='primary'
               >
                 I Do Agree
@@ -430,13 +435,15 @@ const mapStateToProps = (state) => {
     divergenceVerified: state.firebase.profile.divergenceVerified || false,
     asideShow: state.charts.asideShow,
     watchList: state.charts.watchList,
-    watchListChanged: state.charts.watchListChanged
+    watchListChanged: state.charts.watchListChanged,
+    disableEvent: state.charts.disableEvent
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
     updateProperty: (property) => dispatch(updateProperty(property)),
+    EditProfile: (propertyUpdate) => dispatch(EditProfile(propertyUpdate)),
     EditWatchList: (brandSymbol) => dispatch(EditWatchList(brandSymbol)),
     EditMarket: (brandSymbol, brandUid, removeBrand, additionalSettings) => dispatch(EditMarket(brandSymbol, brandUid, removeBrand, additionalSettings)),
     SearchSymbol: (searchInput) => dispatch(SearchSymbol(searchInput))

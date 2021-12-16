@@ -548,15 +548,16 @@ let ChartHolder = forwardRef((props, ref) => {
     const end = xAccessor(data[0])
     let xExtents = localStorage.getItem(chartUid) !== null ? JSON.parse(localStorage.getItem(chartUid)) : [start, end]
     if (xExtentsStartLimitRef.current == 0 && xExtentsEndLimitRef.current == 0) {
-        
-        if (localStorage.getItem(chartUid) !== null) {
-            const localStorageExtents = JSON.parse(localStorage.getItem(chartUid))
-            xExtentsStartLimitRef.current = localStorageExtents[0]
-            xExtentsEndLimitRef.current = localStorageExtents[1]
-        } else {
-            xExtentsStartLimitRef.current = start
-            xExtentsEndLimitRef.current = end
-        }
+        xExtentsStartLimitRef.current = start
+        xExtentsEndLimitRef.current = end
+        // if (localStorage.getItem(chartUid) !== null) {
+        //     const localStorageExtents = JSON.parse(localStorage.getItem(chartUid))
+        //     xExtentsStartLimitRef.current = localStorageExtents[0]
+        //     xExtentsEndLimitRef.current = localStorageExtents[1]
+        // } else {
+        //     xExtentsStartLimitRef.current = start
+        //     xExtentsEndLimitRef.current = end
+        // }
     }
 
     if (xExtentsReplay !== null) {
@@ -899,7 +900,7 @@ let ChartHolder = forwardRef((props, ref) => {
                     rectWidth={25}
                     rectHeight={15}
                     rectRadius={7}
-                    displayFormat={timeFormat("%H:%M")} 
+                    displayFormat={timeFormat("%b %d, %H:%M")} 
                     fill={darkMode ? primaryDarkColor : primaryLightColor}/>
                 <MouseCoordinateY
                     at="right"

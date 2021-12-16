@@ -45,6 +45,7 @@ const ChartList = props => {
       currentChartSettings,
       watchList,
       watchListChanged,
+      disableEvent,
       updateTheCharts,
       updateProperty,
       SetChartSettings,
@@ -65,8 +66,10 @@ const ChartList = props => {
     const asyncSelectRef = useRef(null)
 
     const addEventListener = useRef(false)
+    const disableEventListener = useRef(false)
     const currentSelectedChart = useRef(null)
     const searchedValues = useRef('')
+    const enterChangeValue = useRef(true)
 
     const showAsyncSelect = useRef(false)
     const [viewAsyncSelect, setViewAsyncSelect] = useState(false)
@@ -76,17 +79,6 @@ const ChartList = props => {
         updateProperty({headerHeight: node.getBoundingClientRect().height})
       }
     }, [])
-    // const selectedChartRef = useDetectClickOutside({ 
-    //   onTriggered: (e) => {
-    //     if (
-    //       e.target.classList.contains('c-main') || e.target.classList.contains('parent_charts-list') ||
-    //       parseInt(e.which) == 27
-    //     ) {
-    //       updateProperty({selectedChart: null})
-    //     }
-    //   },
-    //   triggerKeys: ['Escape']
-    // })
 
     useEffect(() => {
       let watchedMap = []
@@ -108,11 +100,13 @@ const ChartList = props => {
         setMapCharts([fullScreenBrand])
       }
 
+      disableEventListener.current = disableEvent
+
       if (!addEventListener.current) {
         addEventListener.current = true
         window.addEventListener('keydown', onKeyPress)
       }
-    }, [charts, watchListChanged, selectedChart, fullScreenMode])
+    }, [charts, watchListChanged, selectedChart, fullScreenMode, disableEvent])
 
     useEffect(() => {
         return () => {
@@ -121,8 +115,21 @@ const ChartList = props => {
     }, [])
 
     const onKeyPress = (event) => {
-      if (currentSelectedChart.current != null) {
-        if (event.keyCode == 13) {
+      if (currentSelectedChart.current != null && !disableEventListener.current) {
+        if (event.altKey) {
+          event.preventDefault()
+          
+          if (event.keyCode >= 65 && event.keyCode <= 90) {
+            updateProperty({selectedChartEvent: {
+              chart: currentSelectedChart.current,
+              code: event.keyCode,
+              uid: uniqid()
+            }})
+          }
+          return
+        }
+
+        if (event.keyCode == 13) {     
           if (showAsyncSelect.current) {
             const searchedValue = searchedValues.current.toUpperCase()
             setViewAsyncSelect(false)
@@ -130,6 +137,10 @@ const ChartList = props => {
             EditMarket(searchedValue, currentSelectedChart.current, false)
             searchedValues.current = ''
           }
+        } else if (event.keyCode == 27 && showAsyncSelect.current) {
+            setViewAsyncSelect(false)
+            showAsyncSelect.current = false
+            searchedValues.current = ''
         } else if (event.keyCode >= 65 && event.keyCode <= 90) {
           if (!showAsyncSelect.current) {
             setViewAsyncSelect(currentSelectedChart.current)
@@ -320,10 +331,19 @@ const ChartList = props => {
                             }
                           }}
                           onChange={(e) => {
-                            const searchedValue = e.value
-                            setViewAsyncSelect(false)
-                            showAsyncSelect.current = false
-                            EditMarket(searchedValue, currentSelectedChart.current, false)
+                            if (enterChangeValue.current) {
+                              const searchedValue = e.value
+                              setViewAsyncSelect(false)
+                              showAsyncSelect.current = false
+                              EditMarket(searchedValue, currentSelectedChart.current, false)
+                            }
+
+                            enterChangeValue.current = true
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.keyCode == 13) {
+                              enterChangeValue.current = false
+                            }
                           }}
                           isMulti={false}
                           defaultMenuIsOpen={true}
@@ -592,6 +612,7 @@ const ChartList = props => {
                             <CLink className='card-header-action pl-1 pr-1'
                               onClick={() => {
                                 EditMarket(chart.chartSymbol, chart.chartUid, true)
+                                localStorage.removeItem(chart.chartUid)
                               }}>
                                 <CIcon name='cis-x-circle' height={20} />
                             </CLink>
@@ -636,7 +657,8 @@ const mapStateToProps = (state) => {
     selectedChartEvent: state.charts.selectedChartEvent,
     brandsModelShow: state.charts.brandsModelShow,
     watchList: state.charts.watchList,
-    watchListChanged: state.charts.watchListChanged
+    watchListChanged: state.charts.watchListChanged,
+    disableEvent: state.charts.disableEvent
   }
 }
 

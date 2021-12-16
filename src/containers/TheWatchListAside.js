@@ -25,6 +25,7 @@ const TheWatchListAside = props => {
     watchList,
     watchListChanged,
     dbWachList,
+    disableEvent,
     updateProperty,
     EditWatchList,
     EditMarket,
@@ -322,6 +323,8 @@ const TheWatchListAside = props => {
                             loadOptions={promiseOptions}
                             onChange={setSymbolFilters}
                             isMulti
+                            onFocus={() => updateProperty({disableEvent: true})}
+                            onBlur={() => updateProperty({disableEvent: false})}
                             theme={(theme) => ({
                                 ...theme,
                                 colors: {
@@ -398,6 +401,7 @@ const mapStateToProps = (state) => {
     watchlistAsideShow: state.charts.watchlistAsideShow,
     watchList: state.charts.watchList,
     watchListChanged: state.charts.watchListChanged,
+    disableEvent: state.charts.disableEvent,
     dbWachList: state.firebase.data.mySymbols
   }
 }

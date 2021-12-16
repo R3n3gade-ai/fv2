@@ -85,6 +85,7 @@ const Dashboard = props => {
     compSigned,
     watchList,
     watchListChanged,
+    disableEvent,
     geoPullApi,
     updateProfileError,
     updateProperty,
@@ -188,20 +189,6 @@ const Dashboard = props => {
     if(ps) ps.update()
   }, [brands, currentComplianceStep, geoPullApi, updateProfileError, compSigned, watchListChanged])
 
-  // const assignUser = async() => {
-  //   let currentUser = React.firebase.firebase.auth().currentUser
-  //   React.firebase.ae.auth().updateCurrentUser(currentUser)
-  //   React.firebase.fl.auth().updateCurrentUser(currentUser)
-  //   React.firebase.ms.auth().updateCurrentUser(currentUser)
-  //   React.firebase.tz.auth().updateCurrentUser(currentUser)
-  //   React.firebase.lae.auth().updateCurrentUser(currentUser)
-  //   React.firebase.lfl.auth().updateCurrentUser(currentUser)
-  //   React.firebase.lms.auth().updateCurrentUser(currentUser)
-  //   React.firebase.ltz.auth().updateCurrentUser(currentUser)
-  //   React.firebase.blocks.auth().updateCurrentUser(currentUser)
-  //   React.firebase.tracking.auth().updateCurrentUser(currentUser)
-  // }
-
   const generateReport = async() => {
     console.log('generating now')
 
@@ -216,7 +203,6 @@ const Dashboard = props => {
 
     await gotUsersAndInvoices(xusers, xInvoices)
   }
-
 
   const sortBy = (xrecords, row) => {
     xrecords.sort((a, b) => (a[row] > b[row] ? 1 : -1))
@@ -817,270 +803,6 @@ const Dashboard = props => {
   
   return (
     <>
-      {/* { fullScreenMode && 
-        <div>
-          <CCard className='m-0'>
-            <CCardHeader innerRef={headerRef} className='card-header-actions mr-0 d-flex align-items-center justify-content-between c-header'>
-              <div className='d-flex'>
-                <span onClick={() => updateProperty({brandsModelShow: true})}
-                  className='h5 ml-2 mb-0 chart-symbol_container'>{fullScreenBrand.chartSymbol}</span>
-                <span className='ml-1 mb-0 text-muted mt-auto'>{fullScreenBrand.chartBrand}</span>
-              </div>
-              <div className='card-header-actions d-flex'>
-                <CTooltip content='Time Frame'>
-                  <CBadge 
-                    shape="pill"
-                    style={{
-                      border: '1.5px solid ' + fullScreenBrand.chartSettings.priceBarsColor,
-                      cursor: 'pointer'
-                    }}
-                    className="ml-1 mr-1 d-flex align-items-center justify-content-center"
-                    onClick={() => {
-                      SetChartSettings({
-                        periodicity: fullScreenBrand.chartSettings.periodicity == '1m' ? '15m' : '1m'
-                      }, fullScreenBrand.chartUid, false, true)
-                    }}>
-                    {fullScreenBrand.chartSettings.periodicity}
-                  </CBadge>
-                </CTooltip>
-                <CTooltip content='Flow Index'>
-                  <CBadge 
-                    shape="pill" 
-                    style={{
-                      border: '1.5px solid ' + ( fullScreenBrand.chartSettings.flowIndex === 'normal' ? fullScreenBrand.chartSettings.flowIndexColor : (
-                          fullScreenBrand.chartSettings.flowIndex === 'dark-pool' ? fullScreenBrand.chartSettings.flowDarkIndexColor : fullScreenBrand.chartSettings.flowBothIndexColor
-                      ) ),
-                      cursor: 'pointer'
-                    }}
-                    className="ml-1 mr-1 d-flex align-items-center justify-content-center"                    
-                    onClick={() => {
-                      let newFlowIndex
-                      switch(fullScreenBrand.chartSettings.flowIndex) {
-                        case 'normal':
-                          newFlowIndex = 'dark-pool'
-                          break
-                        case 'dark-pool':
-                          newFlowIndex = 'both'
-                          break
-                        case 'both':
-                          newFlowIndex = 'normal'
-                          break
-                      }
-
-                      SetChartSettings({
-                        flowIndex: newFlowIndex
-                      }, fullScreenBrand.chartUid, false, true)
-                    }}>
-                    {fullScreenBrand.chartSettings.flowIndex}
-                  </CBadge>
-                </CTooltip>
-
-                { fullScreenBrand.chartSettings.replayMarket &&
-                  <>
-                    { !(fullScreenBrand.chartSettings.replayMarket == 'pause') && 
-                      <CTooltip content='Pause Market'>
-                        <CLink className='card-header-action pl-1 pr-0'
-                          onClick={() => {
-                            SetChartSettings({
-                              replayMarket: 'pause'
-                            }, fullScreenBrand.chartUid, false, false)
-                          }}>
-                            <CIcon name='cis-media-pause-circle' height={20} />
-                        </CLink>
-                      </CTooltip>}
-                    { fullScreenBrand.chartSettings.replayMarket == 'pause' &&
-                      <CTooltip content='Play Market'>
-                        <CLink className='card-header-action pl-1 pr-0'
-                          onClick={() => {
-                            SetChartSettings({
-                              replayMarket: 'play'
-                            }, fullScreenBrand.chartUid, false, false)
-                          }}>
-                            <CIcon name='cis-media-play-circle' height={20} />
-                        </CLink>
-                      </CTooltip>}
-                    <CTooltip content='Stop Market'>
-                      <CLink className='card-header-action p-07'
-                        onClick={() => {
-                          SetChartSettings({
-                            replayMarket: false
-                          }, fullScreenBrand.chartUid, false, false)
-                        }}>
-                          <CIcon name='cis-media-stop-circle' height={20} />
-                      </CLink>
-                    </CTooltip>
-                    <CTooltip content='Speed'>
-                      <div className='card-header-action p-07'>
-                        <CSelect 
-                          custom size="xs" name="selectSm" id="SelectLm" 
-                          value={fullScreenBrand.chartSettings.replayMarketSettings.speed}
-                          onChange={(e) => {
-                            SetChartSettings({
-                              replayMarket: 'replay',
-                              replayMarketSettings: {
-                                speed: e.target.value
-                              }
-                            }, fullScreenBrand.chartUid, false, false)
-                          }}>
-                          <option value="500">Slow</option>
-                          <option value="250">Normal</option>
-                          <option value="100">Fast</option>
-                        </CSelect>
-                      </div>
-                    </CTooltip>            
-                  </>          
-                }
-                { !fullScreenBrand.chartSettings.replayMarket &&
-                  <>
-                    <CTooltip content='Watch List'>
-                      <CLink className='card-header-action pl-1 pr-1'
-                        onClick={() => {
-                          EditWatchList(fullScreenBrand.chartSymbol)
-                        }}>
-                          {watchedState && 
-                            <CIcon height={20} className='text-danger' name="cis-queue-remove" /> ||
-                            <CIcon name='cil-queue-add' height={20} />  }
-                      </CLink>
-                    </CTooltip>
-                    <div onClick={(e) => {
-                      if (e.target.parentNode.classList.contains('chartTypes-option') ||
-                        e.target.parentNode.classList.contains('chartTypes-list')
-                      ) {
-                        let changeChartType = e.target.parentNode.classList.contains('chartTypes-option') ?
-                          e.target.parentNode.getAttribute('data-chartype') : e.target.getAttribute('data-chartype')
-
-                        SetChartSettings({
-                          chartType: changeChartType
-                        }, fullScreenBrand.chartUid, false, true)
-                      }
-                    }}>
-                      <CPopover
-                        content={React.createElement(
-                            'ul', {
-                                className: 'chartTypes-list',
-                            },
-                                React.createElement('div', {className: 'chartTypes-option' + 
-                                  (fullScreenBrand.chartSettings.chartType == 'ohlc' ? ' chartTypes-option-selected' : ''),
-                                  'data-chartype': 'ohlc'}, 
-                                  React.createElement('img', {src: React.icons.Tools.ohlc},null),
-                                  React.createElement('span', {},'OHLC'),
-                                ),
-                                React.createElement('div', {className: 'chartTypes-option' + 
-                                  (fullScreenBrand.chartSettings.chartType == 'candles' ? ' chartTypes-option-selected' : ''),
-                                  'data-chartype': 'candles'}, 
-                                  React.createElement('img', {src: React.icons.Tools.candles},null),
-                                  React.createElement('span', {},'Candles'),
-                                ),
-                        )}
-                        placement={'bottom'}
-                        interactive={true}
-                        trigger='click'
-                      >
-                        <CImg
-                          className='card-header-action pl-1 pr-1 chartType-container'
-                          src={React.icons.Tools[fullScreenBrand.chartSettings.chartType]}
-                        />
-                      </CPopover>
-                    </div>
-                    <CTooltip content='ScreenShot'>
-                      <CLink className='card-header-action pl-1 pr-1'
-                        onClick={() => {
-                          SetChartSettings({
-                            takeScreenShot: true
-                          }, fullScreenBrand.chartUid, false, false)
-                          updateProperty({showScreenShotModal: !showScreenShotModal})
-                        }}>
-                          <CIcon name='cis-images' height={20} />
-                      </CLink>
-                    </CTooltip>
-                    <CTooltip content='Show BlockTrades'>
-                      <CLink className='card-header-action pl-1 pr-1'
-                        onClick={() => {
-                          SetChartSettings({
-                            blocksLine: !fullScreenBrand.chartSettings.blocksLine
-                          }, fullScreenBrand.chartUid, false, true)
-                        }}>
-                          { !fullScreenBrand.chartSettings.blocksLine &&
-                            <CIcon name='cil-image-broken' height={20} />
-                          }
-                          { fullScreenBrand.chartSettings.blocksLine &&
-                            <CIcon name='cis-image-broken' height={20} />
-                          }
-                      </CLink>
-                    </CTooltip>
-                        <CTooltip content='Show Divergence'>
-                          <CLink className='card-header-action pl-1 pr-1'
-                            onClick={() => {
-                              SetChartSettings({
-                                showDivergence: !fullScreenBrand.chartSettings.showDivergence
-                              }, fullScreenBrand.chartUid, false, true)
-                            }}>
-                              { !fullScreenBrand.chartSettings.showDivergence &&
-                                <CIcon name='cil-call-split' height={20} />
-                              }
-                              { fullScreenBrand.chartSettings.showDivergence &&
-                                <CIcon name='cis-call-split' height={20} />
-                              }
-                          </CLink>
-                        </CTooltip>
-                    <CTooltip content='Replay Market'>
-                      <CLink className='card-header-action pl-1 pr-1'
-                        onClick={() => {
-                          SetChartSettings({
-                            replayMarket: true
-                          }, fullScreenBrand.chartUid, false, false)
-                        }}>
-                          <CIcon name='cis-media-play-circle' height={20} />
-                      </CLink>
-                    </CTooltip>
-                    <CTooltip content='Chart Settings'>
-                      <CLink className='card-header-action pl-1 pr-1'
-                        onClick={() => {
-                          SetChartSettings({
-                            chartSymbol : fullScreenBrand.chartSymbol
-                          }, fullScreenBrand.chartUid, false, false)
-                          updateProperty({settingsModelShow: !settingsModelShow})
-                        }}>
-                          <CIcon name='cis-settings' height={20} />
-                      </CLink>
-
-                    </CTooltip>
-                    <CTooltip content='Restore Screen'>
-                      <CLink className='card-header-action pl-1 pr-1'
-                        onClick={() => {
-                          SetChartSettings({
-                            fullScreenMode : false
-                          }, fullScreenBrand.chartUid, true, false)
-                          updateProperty({
-                            fullScreenMode:!fullScreenMode
-                          })
-                        }}>
-                          <CIcon name='cis-window-restore' height={20} />
-                      </CLink>
-                    </CTooltip>
-                  </>
-                }
-              </div>
-            </CCardHeader>
-            <CCardBody style={{backgroundColor: fullScreenBrand.chartSettings.backgroundColor}}>
-              <div className='chart-watermark'>
-                <CIcon content={React.icons.flowtradeDarkLogo} height="190" alt="Flowtrade"/>
-              </div>
-              <ChartRender 
-                mainHeight={(mainHeight - headerHeight - 40)}
-                currentSymbol={fullScreenBrand.chartSymbol}
-                currentUid={fullScreenBrand.chartUid}
-              />
-            </CCardBody>
-          </CCard> 
-        </div> 
-      } */}
-      {/* { !fullScreenMode &&
-        <>
-
-        </>
-      } */}
-
       {(charts.length < 4 && !fullScreenMode) && <CButton 
       onClick={() => updateProperty({selectedChart:null, brandsModelShow: true})}
       className='add-new-market_button first-step' shape='pill' color='primary'
@@ -1133,8 +855,12 @@ const Dashboard = props => {
 
       <CModal
         show={brandsModelShow}
-        onClose={() => updateProperty({brandsModelShow: false})}
+        onClose={() => {
+          updateProperty({disableEvent: false, brandsModelShow: false})
+        }}
+        onClosed={() => updateProperty({disableEvent: false})}
         onOpened={() => {
+          updateProperty({disableEvent: true})
           ps = new PerfectScrollbar('.symbols-modal-body')
         }}
         closeOnBackdrop={false}
@@ -1146,10 +872,11 @@ const Dashboard = props => {
       </CModal>
       <CModal
         show={settingsModelShow}
+        onOpened={() => updateProperty({disableEvent: true})}
         onClose={() => {
-          updateProperty({currentChartSettings: {}, settingsModelShow: !settingsModelShow})
+          updateProperty({disableEvent: false, currentChartSettings: {}, settingsModelShow: !settingsModelShow})
         }}
-        //onOpened={() => alert('opened')}
+        onClosed={() => updateProperty({disableEvent: false})}
         closeOnBackdrop={false}
         size='lg'
       >
@@ -1160,10 +887,11 @@ const Dashboard = props => {
       </CModal>
       <CModal
         show={showScreenShotModal}
+        onOpened={() => updateProperty({disableEvent: true})}
         onClose={() => {
-          updateProperty({screenShotSrc: null, showScreenShotModal: !showScreenShotModal})
+          updateProperty({disableEvent: false, screenShotSrc: null, showScreenShotModal: !showScreenShotModal})
         }}
-        //onOpened={() => alert('opened')}
+        onClosed={() => updateProperty({disableEvent: false})}
         closeOnBackdrop={false}
         size='lg'
         className='tiiist'
@@ -1180,7 +908,12 @@ const Dashboard = props => {
       </CModal>
       <CModal
         show={showCompliance}
-        onClose={() => setShowCompliance(false)}
+        onOpened={() => updateProperty({disableEvent: true})}
+        onClose={() => {
+          updateProperty({disableEvent: false})
+          setShowCompliance(false)
+        }}
+        onClosed={() => updateProperty({disableEvent: false})}
         closeOnBackdrop={false}
         size='lg'
         className='compliance_modal'
@@ -1704,6 +1437,7 @@ const mapStateToProps = (state) => {
     compSigned: state.firebase.profile.compSigned,
     watchList: state.charts.watchList,
     watchListChanged: state.charts.watchListChanged,
+    disableEvent: state.charts.disableEvent,
     geoPullApi: state.misc.geoPullApi,
     updateProfileError: state.user.updateProfileError
   }

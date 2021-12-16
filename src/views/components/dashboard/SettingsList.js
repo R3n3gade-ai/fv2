@@ -176,7 +176,7 @@ const SettingsList = props => {
                                         fibonacciRetracements: true
                                     },
                                     icon: 'fibonacci',
-                                    shortCode: 'F'
+                                    shortCode: 'ALT + F'
                                 },
                                 {
                                     name: 'Finite Line',
@@ -185,7 +185,7 @@ const SettingsList = props => {
                                         trendLineType: 'LINE'
                                     },
                                     icon: 'sLine',
-                                    shortCode: 'L'
+                                    shortCode: 'ALT + L'
                                 },
                                 {
                                     name: 'Semi-Infinite Line',
@@ -194,7 +194,7 @@ const SettingsList = props => {
                                         trendLineType: 'RAY'
                                     },
                                     icon: 'siLine',
-                                    shortCode: 'R'
+                                    shortCode: 'ALT + R'
                                 },
                                 {
                                     name: 'Infinite Line',
@@ -203,7 +203,7 @@ const SettingsList = props => {
                                         trendLineType: 'XLINE'
                                     },
                                     icon: 'iLine',
-                                    shortCode: 'X'
+                                    shortCode: 'ALT + X'
                                 }
                             ]}
                         />     

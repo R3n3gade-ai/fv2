@@ -82,6 +82,7 @@ const initialState = {
   },
   selectedChart: null,
   selectedChartEvent: null,
+  disableEvent: false,
   applyToAllChart: true,
   currentChartSettings: {},
 

@@ -38,28 +38,17 @@ const ChartRender = props => {
 	const [ignored, forceUpdate] = useReducer(x => x + 1, 0)
 
 	const chartRenderRef = useRef(null)
-	const mountedRef = useRef(true)
 
-	useEffect(async() => {
-		if (!mountedRef.current) return null
-
+	useEffect(() => {
 		if (newChartLoaded) {
 			updateProperty({newChartLoaded: false})
 			setChartLoaded(false)
 		}
-
-		await setChartRenderComponent(currentSymbol, currentUid, currentEvent)
-
+		setChartRenderComponent(currentSymbol, currentUid, currentEvent)
 		setChartLoaded(true)
 	}, [props, charts])
 
-	useEffect(() => {
-		return () => { 
-			mountedRef.current = false
-		}
-	}, [])
-
-	const setChartRenderComponent = async(theSymbol, theUid, theEvent) => {
+	const setChartRenderComponent = (theSymbol, theUid, theEvent) => {
 		const currentChartData = charts.filter(chartSet => {
 			return chartSet.chartUid === theUid
 		})

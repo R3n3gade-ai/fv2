@@ -45,6 +45,7 @@ const TheScanAside = props => {
         watchListChanged,
         defaultChartSettings,
         scanAsideShow,
+        disableEvent,
         trendScansData,
         updateProperty,
         EditWatchList,
@@ -565,6 +566,8 @@ const TheScanAside = props => {
                                     defaultOptions={defaultSymbolOptions}
                                     loadOptions={promiseOptions}
                                     onChange={setSymbolFilters}
+                                    onFocus={() => updateProperty({disableEvent: true})}
+                                    onBlur={() => updateProperty({disableEvent: false})}
                                     isMulti
                                     theme={(theme) => ({
                                         ...theme,
@@ -1146,6 +1149,7 @@ const mapStateToProps = (state) => {
     watchListChanged: state.charts.watchListChanged,
     defaultChartSettings: state.charts.defaultChartSettings,
     scanAsideShow: state.charts.scanAsideShow,
+    disableEvent: state.charts.disableEvent,
     trendScansData: state.firebase.data.scansTest,
   }
 }

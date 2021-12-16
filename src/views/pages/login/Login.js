@@ -127,7 +127,7 @@ const Login = props => {
 
   return (
     <>
-      {!loadedProfile && <TheLoader/>}
+      {!profileInfo.isLoaded && <TheLoader/>}
       <div className="c-app c-dark-theme c-default-layout flex-row align-items-center login-app-bg">
         <CContainer>
           <CRow className="justify-content-center">
