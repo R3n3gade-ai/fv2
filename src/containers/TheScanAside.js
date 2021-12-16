@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useReducer } from 'react'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
 import { firebaseConnect } from 'react-redux-firebase'
@@ -85,9 +85,21 @@ const TheScanAside = props => {
         KeltsScansOmonthDataTable: false
     })
 
+    const [ignored, forceUpdate] = useReducer(x => x + 1, 0)
+
+    let TrendsDataRef = useRef([]),
+        firebaseRefs = useRef([]),
+        alphaFirebaseRef = useRef(null)
+
     useEffect(async() => {
+        if (alphaFirebaseRef.current == null) {
+            let requestDate = moment(new Date()).format('YYYY_MM_DD')
+            alphaFirebaseRef.current = React.firebase.firebase.database(React.firebase.tracking).ref(`${requestDate}/one/gainers`)
+        }
+
         getAlphaScans()
-        getTrendsScans()
+        const gotTrends = await getTrendsScans()
+        if(gotTrends) subscribeToTrends()
 
         AlphaScanstableWrapperRef.current && (alphaScansPs = new PerfectScrollbar('.option-table_wrapper-alpha'))
         TrendsScanstableWrapperRef.current && (TrendsScansPs = new PerfectScrollbar('.option-table_wrapper-trends_4h'))
@@ -100,15 +112,54 @@ const TheScanAside = props => {
         KeltsOmonthScanstableWrapperRef.current && (KeltsOmonthScansPs = new PerfectScrollbar('.option-table_wrapper-kelts_1m'))
     }, [symbolFilters, onlyWatchlist, trendScansData])
     
+    useEffect(() => {
+        return () => {
+            alphaFirebaseRef.current.off('value', postGetAlphaScans)
+            firebaseRefs.current.map(firebaseRef => {
+                firebaseRef.dbRef.off('value', (val) => {
+                    preTrackLivePriceBis(val, firebaseRef.symbol)
+                })
+            })
+        }
+    }, [])
+
+    const subscribeToTrends = () => {
+        TrendsDataRef.current.map((trendTypeData, trendTypeDataIndex) => {
+            trendTypeData.data.map((trendDetailsData, trendDetailsDataIndex) => {
+                let symbolDatabase = getDatabase(trendDetailsData.symbol),
+                    ExistingRef = firebaseRefs.current.findIndex(firebaseRef => {
+                        return firebaseRef.pathName == `liveTick/e${trendDetailsData.symbol}`
+                    })
+
+                if (ExistingRef == '-1') {
+                    firebaseRefs.current.push({
+                        'dbRef': React.firebase.firebase.database(React.firebase['l' + symbolDatabase])
+                                    .ref(`liveTick/e${trendDetailsData.symbol}`),
+                        'pathName': `liveTick/e${trendDetailsData.symbol}`,
+                        'symbol': trendDetailsData.symbol
+                    })
+
+                    ExistingRef = firebaseRefs.current.findIndex(firebaseRef => {
+                        return firebaseRef.pathName == `liveTick/e${trendDetailsData.symbol}`
+                    })
+
+                    firebaseRefs.current[ExistingRef].dbRef.on('value', (val) => {
+                        preTrackLivePriceBis(val, trendDetailsData.symbol)
+                    })
+                }
+            }) 
+        })
+    }
+
     const getDatabase = (eSymbol) => {
         let eSymbolCodeCharachter = eSymbol.charAt(0)
         let eSymbolCode = (eSymbolCodeCharachter.toLowerCase()).charCodeAt( eSymbolCodeCharachter.length - 1 )
 
-        if (eSymbolCode >= 97 && eSymbolCode <= 101) {
+        if (eSymbolCode >= 97 && eSymbolCode <= 102) {
             return 'ae'
         }
 
-        if (eSymbolCode >= 102 && eSymbolCode <= 108) {
+        if (eSymbolCode > 102 && eSymbolCode <= 108) {
             return 'fl'
         }
 
@@ -123,42 +174,40 @@ const TheScanAside = props => {
 
     const getAlphaScans = async() => {
         return new Promise((resolve, reject) => {
-            let requestDate = moment(new Date()).format('YYYY_MM_DD')
-
-            React.firebase.firebase.database(React.firebase.tracking)
-            .ref(`${requestDate}/one/gainers`)
-            .on('value', (val) => {
-                let scansData = []
-                val.forEach(function(childSnapshot) {
-                    let currentSymbol = childSnapshot.key.substring(1),
-                        currentValues = childSnapshot.val()
-
-                    if (symbolFilters.length > 0) {
-                      let filterSymbols = symbolFilters.map(Sy => {
-                        return Sy.value
-                      })
-                      
-                      if (!filterSymbols.find(SyElement => SyElement == currentSymbol)) return
-                    }
-
-                    if (onlyWatchlist) {
-                      if (!watchList.find(SyElement => SyElement.symbol == currentSymbol)) return
-                    }
-
-                    if (currentValues.C > currentValues.MO) {
-                        scansData.push({
-                            symbol: currentSymbol,
-                            opened: currentValues.MO,
-                            close: currentValues.C,
-                            netchange: (currentValues.C - currentValues.MO).toFixed(2),
-                            epoch: +currentValues.T
-                        })
-                    }
-                })
-
-                setAlphaScansData(scansData.sort( compare ))
-            })
+            alphaFirebaseRef.current.on('value', postGetAlphaScans)
         })
+    }
+
+    const postGetAlphaScans = (val) => {
+        let scansData = []
+        val.forEach(function(childSnapshot) {
+            let currentSymbol = childSnapshot.key.substring(1),
+                currentValues = childSnapshot.val()
+
+            if (symbolFilters.length > 0) {
+                let filterSymbols = symbolFilters.map(Sy => {
+                return Sy.value
+                })
+                
+                if (!filterSymbols.find(SyElement => SyElement == currentSymbol)) return
+            }
+
+            if (onlyWatchlist) {
+                if (!watchList.find(SyElement => SyElement.symbol == currentSymbol)) return
+            }
+
+            if (currentValues.C > currentValues.MO) {
+                scansData.push({
+                    symbol: currentSymbol,
+                    opened: currentValues.MO,
+                    close: currentValues.C,
+                    netchange: (currentValues.C - currentValues.MO).toFixed(2),
+                    epoch: +currentValues.T
+                })
+            }
+        })
+
+        setAlphaScansData(scansData.sort( compare ))
     }
 
     const getTrendsScans = async() => {
@@ -258,132 +307,59 @@ const TheScanAside = props => {
             })
             
             await Promise.all(trendsDataPromises)
-            setTrendsScansDataTable(trendsData.sort( compare ))
-            setTrendsScansOdayDataTable(trendsOdayData.sort( compare ))
-            setTrendsScansOweekDataTable(trendsOweekData.sort( compare ))
-            setTrendsScansOmonthDataTable(trendsOmonthData.sort( compare ))
-            setKeltsScansDataTable(keltsData)
-            setKeltsScansOdayDataTable(keltsOdayData)
-            setKeltsScansOweekDataTable(keltsOweekData)
-            setKeltsScansOmonthDataTable(keltsOmonthData)
+            TrendsDataRef.current = [
+                {
+                    type: 'trendsScansDataTable',
+                    data: trendsData.sort( compare )
+                },
+                {
+                    type: 'trendsScansOdayDataTable',
+                    data: trendsOdayData.sort( compare )
+                },
+                {
+                    type: 'trendsScansOweekDataTable',
+                    data: trendsOweekData.sort( compare )
+                },
+                {
+                    type: 'trendsScansOmonthDataTable',
+                    data: trendsOmonthData.sort( compare )
+                },
+                {
+                    type: 'keltsScansDataTable',
+                    data: keltsData
+                },
+                {
+                    type: 'keltsScansOdayDataTable',
+                    data: keltsOdayData
+                },
+                {
+                    type: 'keltsScansOweekDataTable',
+                    data: keltsOweekData
+                },
+                {
+                    type: 'keltsScansOmonthDataTable',
+                    data: keltsOmonthData
+                }
+            ]
+
+            return true
+        } else {
+            return false
         }
     }
 
-    const preTrackLivePrice = () => {
-        if (TrendsScansDataTable.length && !gotTrendsDataRef.current.TrendsScansDataTable) {
-            gotTrendsDataRef.current.TrendsScansDataTable = true
+    const preTrackLivePriceBis = (val, symbol) => {
+        TrendsDataRef.current.map((trendTypeData, trendTypeDataIndex) => {
+            trendTypeData.data.map((trendDetailsData, trendDetailsDataIndex) => {
+                if (trendDetailsData.symbol == symbol) {
+                    TrendsDataRef.current[trendTypeDataIndex].data[trendDetailsDataIndex].price = 
+                        val.val() !== null && val.val().C.toFixed(2) || '0'
 
-            TrendsScansDataTable.map((scanData, scanIndex) => {
-                const symbolDatabase = getDatabase(scanData.symbol)
-                React.firebase.firebase.database(React.firebase['l' + symbolDatabase])
-                    .ref(`liveTick/e${scanData.symbol}`)
-                    .on('value', (val) => {
-                        TrendsScansDataTable[scanIndex].price = val.val() !== null && val.val().C.toFixed(2) || '0'
-                        setTrendsScansDataTable(TrendsScansDataTable)
-                })
+                    // forceUpdate()
+                }
             })
-        }
-
-        if (TrendsScansOdayDataTable.length && !gotTrendsDataRef.current.TrendsScansOdayDataTable) {
-            gotTrendsDataRef.current.TrendsScansOdayDataTable = true
-
-            TrendsScansOdayDataTable.map((scanData, scanIndex) => {
-                const symbolDatabase = getDatabase(scanData.symbol)
-                React.firebase.firebase.database(React.firebase['l' + symbolDatabase])
-                    .ref(`liveTick/e${scanData.symbol}`)
-                    .on('value', (val) => {
-                        TrendsScansOdayDataTable[scanIndex].price = val.val() !== null && val.val().C.toFixed(2) || '0'
-                        setTrendsScansOdayDataTable(TrendsScansOdayDataTable)
-                })
-            })
-        }
-
-        if (TrendsScansOweekDataTable.length && !gotTrendsDataRef.current.TrendsScansOweekDataTable) {
-            gotTrendsDataRef.current.TrendsScansOweekDataTable = true
-
-            TrendsScansOweekDataTable.map((scanData, scanIndex) => {
-                const symbolDatabase = getDatabase(scanData.symbol)
-                React.firebase.firebase.database(React.firebase['l' + symbolDatabase])
-                    .ref(`liveTick/e${scanData.symbol}`)
-                    .on('value', (val) => {
-                        TrendsScansOweekDataTable[scanIndex].price = val.val() !== null && val.val().C.toFixed(2) || '0'
-                        setTrendsScansOweekDataTable(TrendsScansOweekDataTable)
-                })
-            })
-        }
-
-        if (TrendsScansOmonthDataTable.length && !gotTrendsDataRef.current.TrendsScansOmonthDataTable) {
-            gotTrendsDataRef.current.TrendsScansOmonthDataTable = true
-
-            TrendsScansOmonthDataTable.map((scanData, scanIndex) => {
-                const symbolDatabase = getDatabase(scanData.symbol)
-                React.firebase.firebase.database(React.firebase['l' + symbolDatabase])
-                    .ref(`liveTick/e${scanData.symbol}`)
-                    .on('value', (val) => {
-                        TrendsScansOmonthDataTable[scanIndex].price = val.val() !== null && val.val().C.toFixed(2) || '0'
-                        setTrendsScansOmonthDataTable(TrendsScansOmonthDataTable)
-                })
-            })
-        }
-
-        if (KeltsScansDataTable.length && !gotTrendsDataRef.current.KeltsScansDataTable) {
-            gotTrendsDataRef.current.KeltsScansDataTable = true
-
-            KeltsScansDataTable.map((scanData, scanIndex) => {
-                const symbolDatabase = getDatabase(scanData.symbol)
-                React.firebase.firebase.database(React.firebase['l' + symbolDatabase])
-                    .ref(`liveTick/e${scanData.symbol}`)
-                    .on('value', (val) => {
-                        KeltsScansDataTable[scanIndex].price = val.val() !== null && val.val().C.toFixed(2) || '0'
-                        setKeltsScansDataTable(KeltsScansDataTable)
-                })
-            })
-        }
-
-        if (KeltsScansOdayDataTable.length && !gotTrendsDataRef.current.KeltsScansOdayDataTable) {
-            gotTrendsDataRef.current.KeltsScansOdayDataTable = true
-
-            KeltsScansOdayDataTable.map((scanData, scanIndex) => {
-                const symbolDatabase = getDatabase(scanData.symbol)
-                React.firebase.firebase.database(React.firebase['l' + symbolDatabase])
-                    .ref(`liveTick/e${scanData.symbol}`)
-                    .on('value', (val) => {
-                        KeltsScansOdayDataTable[scanIndex].price = val.val() !== null && val.val().C.toFixed(2) || '0'
-                        setKeltsScansOdayDataTable(KeltsScansOdayDataTable)
-                })
-            })
-        }
-
-        if (KeltsScansOweekDataTable.length && !gotTrendsDataRef.current.KeltsScansOweekDataTable) {
-            gotTrendsDataRef.current.KeltsScansOweekDataTable = true
-
-            KeltsScansOweekDataTable.map((scanData, scanIndex) => {
-                const symbolDatabase = getDatabase(scanData.symbol)
-                React.firebase.firebase.database(React.firebase['l' + symbolDatabase])
-                    .ref(`liveTick/e${scanData.symbol}`)
-                    .on('value', (val) => {
-                        KeltsScansOweekDataTable[scanIndex].price = val.val() !== null && val.val().C.toFixed(2) || '0'
-                        setKeltsScansOweekDataTable(KeltsScansOweekDataTable)
-                })
-            })
-        }
-        
-        if (KeltsScansOmonthDataTable.length && !gotTrendsDataRef.current.KeltsScansOmonthDataTable) {
-            gotTrendsDataRef.current.KeltsScansOmonthDataTable = true
-
-            KeltsScansOmonthDataTable.map((scanData, scanIndex) => {
-                const symbolDatabase = getDatabase(scanData.symbol)
-                React.firebase.firebase.database(React.firebase['l' + symbolDatabase])
-                    .ref(`liveTick/e${scanData.symbol}`)
-                    .on('value', (val) => {
-                        KeltsScansOmonthDataTable[scanIndex].price = val.val() !== null && val.val().C.toFixed(2) || '0'
-                        setKeltsScansOmonthDataTable(KeltsScansOmonthDataTable)
-                })
-            })
-        }
+        })
     }
-
-    preTrackLivePrice()
 
     const alphaFields = [
         { key: 'symbol', label: 'Symbol', _style: {} },
@@ -635,7 +611,7 @@ const TheScanAside = props => {
                                                     (item, index)=> {
                                                         return (
                                                             <td style={{fontWeight: 'bolder'}}>
-                                                                <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, false)}>
+                                                                <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, 0, false)}>
                                                                     {item.symbol}
                                                                 </div>
                                                             </td>
@@ -647,7 +623,7 @@ const TheScanAside = props => {
                                                         <td className='add-to_watchlist pl-0 pr-0'>
                                                             <div style={{cursor: 'pointer'}} onClick={() => EditWatchList(item.symbol)}>
                                                                 { !watchList.find(element => element.symbol == item.symbol) && 
-                                                                    <CIcon size={'sm'} className='text-success' name="cis-queue-add" />
+                                                                    <CIcon size={'sm'} className='text-success' name="cil-queue-add" />
                                                                 }
                                                                 { watchList.find(element => element.symbol == item.symbol) && 
                                                                     <CIcon size={'sm'} className='text-danger' name="cis-queue-remove" />
@@ -715,8 +691,8 @@ const TheScanAside = props => {
                                         <CTabContent>
                                             <CTabPane>
                                                 <div className='option-table_wrapper-trends option-table_wrapper-trends_4h' ref={TrendsScanstableWrapperRef}>
-                                                    <CDataTable
-                                                        items={TrendsScansDataTable}
+                                                    {TrendsDataRef.current[0] && <CDataTable
+                                                        items={TrendsDataRef.current[0].data}
                                                         fields={TrendsFields}
                                                         striped
                                                         hover
@@ -725,7 +701,7 @@ const TheScanAside = props => {
                                                                 (item, index)=> {
                                                                     return (
                                                                         <td style={{fontWeight: 'bolder'}}>
-                                                                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, false)}>
+                                                                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, 0, false)}>
                                                                                 {item.symbol}
                                                                             </div>
                                                                         </td>
@@ -737,7 +713,7 @@ const TheScanAside = props => {
                                                                     <td className='add-to_watchlist pl-0 pr-0'>
                                                                         <div style={{cursor: 'pointer'}} onClick={() => EditWatchList(item.symbol)}>
                                                                             { !watchList.find(element => element.symbol == item.symbol) && 
-                                                                                <CIcon size={'sm'} className='text-success' name="cis-queue-add" />
+                                                                                <CIcon size={'sm'} className='text-success' name="cil-queue-add" />
                                                                             }
                                                                             { watchList.find(element => element.symbol == item.symbol) && 
                                                                                 <CIcon size={'sm'} className='text-danger' name="cis-queue-remove" />
@@ -765,13 +741,13 @@ const TheScanAside = props => {
                                                                     )
                                                                 },
                                                         }}
-                                                    />
+                                                    />}
                                                 </div>
                                             </CTabPane>
                                             <CTabPane>
                                                 <div className='option-table_wrapper-trends option-table_wrapper-trends_1d' ref={TrendsOdayScanstableWrapperRef}>
-                                                    <CDataTable
-                                                        items={TrendsScansOdayDataTable}
+                                                    {TrendsDataRef.current[1] && <CDataTable
+                                                        items={TrendsDataRef.current[1].data}
                                                         fields={TrendsFields}
                                                         striped
                                                         hover
@@ -780,7 +756,7 @@ const TheScanAside = props => {
                                                                 (item, index)=> {
                                                                     return (
                                                                         <td style={{fontWeight: 'bolder'}}>
-                                                                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, false)}>
+                                                                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, 0, false)}>
                                                                                 {item.symbol}
                                                                             </div>
                                                                         </td>
@@ -792,7 +768,7 @@ const TheScanAside = props => {
                                                                     <td className='add-to_watchlist pl-0 pr-0'>
                                                                         <div style={{cursor: 'pointer'}} onClick={() => EditWatchList(item.symbol)}>
                                                                             { !watchList.find(element => element.symbol == item.symbol) && 
-                                                                                <CIcon size={'sm'} className='text-success' name="cis-queue-add" />
+                                                                                <CIcon size={'sm'} className='text-success' name="cil-queue-add" />
                                                                             }
                                                                             { watchList.find(element => element.symbol == item.symbol) && 
                                                                                 <CIcon size={'sm'} className='text-danger' name="cis-queue-remove" />
@@ -820,13 +796,13 @@ const TheScanAside = props => {
                                                                     )
                                                                 },
                                                         }}
-                                                    />
+                                                    />}
                                                 </div>
                                             </CTabPane>
                                             <CTabPane>
                                                 <div className='option-table_wrapper-trends option-table_wrapper-trends_1w' ref={TrendsOweekScanstableWrapperRef}>
-                                                    <CDataTable
-                                                        items={TrendsScansOweekDataTable}
+                                                    {TrendsDataRef.current[2]  && <CDataTable
+                                                        items={TrendsDataRef.current[2].data}
                                                         fields={TrendsFields}
                                                         striped
                                                         hover
@@ -835,7 +811,7 @@ const TheScanAside = props => {
                                                                 (item, index)=> {
                                                                     return (
                                                                         <td style={{fontWeight: 'bolder'}}>
-                                                                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, false)}>
+                                                                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, 0, false)}>
                                                                                 {item.symbol}
                                                                             </div>
                                                                         </td>
@@ -847,7 +823,7 @@ const TheScanAside = props => {
                                                                     <td className='add-to_watchlist pl-0 pr-0'>
                                                                         <div style={{cursor: 'pointer'}} onClick={() => EditWatchList(item.symbol)}>
                                                                             { !watchList.find(element => element.symbol == item.symbol) && 
-                                                                                <CIcon size={'sm'} className='text-success' name="cis-queue-add" />
+                                                                                <CIcon size={'sm'} className='text-success' name="cil-queue-add" />
                                                                             }
                                                                             { watchList.find(element => element.symbol == item.symbol) && 
                                                                                 <CIcon size={'sm'} className='text-danger' name="cis-queue-remove" />
@@ -875,13 +851,13 @@ const TheScanAside = props => {
                                                                     )
                                                                 },
                                                         }}
-                                                    />
+                                                    />}
                                                 </div>
                                             </CTabPane>
                                             <CTabPane>
                                                 <div className='option-table_wrapper-trends option-table_wrapper-trends_1m' ref={TrendsOmonthScanstableWrapperRef}>
-                                                    <CDataTable
-                                                        items={TrendsScansOmonthDataTable}
+                                                    {TrendsDataRef.current[3] && <CDataTable
+                                                        items={TrendsDataRef.current[3].data}
                                                         fields={TrendsFields}
                                                         striped
                                                         hover
@@ -890,7 +866,7 @@ const TheScanAside = props => {
                                                                 (item, index)=> {
                                                                     return (
                                                                         <td style={{fontWeight: 'bolder'}}>
-                                                                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, false)}>
+                                                                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, 0, false)}>
                                                                                 {item.symbol}
                                                                             </div>
                                                                         </td>
@@ -902,7 +878,7 @@ const TheScanAside = props => {
                                                                     <td className='add-to_watchlist pl-0 pr-0'>
                                                                         <div style={{cursor: 'pointer'}} onClick={() => EditWatchList(item.symbol)}>
                                                                             { !watchList.find(element => element.symbol == item.symbol) && 
-                                                                                <CIcon size={'sm'} className='text-success' name="cis-queue-add" />
+                                                                                <CIcon size={'sm'} className='text-success' name="cil-queue-add" />
                                                                             }
                                                                             { watchList.find(element => element.symbol == item.symbol) && 
                                                                                 <CIcon size={'sm'} className='text-danger' name="cis-queue-remove" />
@@ -930,7 +906,7 @@ const TheScanAside = props => {
                                                                     )
                                                                 },
                                                         }}
-                                                    />
+                                                    />}
                                                 </div>
                                             </CTabPane>
                                         </CTabContent>
@@ -963,8 +939,8 @@ const TheScanAside = props => {
                                         <CTabContent>
                                             <CTabPane>
                                                 <div className='option-table_wrapper-trends option-table_wrapper-kelts_4h' ref={KeltsScanstableWrapperRef}>
-                                                    <CDataTable
-                                                        items={KeltsScansDataTable}
+                                                    {TrendsDataRef.current[4] && <CDataTable
+                                                        items={TrendsDataRef.current[4].data}
                                                         fields={KeltsFields}
                                                         striped
                                                         hover
@@ -973,7 +949,7 @@ const TheScanAside = props => {
                                                                 (item, index)=> {
                                                                     return (
                                                                         <td style={{fontWeight: 'bolder'}}>
-                                                                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, false)}>
+                                                                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, 0, false)}>
                                                                                 {item.symbol}
                                                                             </div>
                                                                         </td>
@@ -985,7 +961,7 @@ const TheScanAside = props => {
                                                                     <td className='add-to_watchlist pl-0 pr-0'>
                                                                         <div style={{cursor: 'pointer'}} onClick={() => EditWatchList(item.symbol)}>
                                                                             { !watchList.find(element => element.symbol == item.symbol) && 
-                                                                                <CIcon size={'sm'} className='text-success' name="cis-queue-add" />
+                                                                                <CIcon size={'sm'} className='text-success' name="cil-queue-add" />
                                                                             }
                                                                             { watchList.find(element => element.symbol == item.symbol) && 
                                                                                 <CIcon size={'sm'} className='text-danger' name="cis-queue-remove" />
@@ -1005,13 +981,13 @@ const TheScanAside = props => {
                                                                     )
                                                                 },
                                                         }}
-                                                    />
+                                                    />}
                                                 </div>
                                             </CTabPane>
                                             <CTabPane>
                                                 <div className='option-table_wrapper-trends option-table_wrapper-kelts_1d' ref={KeltsOdayScanstableWrapperRef}>
-                                                    <CDataTable
-                                                        items={KeltsScansOdayDataTable}
+                                                    {TrendsDataRef.current[5] && <CDataTable
+                                                        items={TrendsDataRef.current[5].data}
                                                         fields={KeltsFields}
                                                         striped
                                                         hover
@@ -1020,7 +996,7 @@ const TheScanAside = props => {
                                                                 (item, index)=> {
                                                                     return (
                                                                         <td style={{fontWeight: 'bolder'}}>
-                                                                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, false)}>
+                                                                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, 0, false)}>
                                                                                 {item.symbol}
                                                                             </div>
                                                                         </td>
@@ -1032,7 +1008,7 @@ const TheScanAside = props => {
                                                                     <td className='add-to_watchlist pl-0 pr-0'>
                                                                         <div style={{cursor: 'pointer'}} onClick={() => EditWatchList(item.symbol)}>
                                                                             { !watchList.find(element => element.symbol == item.symbol) && 
-                                                                                <CIcon size={'sm'} className='text-success' name="cis-queue-add" />
+                                                                                <CIcon size={'sm'} className='text-success' name="cil-queue-add" />
                                                                             }
                                                                             { watchList.find(element => element.symbol == item.symbol) && 
                                                                                 <CIcon size={'sm'} className='text-danger' name="cis-queue-remove" />
@@ -1052,13 +1028,13 @@ const TheScanAside = props => {
                                                                     )
                                                                 },
                                                         }}
-                                                    />
+                                                    />}
                                                 </div>
                                             </CTabPane>
                                             <CTabPane>
                                                 <div className='option-table_wrapper-trends option-table_wrapper-kelts_1w' ref={KeltsOweekScanstableWrapperRef}>
-                                                    <CDataTable
-                                                        items={KeltsScansOweekDataTable}
+                                                    {TrendsDataRef.current[6] && <CDataTable
+                                                        items={TrendsDataRef.current[6].data}
                                                         fields={KeltsFields}
                                                         striped
                                                         hover
@@ -1067,7 +1043,7 @@ const TheScanAside = props => {
                                                                 (item, index)=> {
                                                                     return (
                                                                         <td style={{fontWeight: 'bolder'}}>
-                                                                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, false)}>
+                                                                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, 0, false)}>
                                                                                 {item.symbol}
                                                                             </div>
                                                                         </td>
@@ -1079,7 +1055,7 @@ const TheScanAside = props => {
                                                                     <td className='add-to_watchlist pl-0 pr-0'>
                                                                         <div style={{cursor: 'pointer'}} onClick={() => EditWatchList(item.symbol)}>
                                                                             { !watchList.find(element => element.symbol == item.symbol) && 
-                                                                                <CIcon size={'sm'} className='text-success' name="cis-queue-add" />
+                                                                                <CIcon size={'sm'} className='text-success' name="cil-queue-add" />
                                                                             }
                                                                             { watchList.find(element => element.symbol == item.symbol) && 
                                                                                 <CIcon size={'sm'} className='text-danger' name="cis-queue-remove" />
@@ -1099,13 +1075,13 @@ const TheScanAside = props => {
                                                                     )
                                                                 },
                                                         }}
-                                                    />
+                                                    />}
                                                 </div>
                                             </CTabPane>
                                             <CTabPane>
                                                 <div className='option-table_wrapper-trends option-table_wrapper-kelts_1m' ref={KeltsOmonthScanstableWrapperRef}>
-                                                    <CDataTable
-                                                        items={KeltsScansOmonthDataTable}
+                                                    {TrendsDataRef.current[7] && <CDataTable
+                                                        items={TrendsDataRef.current[7].data}
                                                         fields={KeltsFields}
                                                         striped
                                                         hover
@@ -1114,7 +1090,7 @@ const TheScanAside = props => {
                                                                 (item, index)=> {
                                                                     return (
                                                                         <td style={{fontWeight: 'bolder'}}>
-                                                                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, false)}>
+                                                                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, 0, false)}>
                                                                                 {item.symbol}
                                                                             </div>
                                                                         </td>
@@ -1126,7 +1102,7 @@ const TheScanAside = props => {
                                                                     <td className='add-to_watchlist pl-0 pr-0'>
                                                                         <div style={{cursor: 'pointer'}} onClick={() => EditWatchList(item.symbol)}>
                                                                             { !watchList.find(element => element.symbol == item.symbol) && 
-                                                                                <CIcon size={'sm'} className='text-success' name="cis-queue-add" />
+                                                                                <CIcon size={'sm'} className='text-success' name="cil-queue-add" />
                                                                             }
                                                                             { watchList.find(element => element.symbol == item.symbol) && 
                                                                                 <CIcon size={'sm'} className='text-danger' name="cis-queue-remove" />
@@ -1146,7 +1122,7 @@ const TheScanAside = props => {
                                                                     )
                                                                 },
                                                         }}
-                                                    />
+                                                    />}
                                                 </div>
                                             </CTabPane>
                                         </CTabContent>
@@ -1178,7 +1154,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     updateProperty: (property) => dispatch(updateProperty(property)),
     EditWatchList: (brandSymbol) => dispatch(EditWatchList(brandSymbol)),
-    EditMarket: (brandSymbol, removeBrand) => dispatch(EditMarket(brandSymbol, removeBrand)),
+    EditMarket: (brandSymbol, brandUid, removeBrand) => dispatch(EditMarket(brandSymbol, brandUid, removeBrand)),
     SearchSymbol: (searchInput) => dispatch(SearchSymbol(searchInput))
   }
 }

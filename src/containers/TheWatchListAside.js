@@ -3,7 +3,7 @@ import { compose } from 'redux'
 import { connect } from 'react-redux'
 import { firebaseConnect } from 'react-redux-firebase'
 import { updateProperty } from '../store/actions/StylesActions'
-import { EditWatchList, SearchSymbol } from '../store/actions/ChartActions'
+import { EditWatchList, EditMarket, SearchSymbol } from '../store/actions/ChartActions'
 import {
     CSidebar,
     CSidebarClose,
@@ -27,6 +27,7 @@ const TheWatchListAside = props => {
     dbWachList,
     updateProperty,
     EditWatchList,
+    EditMarket,
     SearchSymbol
   } = props;
 
@@ -344,9 +345,11 @@ const TheWatchListAside = props => {
                         'symbol':
                         (item, index)=> {
                             return (
-                                <td style={{fontWeight: 'bolder'}}>
-                                    {item.symbol}
-                                </td>
+                              <td style={{fontWeight: 'bolder'}}>
+                                  <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, 0, false)}>
+                                      {item.symbol}
+                                  </div>
+                              </td>
                             )
                         },
                         'action':
@@ -403,6 +406,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     updateProperty: (property) => dispatch(updateProperty(property)),
     EditWatchList: (brandSymbol) => dispatch(EditWatchList(brandSymbol)),
+    EditMarket: (brandSymbol, brandUid, removeBrand) => dispatch(EditMarket(brandSymbol, brandUid, removeBrand)),
     SearchSymbol: (searchInput) => dispatch(SearchSymbol(searchInput))
   }
 }

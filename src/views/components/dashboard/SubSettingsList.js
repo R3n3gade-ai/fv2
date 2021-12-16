@@ -63,7 +63,7 @@ const SubSettingsList = props => {
       }
 
       for (var j = 0; j < editedCharts; j++) {
-        let loopChartSymbol = applyToAllChart ? chartSetting[j].chartSymbol : currentChartSettings.chartSymbol
+        let loopChartSymbol = applyToAllChart ? chartSetting[j].chartUid : currentChartSettings.chartUid
         if (typeof setting.id === 'object') {
           SetChartSettings({
               ...setting.id,
@@ -94,7 +94,7 @@ const SubSettingsList = props => {
             <div>
               {settingTitle}
             </div>
-            { settingApplyToAll && 
+            {/* { settingApplyToAll && 
               <div>
                 <CSwitch
                   className=""
@@ -106,7 +106,7 @@ const SubSettingsList = props => {
                   labelOff="ONE"
                   onChange={() => updateProperty({applyToAllChart: !applyToAllChart})}
                 />
-              </div>}
+              </div>} */}
           </CListGroupItem>
           {settingType == 'multiple' &&
             settingAttribute.map((setting, i) => {
@@ -211,6 +211,11 @@ const SubSettingsList = props => {
                       }
                     </div>
                   }
+                  { setting.shortCode &&
+                    <div className="card-header-action pl-1 pr-1">
+                      {setting.shortCode}
+                    </div>
+                  }
                   </CListGroupItem>
             })
           }
@@ -232,8 +237,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     updateProperty: (property) => dispatch(updateProperty(property)),
     SetChartSettings: (
-          newChartSettings, chartSymbol, resetChartData, synchronizeChart, synchronizeChartOnly, saveDefault
-        ) => dispatch(SetChartSettings(newChartSettings, chartSymbol, resetChartData, synchronizeChart, synchronizeChartOnly, saveDefault))
+          newChartSettings, chartUid, resetChartData, synchronizeChart, synchronizeChartOnly, saveDefault
+        ) => dispatch(SetChartSettings(newChartSettings, chartUid, resetChartData, synchronizeChart, synchronizeChartOnly, saveDefault))
   }
 }
 

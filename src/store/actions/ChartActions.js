@@ -39,7 +39,7 @@ export const EditWatchList = (brandSymbol) => {
   }
 }
 
-export const EditMarket = (brandSymbol, removeBrand, additionalSettings = {}) => {
+export const EditMarket = (brandSymbol, brandUid, removeBrand, additionalSettings = {}) => {
   return (dispatch, getState, {getFirebase}) => {
     const firebase = getFirebase()
     const authorId = getState().firebase.auth.uid
@@ -51,13 +51,18 @@ export const EditMarket = (brandSymbol, removeBrand, additionalSettings = {}) =>
         brandsModelShow = getState().charts.brandsModelShow,
         updateTheCharts = getState().charts.updateTheCharts,
         currentExistingCharts = getState().charts.existingCharts,
-        selectedChart = getState().charts.selectedChart
+        selectedChart = getState().charts.selectedChart,
+        sameChartSettings = {}
 
     if (selectedChart !== null) {
       currentOperation = 'edit'
       currentCharts.map(currentChart => {
-        if (currentChart.chartSymbol == selectedChart) {
+        if (currentChart.chartUid == selectedChart) {
           currentIndice = currentChart.chartSettings.chartDbIndex
+          sameChartSettings = {
+            periodicity: currentChart.chartSettings.periodicity,
+            flowIndex: currentChart.chartSettings.flowIndex
+          }
         }
       })
     } else {
@@ -78,7 +83,7 @@ export const EditMarket = (brandSymbol, removeBrand, additionalSettings = {}) =>
 
     if (removeBrand) {
       let chartSettingIndex = currentCharts.findIndex(chartSet => {
-            return chartSet.chartSymbol === brandSymbol
+            return chartSet.chartUid === brandUid
           })
 
       firebase
@@ -86,17 +91,29 @@ export const EditMarket = (brandSymbol, removeBrand, additionalSettings = {}) =>
         .ref('favoritesv2/' + authorId + '/' + currentCharts[chartSettingIndex].chartSettings.chartDbIndex)
         .remove()
         .then(() => {
-          currentCharts = currentCharts.filter((item) => item.chartSymbol !== brandSymbol)
-          currentExistingCharts = currentExistingCharts.filter((item) => item !== brandSymbol)
+          currentCharts = currentCharts.filter((item) => item.chartUid !== brandUid)
+          currentExistingCharts = currentExistingCharts.filter((item) => item !== brandUid)
 
           dispatch({type: 'set', charts: currentCharts, existingCharts: currentExistingCharts, updateTheCharts: !updateTheCharts})
           if (selectedChart !== null)  dispatch({type: 'set', selectedChart: null})
-          deleteInteractiveNodes(brandSymbol)
-          localStorage.removeItem(brandSymbol)
+          deleteInteractiveNodes(brandUid)
+          localStorage.removeItem(brandUid)
         }).catch((err) => {
 
         })
     } else {
+      let addChartSettings = {
+            ...syncChartSettings,
+            ...additionalSettings
+          },
+          newBrandUid = uniqid()
+
+      if (Object.keys(sameChartSettings).length > 0) {
+        addChartSettings = {
+          ...addChartSettings,
+          ...sameChartSettings
+        }
+      }
       firebase
         .database()
         .ref('favoritesv2/' + authorId + '/' + ( currentOperation == 'push' ? currentIndice + 1 : currentIndice))
@@ -106,14 +123,11 @@ export const EditMarket = (brandSymbol, removeBrand, additionalSettings = {}) =>
             vol: 0,
             value: 0,
             name: brandSymbol,
-            uid: uniqid(),
-            chartSettings: {
-              ...syncChartSettings,
-              ...additionalSettings
-            }
+            uid: newBrandUid,
+            chartSettings: addChartSettings
         }).then(() => {
           dispatch({type: 'set', brandsModelShow: false})
-          if (selectedChart !== null)  dispatch({type: 'set', selectedChart: brandSymbol})
+          if (selectedChart !== null)  dispatch({type: 'set', selectedChart: newBrandUid})
         }).catch((err) => {
 
         })
@@ -123,7 +137,7 @@ export const EditMarket = (brandSymbol, removeBrand, additionalSettings = {}) =>
 
 export const SetChartSettings = (
   newChartSettings, 
-  chartSymbol, 
+  chartUid, 
   resetChartData,
   synchronizeChart,
   synchronizeChartOnly = false,
@@ -133,12 +147,12 @@ export const SetChartSettings = (
     const firebase = getFirebase()
     const authorId = getState().firebase.auth.uid
 
-    if (typeof chartSymbol == typeof undefined) return
+    if (typeof chartUid == typeof undefined) return
     
     let charts = getState().charts.charts,
         currentCharts = charts,
         chartSettingIndex = currentCharts.findIndex(chartSet => {
-          return chartSet.chartSymbol === chartSymbol
+          return chartSet.chartUid === chartUid
         }),
         currentChartSettings = getState().charts.currentChartSettings,
         updateTheCharts = getState().charts.updateTheCharts,
@@ -178,7 +192,8 @@ export const SetChartSettings = (
           flowBothIndexColor: newChartSettings.flowBothIndexColor || currentCharts[chartSettingIndex].chartSettings.flowBothIndexColor,
           blockTradesDarkPoolColor: newChartSettings.blockTradesDarkPoolColor || currentCharts[chartSettingIndex].chartSettings.blockTradesDarkPoolColor,
           blockTradesRegularPoolColor: newChartSettings.blockTradesRegularPoolColor || currentCharts[chartSettingIndex].chartSettings.blockTradesRegularPoolColor,
-          backgroundColor: newChartSettings.backgroundColor || currentCharts[chartSettingIndex].chartSettings.backgroundColor
+          backgroundColor: newChartSettings.backgroundColor || currentCharts[chartSettingIndex].chartSettings.backgroundColor,
+          chartType: newChartSettings.chartType || currentCharts[chartSettingIndex].chartSettings.chartType,
         }).catch((e) => {
           console.log('error saving', e)
         })

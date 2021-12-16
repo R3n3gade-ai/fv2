@@ -14,34 +14,15 @@ import {ErrorBoundary} from 'react-error-boundary'
 
 import ChartHolder from './ChartHolder.js'
 
-let changedIndex = 1
-const getDatabase = (eSymbol) => {
-	let eSymbolCodeCharachter = eSymbol.charAt(0)
-	let eSymbolCode = (eSymbolCodeCharachter.toLowerCase()).charCodeAt( eSymbolCodeCharachter.length - 1 )
-
-	if (eSymbolCode >= 97 && eSymbolCode <= 101) {
-		return 'ae'
-	}
-
-	if (eSymbolCode >= 102 && eSymbolCode <= 108) {
-		return 'fl'
-	}
-
-	if (eSymbolCode >= 109 && eSymbolCode <= 115) {
-		return 'ms'
-	}
-
-	if (eSymbolCode >= 116 && eSymbolCode <= 122) {
-		return 'tz'
-	}
-}
-
 const ChartRender = props => {
 	const {
 		currentSymbol,
+		currentUid,
+		currentEvent,
 		mainHeight,
 		charts,
 		fullScreenMode,
+		newChartLoaded,
 		updateTheCharts,
 		chartState,
 		updateProperty
@@ -57,16 +38,30 @@ const ChartRender = props => {
 	const [ignored, forceUpdate] = useReducer(x => x + 1, 0)
 
 	const chartRenderRef = useRef(null)
+	const mountedRef = useRef(true)
 
 	useEffect(async() => {
-		await setChartRenderComponent(currentSymbol)
+		if (!mountedRef.current) return null
+
+		if (newChartLoaded) {
+			updateProperty({newChartLoaded: false})
+			setChartLoaded(false)
+		}
+
+		await setChartRenderComponent(currentSymbol, currentUid, currentEvent)
 
 		setChartLoaded(true)
 	}, [props, charts])
 
-	const setChartRenderComponent = async(theSymbol) => {
+	useEffect(() => {
+		return () => { 
+			mountedRef.current = false
+		}
+	}, [])
+
+	const setChartRenderComponent = async(theSymbol, theUid, theEvent) => {
 		const currentChartData = charts.filter(chartSet => {
-			return chartSet.chartSymbol === theSymbol
+			return chartSet.chartUid === theUid
 		})
 
 		if (chartRenderRef.current == null) {
@@ -74,10 +69,12 @@ const ChartRender = props => {
 			return
 		}
 
+		if (typeof currentChartData[0] == typeof undefined) return
+
 		const chartDataSnap = chartRenderRef.current
 		let resetCharts = false
 		if (chartDataSnap.chartSettings.periodicity !== currentChartData[0].chartSettings.periodicity) {
-			localStorage.removeItem(theSymbol)
+			localStorage.removeItem(theUid)
 			resetCharts = true
 		}
 		chartRenderRef.current = {
@@ -94,6 +91,15 @@ const ChartRender = props => {
 			}
 		}
 
+		if (theEvent != null && theEvent.chart == theUid) {
+			chartRenderRef.current = {
+				...chartRenderRef.current,
+				...{
+					chartEvent: theEvent
+				}
+			}
+		}
+
 		forceUpdate()
 	}
 
@@ -104,7 +110,6 @@ const ChartRender = props => {
 	return (
 		<ErrorBoundary
 			FallbackComponent={({error, resetErrorBoundary}) => {
-				console.log(error, resetErrorBoundary)
 				return (
 					null
 				)
@@ -114,16 +119,18 @@ const ChartRender = props => {
 			}}
 		>
 			<ChartHolder
-				type="hybrid" 
+				type='hybrid' 
 				// data={chartRenderRef.current.chartData} 
 				height={mainHeight}
 				chartProps={chartRenderRef.current}
 				symbol={chartRenderRef.current.chartSymbol}
 				settings={chartRenderRef.current.chartSettings}
 				chartKey={chartRenderRef.current.chartSymbol}
+				chartUid={chartRenderRef.current.chartUid}
+				chartEvent={chartRenderRef.current.chartEvent}
 			/>
 		</ErrorBoundary>
-	);
+	)
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -132,6 +139,7 @@ const mapStateToProps = (state, ownProps) => {
 	fullScreenMode: state.charts.fullScreenMode,
 	updateTheCharts: state.charts.updateTheCharts,
 	chartState: state.charts.chartState,
+	newChartLoaded: state.charts.newChartLoaded,
 	currentSymbol: ownProps.currentSymbol,
 	mainHeight: ownProps.mainHeight
   }
@@ -146,4 +154,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(ChartRender);
+)(ChartRender)

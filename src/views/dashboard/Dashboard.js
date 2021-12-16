@@ -6,7 +6,7 @@ import React, {
 } from 'react'
 import { connect } from 'react-redux'
 import { updateProperty } from '../../store/actions/StylesActions'
-import { SetChartSettings } from '../../store/actions/ChartActions'
+import { SetChartSettings, EditWatchList } from '../../store/actions/ChartActions'
 import { 
   getGeoToken, 
   getGeoCountry, 
@@ -44,7 +44,10 @@ import {
   CToast,
   CToastBody,
   CToastHeader,
-  CToaster
+  CToaster,
+
+  CImg,
+  CPopover
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 
@@ -80,11 +83,14 @@ const Dashboard = props => {
     showTourSteps,
     showTour,
     compSigned,
+    watchList,
+    watchListChanged,
     geoPullApi,
     updateProfileError,
     updateProperty,
     EditProfile,
     SetChartSettings,
+    EditWatchList,
     getGeoToken,
     getGeoCountry,
     getGeoState,
@@ -135,6 +141,8 @@ const Dashboard = props => {
   const [fade, setFade] = useState(true)
   const [toastType, setToastType] = useState('bg-danger')
 
+  const [watchedState, setWatchedState] = useState(false)
+
   const complianceRef = useRef(null)
   const formRef = useRef(null)
 
@@ -144,7 +152,9 @@ const Dashboard = props => {
       addToast('Updating Failed', updateProfileError)
     }
 
-    if (showTour && compSigned) {
+    let showTourEffect = (typeof showTour == typeof undefined) ? true : showTour
+
+    if (showTourEffect && compSigned) {
       updateProperty({showTourSteps: true})
     }
 
@@ -170,8 +180,27 @@ const Dashboard = props => {
       }
     }
 
+    let symbolWatched = watchList.some(watchListElement => {
+      return watchListElement.symbol == fullScreenBrand.chartSymbol
+    })
+    setWatchedState(symbolWatched)
+
     if(ps) ps.update()
-  }, [brands, currentComplianceStep, geoPullApi, updateProfileError, compSigned])
+  }, [brands, currentComplianceStep, geoPullApi, updateProfileError, compSigned, watchListChanged])
+
+  // const assignUser = async() => {
+  //   let currentUser = React.firebase.firebase.auth().currentUser
+  //   React.firebase.ae.auth().updateCurrentUser(currentUser)
+  //   React.firebase.fl.auth().updateCurrentUser(currentUser)
+  //   React.firebase.ms.auth().updateCurrentUser(currentUser)
+  //   React.firebase.tz.auth().updateCurrentUser(currentUser)
+  //   React.firebase.lae.auth().updateCurrentUser(currentUser)
+  //   React.firebase.lfl.auth().updateCurrentUser(currentUser)
+  //   React.firebase.lms.auth().updateCurrentUser(currentUser)
+  //   React.firebase.ltz.auth().updateCurrentUser(currentUser)
+  //   React.firebase.blocks.auth().updateCurrentUser(currentUser)
+  //   React.firebase.tracking.auth().updateCurrentUser(currentUser)
+  // }
 
   const generateReport = async() => {
     console.log('generating now')
@@ -788,12 +817,13 @@ const Dashboard = props => {
   
   return (
     <>
-      { fullScreenMode && 
+      {/* { fullScreenMode && 
         <div>
           <CCard className='m-0'>
             <CCardHeader innerRef={headerRef} className='card-header-actions mr-0 d-flex align-items-center justify-content-between c-header'>
               <div className='d-flex'>
-                <span className='h5 ml-2 mb-0'>{fullScreenBrand.chartSymbol}</span>
+                <span onClick={() => updateProperty({brandsModelShow: true})}
+                  className='h5 ml-2 mb-0 chart-symbol_container'>{fullScreenBrand.chartSymbol}</span>
                 <span className='ml-1 mb-0 text-muted mt-auto'>{fullScreenBrand.chartBrand}</span>
               </div>
               <div className='card-header-actions d-flex'>
@@ -801,28 +831,49 @@ const Dashboard = props => {
                   <CBadge 
                     shape="pill"
                     style={{
-                      backgroundColor: fullScreenBrand.chartSettings.priceBarsColor,
+                      border: '1.5px solid ' + fullScreenBrand.chartSettings.priceBarsColor,
                       cursor: 'pointer'
                     }}
                     className="ml-1 mr-1 d-flex align-items-center justify-content-center"
                     onClick={() => {
                       SetChartSettings({
                         periodicity: fullScreenBrand.chartSettings.periodicity == '1m' ? '15m' : '1m'
-                      }, fullScreenBrand.chartSymbol, false, true)
+                      }, fullScreenBrand.chartUid, false, true)
                     }}>
                     {fullScreenBrand.chartSettings.periodicity}
                   </CBadge>
                 </CTooltip>
-                <CBadge 
-                  shape="pill" 
-                  style={{
-                    backgroundColor: fullScreenBrand.chartSettings.flowIndex === 'normal' ? fullScreenBrand.chartSettings.flowIndexColor : (
-                        fullScreenBrand.chartSettings.flowIndex === 'dark-pool' ? fullScreenBrand.chartSettings.flowDarkIndexColor : fullScreenBrand.chartSettings.flowBothIndexColor
-                    )
-                  }}
-                  className="ml-1 mr-1 d-flex align-items-center justify-content-center">
-                  {fullScreenBrand.chartSettings.flowIndex}
-                </CBadge>
+                <CTooltip content='Flow Index'>
+                  <CBadge 
+                    shape="pill" 
+                    style={{
+                      border: '1.5px solid ' + ( fullScreenBrand.chartSettings.flowIndex === 'normal' ? fullScreenBrand.chartSettings.flowIndexColor : (
+                          fullScreenBrand.chartSettings.flowIndex === 'dark-pool' ? fullScreenBrand.chartSettings.flowDarkIndexColor : fullScreenBrand.chartSettings.flowBothIndexColor
+                      ) ),
+                      cursor: 'pointer'
+                    }}
+                    className="ml-1 mr-1 d-flex align-items-center justify-content-center"                    
+                    onClick={() => {
+                      let newFlowIndex
+                      switch(fullScreenBrand.chartSettings.flowIndex) {
+                        case 'normal':
+                          newFlowIndex = 'dark-pool'
+                          break
+                        case 'dark-pool':
+                          newFlowIndex = 'both'
+                          break
+                        case 'both':
+                          newFlowIndex = 'normal'
+                          break
+                      }
+
+                      SetChartSettings({
+                        flowIndex: newFlowIndex
+                      }, fullScreenBrand.chartUid, false, true)
+                    }}>
+                    {fullScreenBrand.chartSettings.flowIndex}
+                  </CBadge>
+                </CTooltip>
 
                 { fullScreenBrand.chartSettings.replayMarket &&
                   <>
@@ -832,7 +883,7 @@ const Dashboard = props => {
                           onClick={() => {
                             SetChartSettings({
                               replayMarket: 'pause'
-                            }, fullScreenBrand.chartSymbol, false, false)
+                            }, fullScreenBrand.chartUid, false, false)
                           }}>
                             <CIcon name='cis-media-pause-circle' height={20} />
                         </CLink>
@@ -843,7 +894,7 @@ const Dashboard = props => {
                           onClick={() => {
                             SetChartSettings({
                               replayMarket: 'play'
-                            }, fullScreenBrand.chartSymbol, false, false)
+                            }, fullScreenBrand.chartUid, false, false)
                           }}>
                             <CIcon name='cis-media-play-circle' height={20} />
                         </CLink>
@@ -853,7 +904,7 @@ const Dashboard = props => {
                         onClick={() => {
                           SetChartSettings({
                             replayMarket: false
-                          }, fullScreenBrand.chartSymbol, false, false)
+                          }, fullScreenBrand.chartUid, false, false)
                         }}>
                           <CIcon name='cis-media-stop-circle' height={20} />
                       </CLink>
@@ -869,7 +920,7 @@ const Dashboard = props => {
                               replayMarketSettings: {
                                 speed: e.target.value
                               }
-                            }, fullScreenBrand.chartSymbol, false, false)
+                            }, fullScreenBrand.chartUid, false, false)
                           }}>
                           <option value="500">Slow</option>
                           <option value="250">Normal</option>
@@ -881,12 +932,62 @@ const Dashboard = props => {
                 }
                 { !fullScreenBrand.chartSettings.replayMarket &&
                   <>
+                    <CTooltip content='Watch List'>
+                      <CLink className='card-header-action pl-1 pr-1'
+                        onClick={() => {
+                          EditWatchList(fullScreenBrand.chartSymbol)
+                        }}>
+                          {watchedState && 
+                            <CIcon height={20} className='text-danger' name="cis-queue-remove" /> ||
+                            <CIcon name='cil-queue-add' height={20} />  }
+                      </CLink>
+                    </CTooltip>
+                    <div onClick={(e) => {
+                      if (e.target.parentNode.classList.contains('chartTypes-option') ||
+                        e.target.parentNode.classList.contains('chartTypes-list')
+                      ) {
+                        let changeChartType = e.target.parentNode.classList.contains('chartTypes-option') ?
+                          e.target.parentNode.getAttribute('data-chartype') : e.target.getAttribute('data-chartype')
+
+                        SetChartSettings({
+                          chartType: changeChartType
+                        }, fullScreenBrand.chartUid, false, true)
+                      }
+                    }}>
+                      <CPopover
+                        content={React.createElement(
+                            'ul', {
+                                className: 'chartTypes-list',
+                            },
+                                React.createElement('div', {className: 'chartTypes-option' + 
+                                  (fullScreenBrand.chartSettings.chartType == 'ohlc' ? ' chartTypes-option-selected' : ''),
+                                  'data-chartype': 'ohlc'}, 
+                                  React.createElement('img', {src: React.icons.Tools.ohlc},null),
+                                  React.createElement('span', {},'OHLC'),
+                                ),
+                                React.createElement('div', {className: 'chartTypes-option' + 
+                                  (fullScreenBrand.chartSettings.chartType == 'candles' ? ' chartTypes-option-selected' : ''),
+                                  'data-chartype': 'candles'}, 
+                                  React.createElement('img', {src: React.icons.Tools.candles},null),
+                                  React.createElement('span', {},'Candles'),
+                                ),
+                        )}
+                        placement={'bottom'}
+                        interactive={true}
+                        trigger='click'
+                      >
+                        <CImg
+                          className='card-header-action pl-1 pr-1 chartType-container'
+                          src={React.icons.Tools[fullScreenBrand.chartSettings.chartType]}
+                        />
+                      </CPopover>
+                    </div>
                     <CTooltip content='ScreenShot'>
                       <CLink className='card-header-action pl-1 pr-1'
                         onClick={() => {
                           SetChartSettings({
                             takeScreenShot: true
-                          }, fullScreenBrand.chartSymbol, false, false)
+                          }, fullScreenBrand.chartUid, false, false)
                           updateProperty({showScreenShotModal: !showScreenShotModal})
                         }}>
                           <CIcon name='cis-images' height={20} />
@@ -897,7 +998,7 @@ const Dashboard = props => {
                         onClick={() => {
                           SetChartSettings({
                             blocksLine: !fullScreenBrand.chartSettings.blocksLine
-                          }, fullScreenBrand.chartSymbol, false, true)
+                          }, fullScreenBrand.chartUid, false, true)
                         }}>
                           { !fullScreenBrand.chartSettings.blocksLine &&
                             <CIcon name='cil-image-broken' height={20} />
@@ -912,7 +1013,7 @@ const Dashboard = props => {
                             onClick={() => {
                               SetChartSettings({
                                 showDivergence: !fullScreenBrand.chartSettings.showDivergence
-                              }, fullScreenBrand.chartSymbol, false, true)
+                              }, fullScreenBrand.chartUid, false, true)
                             }}>
                               { !fullScreenBrand.chartSettings.showDivergence &&
                                 <CIcon name='cil-call-split' height={20} />
@@ -927,7 +1028,7 @@ const Dashboard = props => {
                         onClick={() => {
                           SetChartSettings({
                             replayMarket: true
-                          }, fullScreenBrand.chartSymbol, false, false)
+                          }, fullScreenBrand.chartUid, false, false)
                         }}>
                           <CIcon name='cis-media-play-circle' height={20} />
                       </CLink>
@@ -937,7 +1038,7 @@ const Dashboard = props => {
                         onClick={() => {
                           SetChartSettings({
                             chartSymbol : fullScreenBrand.chartSymbol
-                          }, fullScreenBrand.chartSymbol, false, false)
+                          }, fullScreenBrand.chartUid, false, false)
                           updateProperty({settingsModelShow: !settingsModelShow})
                         }}>
                           <CIcon name='cis-settings' height={20} />
@@ -949,7 +1050,7 @@ const Dashboard = props => {
                         onClick={() => {
                           SetChartSettings({
                             fullScreenMode : false
-                          }, fullScreenBrand.chartSymbol, true, false)
+                          }, fullScreenBrand.chartUid, true, false)
                           updateProperty({
                             fullScreenMode:!fullScreenMode
                           })
@@ -968,46 +1069,35 @@ const Dashboard = props => {
               <ChartRender 
                 mainHeight={(mainHeight - headerHeight - 40)}
                 currentSymbol={fullScreenBrand.chartSymbol}
+                currentUid={fullScreenBrand.chartUid}
               />
             </CCardBody>
           </CCard> 
         </div> 
-      }
-      { !fullScreenMode &&
+      } */}
+      {/* { !fullScreenMode &&
         <>
-          {charts.length < 4 && <CButton 
-          onClick={() => updateProperty({selectedChart:null, brandsModelShow: true})}
-          className='add-new-market_button first-step' shape='pill' color='primary'
-          >
-            <CIcon size={'xl'} name="cis-plus" className='mr-2' />
-            Add New Symbol
-          </CButton>}
 
-          {/* <CButton 
-          onClick={() =>generateReport()}
-          className='add-new-market_button first-step' shape='pill' color='primary'
-          >
-            <CIcon size={'xl'} name="cis-plus" className='mr-2' />
-            generateReport
-          </CButton> */}
-
-          <ChartList />
-
-          <CModal
-            show={brandsModelShow}
-            onClose={() => updateProperty({brandsModelShow: false})}
-            onOpened={() => {
-              ps = new PerfectScrollbar('.symbols-modal-body')
-            }}
-            closeOnBackdrop={false}
-          >
-            <CModalHeader className='font-weight-bold' closeButton>Add New Symbol</CModalHeader>
-            <CModalBody style={{paddingRight: 10}} className='pl-0 pb-0 pt-0 symbols-modal-body h-50'>
-              <BrandList />
-            </CModalBody>
-          </CModal>
         </>
-      }
+      } */}
+
+      {(charts.length < 4 && !fullScreenMode) && <CButton 
+      onClick={() => updateProperty({selectedChart:null, brandsModelShow: true})}
+      className='add-new-market_button first-step' shape='pill' color='primary'
+      >
+        <CIcon size={'xl'} name="cis-plus" className='mr-2' />
+        Add New Symbol
+      </CButton>}
+
+      {/* <CButton 
+      onClick={() =>generateReport()}
+      className='add-new-market_button first-step' shape='pill' color='primary'
+      >
+        <CIcon size={'xl'} name="cis-plus" className='mr-2' />
+        generateReport
+      </CButton> */}
+
+      <ChartList />
 
       <CRow>
         <CCol sm="12" lg="12">
@@ -1041,6 +1131,19 @@ const Dashboard = props => {
         </CCol>
       </CRow>
 
+      <CModal
+        show={brandsModelShow}
+        onClose={() => updateProperty({brandsModelShow: false})}
+        onOpened={() => {
+          ps = new PerfectScrollbar('.symbols-modal-body')
+        }}
+        closeOnBackdrop={false}
+      >
+        <CModalHeader className='font-weight-bold' closeButton>Add New Symbol</CModalHeader>
+        <CModalBody style={{paddingRight: 10}} className='pl-0 pb-0 pt-0 symbols-modal-body h-50'>
+          <BrandList />
+        </CModalBody>
+      </CModal>
       <CModal
         show={settingsModelShow}
         onClose={() => {
@@ -1599,6 +1702,8 @@ const mapStateToProps = (state) => {
     showTourSteps: state.charts.showTourSteps,
     showTour: state.firebase.profile.showTour,
     compSigned: state.firebase.profile.compSigned,
+    watchList: state.charts.watchList,
+    watchListChanged: state.charts.watchListChanged,
     geoPullApi: state.misc.geoPullApi,
     updateProfileError: state.user.updateProfileError
   }
@@ -1609,8 +1714,9 @@ const mapDispatchToProps = (dispatch) => {
     updateProperty: (property) => dispatch(updateProperty(property)),
     EditProfile: (propertyUpdate) => dispatch(EditProfile(propertyUpdate)),
     SetChartSettings: (
-      newChartSettings, chartSymbol, resetChartData, synchronizeChart
-    ) => dispatch(SetChartSettings(newChartSettings, chartSymbol, resetChartData, synchronizeChart)),
+      newChartSettings, chartUid, resetChartData, synchronizeChart
+    ) => dispatch(SetChartSettings(newChartSettings, chartUid, resetChartData, synchronizeChart)),
+    EditWatchList: (brandSymbol) => dispatch(EditWatchList(brandSymbol)),
     getGeoToken: () => dispatch(getGeoToken()),
     getGeoCountry: () => dispatch(getGeoCountry()),
     getGeoState: (country) => dispatch(getGeoState(country)),

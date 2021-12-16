@@ -72,6 +72,21 @@ const SettingsList = props => {
                                     ]
                                 },
                                 {
+                                    name: 'Chart Type',
+                                    id: 'chartType',
+                                    value: currentChartSettings.chartType,
+                                    options: [
+                                        {
+                                            name: 'OHLC',
+                                            id: 'ohlc'
+                                        },
+                                        {
+                                            name: 'Candles',
+                                            id: 'candles'
+                                        }
+                                    ]
+                                },
+                                {
                                     name: 'Show Average',
                                     id: 'showAverage',
                                     value: currentChartSettings.showAverage,
@@ -160,7 +175,8 @@ const SettingsList = props => {
                                     id: {
                                         fibonacciRetracements: true
                                     },
-                                    icon: 'fibonacci'
+                                    icon: 'fibonacci',
+                                    shortCode: 'F'
                                 },
                                 {
                                     name: 'Finite Line',
@@ -168,7 +184,8 @@ const SettingsList = props => {
                                         trendLine: true,
                                         trendLineType: 'LINE'
                                     },
-                                    icon: 'sLine'
+                                    icon: 'sLine',
+                                    shortCode: 'L'
                                 },
                                 {
                                     name: 'Semi-Infinite Line',
@@ -176,7 +193,8 @@ const SettingsList = props => {
                                         trendLine: true,
                                         trendLineType: 'RAY'
                                     },
-                                    icon: 'siLine'
+                                    icon: 'siLine',
+                                    shortCode: 'R'
                                 },
                                 {
                                     name: 'Infinite Line',
@@ -184,7 +202,8 @@ const SettingsList = props => {
                                         trendLine: true,
                                         trendLineType: 'XLINE'
                                     },
-                                    icon: 'iLine'
+                                    icon: 'iLine',
+                                    shortCode: 'X'
                                 }
                             ]}
                         />     

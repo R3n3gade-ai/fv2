@@ -7,6 +7,9 @@
       "hosting": {
         "fv2": [
           "flowtrade-v2"
+        ],
+        "fv2-dev": [
+          "flowtrade-v2-dev"
         ]
       }
     }

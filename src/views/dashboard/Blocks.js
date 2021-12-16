@@ -28,7 +28,7 @@ const kmFormatter = (number) => {
     if(tier == 0) return number;
 
     // get suffix and determine scale
-    if (typeof SI_SYMBOL[tier] == typeof undefined) return false; 
+    if (typeof SI_SYMBOL[tier] == typeof undefined || tier >= 3) return false; 
     var suffix = SI_SYMBOL[tier];
     var scale = Math.pow(10, tier * 3);
 
@@ -55,15 +55,20 @@ const Blocks = props => {
     blockListData,
     updateProperty,
     SearchSymbol
-  } = props;
+  } = props
 
   const [symbolFilters, setSymbolFilters] = useState([])
   const [sizeFilter, setSizeFilter] = useState(100)
   const [poolFilter, setPoolFilter] = useState('combo')
 
-  const blocksTableWrapperRef = useRef(null)
+  let blocksTableWrapperRef = useRef(null),
+      blockFirebaseRef = useRef(null)
 
   useEffect(() => {
+    if (blockFirebaseRef.current == null) {
+      blockFirebaseRef.current = React.firebase.firebase.database(React.firebase.blocks).ref(`/latest`).limitToLast(100)
+    }
+
     getBlocks()
 
     if (blocksTableWrapperRef.current) {
@@ -71,51 +76,56 @@ const Blocks = props => {
     }
   }, [poolFilter, sizeFilter, symbolFilters])
 
+    useEffect(() => {
+        return () => {
+            blockFirebaseRef.current.off('value', postGetBlocks)
+        }
+    }, [])
+
   const getBlocks = async() => {
     return new Promise((resolve, reject) => {
-      React.firebase.firebase.database(React.firebase.blocks)
-        .ref(`/latest`)
-        .limitToLast(100)
-        .on('value', (val) => {
-          let blocksData = [];
-          val.forEach(function(childSnapshot) {
-            const blockData = childSnapshot.val();
-            const utcTimeTick = moment.utc(+blockData.t).format('HH:mm MMMM DD, YYYY');
-            const blockValue = kmFormatter(Number(blockData.S) * Number(blockData.P));
+      blockFirebaseRef.current.on('value', postGetBlocks)
+    })
+  }
 
-            if (blockValue) {
-                if (poolFilter !== 'combo') {
-                  if (poolFilter == 'dark' && !blockData.D) return;
-                  if (poolFilter == 'regular' && blockData.D) return; 
-                }
+  const postGetBlocks = (val) => {
+    let blocksData = []
+    val.forEach(function(childSnapshot) {
+      const blockData = childSnapshot.val()
+      const utcTimeTick = moment.utc(+blockData.t).format('HH:mm MMMM DD, YYYY')
+      const blockValue = kmFormatter(Number(blockData.S) * Number(blockData.P))
 
-                if(Number(blockData.S) < ( Number(sizeFilter) * 1000 ) ) return;
+      if (blockValue) {
+          if (poolFilter !== 'combo') {
+            if (poolFilter == 'dark' && !blockData.D) return
+            if (poolFilter == 'regular' && blockData.D) return
+          }
 
-                if (symbolFilters.length > 0) {
-                  let filterSymbols = symbolFilters.map(Sy => {
-                    return Sy.value
-                  })
-                  
-                  if (!filterSymbols.find(SyElement => SyElement == blockData.Sy.substring(1))) return;
-                }
+          if(Number(blockData.S) < ( Number(sizeFilter) * 1000 ) ) return
 
-                blocksData.push({
-                    symbol: blockData.Sy.substring(1),
-                    dark_pool: blockData.D,
-                    size: kmFormatter(Number(blockData.S)),
-                    price: Number(blockData.P).toFixed(2),
-                    value: blockValue,
-                    time: utcTimeTick,
-                    epoch: +blockData.t,
-                    _classes: blockData.D ? 'dark-pool_row' : ''
-                });   
-            }
-          });
+          if (symbolFilters.length > 0) {
+            let filterSymbols = symbolFilters.map(Sy => {
+              return Sy.value
+            })
+            
+            if (!filterSymbols.find(SyElement => SyElement == blockData.Sy.substring(1))) return
+          }
 
-        updateProperty({blockListData: blocksData.sort( compare )})
-      });
-    });
-  };
+          blocksData.push({
+              symbol: blockData.Sy.substring(1),
+              dark_pool: blockData.D,
+              size: kmFormatter(Number(blockData.S)),
+              price: Number(blockData.P).toFixed(2),
+              value: blockValue,
+              time: utcTimeTick,
+              epoch: +blockData.t,
+              _classes: blockData.D ? 'dark-pool_row' : ''
+          })
+      }
+    })
+
+    updateProperty({blockListData: blocksData.sort( compare )})
+  }
 
   const fields = [
     { key: 'symbol', label: 'Symbol', _style: { width: '20%' } },

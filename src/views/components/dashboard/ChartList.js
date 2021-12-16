@@ -1,7 +1,9 @@
-import React, { useCallback, useEffect, useReducer } from "react"
+import React, { useCallback, useEffect, useState, useRef } from "react"
+import { compose } from 'redux'
 import { connect } from 'react-redux'
+import { firebaseConnect } from 'react-redux-firebase'
 import { updateProperty } from '../../../store/actions/StylesActions'
-import { SetChartSettings, EditMarket } from '../../../store/actions/ChartActions'
+import { EditWatchList, SetChartSettings, EditMarket, SearchSymbol } from '../../../store/actions/ChartActions'
 import PropTypes from "prop-types"
 import {
   CRow,
@@ -14,7 +16,11 @@ import {
 
   CBadge,
 
-  CSelect
+  CSelect,
+  CImg,
+
+  CPopover,
+  CButton
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import ChartRender from '../../charts/ChartRender.js'
@@ -23,39 +29,264 @@ import {
 } from "../../charts/Utils/InteractiveUtils"
 import { useDetectClickOutside } from 'react-detect-click-outside'
 
+import uniqid from 'uniqid'
+import AsyncSelect  from 'react-select/async'
+
 const ChartList = props => {
     const {
       charts,
+      brands,
       fullScreenMode,
+      fullScreenBrand,
       mainHeight,
       headerHeight,
       settingsModelShow,
       showScreenShotModal,
       currentChartSettings,
+      watchList,
+      watchListChanged,
       updateTheCharts,
       updateProperty,
       SetChartSettings,
       EditMarket,
+      SearchSymbol,
+      EditWatchList,
       selectedChart,
+      selectedChartEvent,
       brandsModelShow
     } = props;
+
+    const [watchedState, setWatchedState] = useState([])
+    const [currentEvent, setCurrentEvent] = useState(null)
+
+    const [mapCharts, setMapCharts] = useState([])
+
+    const selectedChartRef = useRef(null)
+    const asyncSelectRef = useRef(null)
+
+    const addEventListener = useRef(false)
+    const currentSelectedChart = useRef(null)
+    const searchedValues = useRef('')
+
+    const showAsyncSelect = useRef(false)
+    const [viewAsyncSelect, setViewAsyncSelect] = useState(false)
 
     const headerRef = useCallback(node => {
       if (node !== null) {
         updateProperty({headerHeight: node.getBoundingClientRect().height})
       }
     }, [])
-    const selectedChartRef = useDetectClickOutside({ 
-      onTriggered: (e) => {
-        if (
-          e.target.classList.contains('c-main') || e.target.classList.contains('parent_charts-list') ||
-          parseInt(e.which) == 27
-        ) {
-          updateProperty({selectedChart: null})
+    // const selectedChartRef = useDetectClickOutside({ 
+    //   onTriggered: (e) => {
+    //     if (
+    //       e.target.classList.contains('c-main') || e.target.classList.contains('parent_charts-list') ||
+    //       parseInt(e.which) == 27
+    //     ) {
+    //       updateProperty({selectedChart: null})
+    //     }
+    //   },
+    //   triggerKeys: ['Escape']
+    // })
+
+    useEffect(() => {
+      let watchedMap = []
+      charts.map((chart, i) => {
+        let symbolWatched = watchList.some(watchListElement => {
+          return watchListElement.symbol == chart.chartSymbol
+        })
+
+        watchedMap[chart.chartUid] = symbolWatched
+      })
+
+      setWatchedState(watchedMap)
+
+      currentSelectedChart.current = selectedChart
+
+      if (!fullScreenMode) {
+        setMapCharts(charts)
+      } else {
+        setMapCharts([fullScreenBrand])
+      }
+
+      if (!addEventListener.current) {
+        addEventListener.current = true
+        window.addEventListener('keydown', onKeyPress)
+      }
+    }, [charts, watchListChanged, selectedChart, fullScreenMode])
+
+    useEffect(() => {
+        return () => {
+            window.removeEventListener('keydown', onKeyPress)
         }
-      },
-      triggerKeys: ['Escape']
+    }, [])
+
+    const onKeyPress = (event) => {
+      if (currentSelectedChart.current != null) {
+        if (event.keyCode == 13) {
+          if (showAsyncSelect.current) {
+            const searchedValue = searchedValues.current.toUpperCase()
+            setViewAsyncSelect(false)
+            showAsyncSelect.current = false
+            EditMarket(searchedValue, currentSelectedChart.current, false)
+            searchedValues.current = ''
+          }
+        } else if (event.keyCode >= 65 && event.keyCode <= 90) {
+          if (!showAsyncSelect.current) {
+            setViewAsyncSelect(currentSelectedChart.current)
+            showAsyncSelect.current = currentSelectedChart.current
+            asyncSelectRef.current.focus()
+          }
+        } else {
+          if (event.which == 9) event.preventDefault()
+          updateProperty({selectedChartEvent: {
+            chart: currentSelectedChart.current,
+            code: event.which,
+            uid: uniqid()
+          }})
+        }
+      }
+    }
+
+    const handleChartOptionClick = (nodeEvent) => {
+      console.log(nodeEvent)
+    }
+
+    const customStyles = {
+        container:  (provided, state) => ({
+            ...provided,
+            padding: '0',
+            border: '0',
+            fontSize: '0.76563rem',
+            lineHeight: 1.5,
+            width: '100%'
+        }),
+        control:  (provided, state) => ({
+            ...provided,
+            height: 'calc(1.5em + 0.5rem + 2px)',
+            minHeight: 'calc(1.5em + 0.5rem + 2px)',
+            fontSize: '0.76563rem',
+            lineHeight: 1.5,
+            borderRadius: '0.2rem',
+            border: 'none',
+            borderColor: '#d8dbe0',
+            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            boxShadow: 'inset 0 1px 1px rgba(0, 0, 0, 0.075)',
+            transition: 'background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out',
+            ':hover': {
+            borderColor: state.isFocused ? '#66afe9' : '#d8dbe0',
+            boxShadow: state.isFocused ? 
+                'inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6)' : 
+                'inset 0 1px 1px rgba(0, 0, 0, 0.075)',
+            }
+        }),
+        valueContainer: (provided, state) => ({
+            ...provided,
+            marginTop: '0',
+            marginLeft: '6px',
+            padding: '0',
+            border: '0',
+        }),
+        dropdownIndicator: (provided, state) => ({
+            ...provided,
+            marginTop: '0',
+            padding: '0',
+            border: '0',
+            width: '16px',
+        }),
+        clearIndicator: (provided, state) => ({
+            ...provided,
+            marginTop: '0',
+            padding: '0',
+            border: '0',
+            width: '16px',
+        }),
+        indicatorsContainer: (provided, state) => ({
+            ...provided,
+            paddingRight: '4px',
+            border: '0',
+        }),
+        multiValue: (provided, state) => {
+            return ({
+                ...provided,
+                backgroundColor: '#4799eb'
+            })
+        },
+        multiValueLabel: (provided, state) => {
+            return ({
+                ...provided,
+                color: 'white',
+                fontWeight: 'bold'
+            })
+        },
+        multiValueRemove: (provided, state) => {
+            return ({
+                ...provided,
+                ':hover': {
+                    backgroundColor: 'white',
+                    color: '#4799eb'
+                }
+            })
+        },
+        input: (provided, state) => {
+            return ({
+                ...provided,
+                color: 'white'
+            })
+        },
+        option: (provided, state) => {
+            return ({
+                ...provided,
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                textAlign: 'left',
+                ':hover': {
+                    backgroundColor: '#4799eb'
+                },
+            })
+        },
+        menuList: (provided, state) => {
+            return ({
+                ...provided,
+                '::-webkit-scrollbar': {
+                    width: '9px',
+                },
+                '::-webkit-scrollbar-track': {
+                    background: 'transparent'
+                },
+                '::-webkit-scrollbar-thumb': {
+                    background: '#555',
+                    borderRadius: 10
+
+                },
+                '::-webkit-scrollbar-thumb:hover': {
+                    background: '#555'
+                }
+            })
+        }
+    }
+    const defaultSymbolOptions = Object.keys(brands).map((brand, i) => {
+        return {
+            'value': brand,
+            'label': brand
+        }
     })
+    const promiseOptions = (inputValue) => {
+        return new Promise(async(resolve) => {
+            const brandsSearch = await SearchSymbol(inputValue)
+            let newValues = (brandsSearch !== false) ? brandsSearch : brands
+
+            if (typeof newValues != typeof undefined && newValues != null) {
+              let resolveValues = Object.keys(newValues).map((brand, i) => {
+                  return {
+                      'value': brand,
+                      'label': brand
+                  }
+              })
+              resolve(resolveValues)
+            } else {
+              resolve([])
+            }
+        })
+    }
 
     if (charts.length == 0) {
       return (<CRow></CRow>)
@@ -64,47 +295,100 @@ const ChartList = props => {
     return (
       <CRow className='parent_charts-list'>
         <>
-          {charts.map((chart, i) => {
+          {mapCharts.map((chart, i) => {
             return (
-              <CCol innerRef={selectedChart == chart.chartSymbol ? selectedChartRef : null} onClick={() => {
-                updateProperty({selectedChart: chart.chartSymbol})
-              }} key={chart.chartSymbol} style={{height: mainHeight/2}} 
-                className={'p-0 chartlist-container'} xs='12' sm='6' md='6'>
-                {selectedChart == chart.chartSymbol && <div className='chartlist-container_shadow'></div>}
-                <CCard className={'m-0' + ( selectedChart == chart.chartSymbol && ' z-index-2')}>
+              <CCol innerRef={selectedChart == chart.chartUid ? selectedChartRef : null} onClick={() => {
+                updateProperty({selectedChartEvent: null, selectedChart: chart.chartUid})
+              }} key={chart.chartUid} style={{height: fullScreenMode ? mainHeight : mainHeight/2}} 
+                className={'p-0 chartlist-container '} xs='12' sm={fullScreenMode ? '12' : '6'} md={fullScreenMode ? '12' : '6'}>
+                {selectedChart == chart.chartUid && <div className='chartlist-container_shadow'></div>}
+                <CCard className={'m-0' + ( selectedChart == chart.chartUid && ' z-index-2')}>
                   <CCardHeader innerRef={headerRef} className='card-header-actions mr-0 d-flex align-items-center justify-content-between c-header'>
-                    <div className='d-flex'>
+                    <div style={{zIndex: 10}} className='d-flex w-50'>
+                      {viewAsyncSelect == chart.chartUid && 
+                        <AsyncSelect
+                          placeholder='Filter Symbols'
+                          styles={customStyles}
+                          name="form-field-name2"
+                          cacheOptions
+                          ref={asyncSelectRef}
+                          defaultOptions={defaultSymbolOptions}
+                          loadOptions={promiseOptions}
+                          onInputChange={(e) => {
+                            if (e != '') {
+                              searchedValues.current = e
+                            }
+                          }}
+                          onChange={(e) => {
+                            const searchedValue = e.value
+                            setViewAsyncSelect(false)
+                            showAsyncSelect.current = false
+                            EditMarket(searchedValue, currentSelectedChart.current, false)
+                          }}
+                          isMulti={false}
+                          defaultMenuIsOpen={true}
+                          theme={(theme) => ({
+                              ...theme,
+                              colors: {
+                              ...theme.colors,
+                              primary: 'black',
+                              primary25: 'black',
+                              dangerLight: 'black',
+                              neutral0: '#2a2b36'
+                              },
+                          })}
+                      /> ||
                       <span onClick={() => updateProperty({brandsModelShow: true})}
-                        className='h5 ml-2 mb-0 chart-symbol_container'>{chart.chartSymbol}</span>
-                      <span className='ml-1 mb-0 text-muted mt-auto'>{chart.chartBrand}</span>
+                        className='h5 ml-2 mb-0 chart-symbol_container'>{chart.chartSymbol}</span>}
                     </div>
                     <div className='card-header-actions d-flex'>
                       <CTooltip content='Time Frame'>
                         <CBadge 
                           shape="pill"
                           style={{
-                            backgroundColor: chart.chartSettings.priceBarsColor,
+                            outline: '1.5px solid ' + chart.chartSettings.priceBarsColor,
                             cursor: 'pointer'
                           }}
                           className="ml-1 mr-1 d-flex align-items-center justify-content-center"
                           onClick={() => {
                             SetChartSettings({
                               periodicity: chart.chartSettings.periodicity == '1m' ? '15m' : '1m'
-                            }, chart.chartSymbol, false, true)
+                            }, chart.chartUid, false, true)
                           }}>
                           {chart.chartSettings.periodicity}
                         </CBadge>
                       </CTooltip>
-                      <CBadge 
-                        shape="pill" 
-                        style={{
-                          backgroundColor: chart.chartSettings.flowIndex === 'normal' ? chart.chartSettings.flowIndexColor : (
-                              chart.chartSettings.flowIndex === 'dark-pool' ? chart.chartSettings.flowDarkIndexColor : chart.chartSettings.flowBothIndexColor
-                          )
-                        }}
-                        className="ml-1 mr-1 d-flex align-items-center justify-content-center">
-                        {chart.chartSettings.flowIndex}
-                      </CBadge>
+                      <CTooltip content='Flow Index'>
+                        <CBadge 
+                          shape="pill" 
+                          style={{
+                            outline: '1.5px solid ' + ( chart.chartSettings.flowIndex === 'normal' ? chart.chartSettings.flowIndexColor : (
+                                chart.chartSettings.flowIndex === 'dark-pool' ? chart.chartSettings.flowDarkIndexColor : chart.chartSettings.flowBothIndexColor
+                            )),
+                            cursor: 'pointer'
+                          }}
+                          className="ml-1 mr-1 d-flex align-items-center justify-content-center"
+                          onClick={() => {
+                            let newFlowIndex
+                            switch(chart.chartSettings.flowIndex) {
+                              case 'normal':
+                                newFlowIndex = 'dark-pool'
+                                break
+                              case 'dark-pool':
+                                newFlowIndex = 'both'
+                                break
+                              case 'both':
+                                newFlowIndex = 'normal'
+                                break
+                            }
+
+                            SetChartSettings({
+                              flowIndex: newFlowIndex
+                            }, chart.chartUid, false, true)
+                          }}>
+                          {chart.chartSettings.flowIndex}
+                        </CBadge>
+                      </CTooltip>
 
                       { chart.chartSettings.replayMarket &&
                         <>
@@ -114,7 +398,7 @@ const ChartList = props => {
                                 onClick={() => {
                                   SetChartSettings({
                                     replayMarket: 'pause'
-                                  }, chart.chartSymbol, false, false)
+                                  }, chart.chartUid, false, false)
                                 }}>
                                   <CIcon name='cis-media-pause-circle' height={20} />
                               </CLink>
@@ -125,7 +409,7 @@ const ChartList = props => {
                               onClick={() => {
                                 SetChartSettings({
                                   replayMarket: 'play'
-                                }, chart.chartSymbol, false, false)
+                                }, chart.chartUid, false, false)
                               }}>
                                 <CIcon name='cis-media-play-circle' height={20} />
                             </CLink>
@@ -135,7 +419,7 @@ const ChartList = props => {
                               onClick={() => {
                                 SetChartSettings({
                                   replayMarket: false
-                                }, chart.chartSymbol, false, false)
+                                }, chart.chartUid, false, false)
                               }}>
                                 <CIcon name='cis-media-stop-circle' height={20} />
                             </CLink>
@@ -151,7 +435,7 @@ const ChartList = props => {
                                     replayMarketSettings: {
                                       speed: e.target.value
                                     }
-                                  }, chart.chartSymbol, false, false)
+                                  }, chart.chartUid, false, false)
                                 }}>
                                 <option value="500">Slow</option>
                                 <option value="250">Normal</option>
@@ -163,12 +447,62 @@ const ChartList = props => {
                       }
                       { !chart.chartSettings.replayMarket &&
                         <>
+                          <CTooltip content='Watch List'>
+                            <CLink className='card-header-action pl-1 pr-1'
+                              onClick={() => {
+                                EditWatchList(chart.chartSymbol)
+                              }}>
+                                {watchedState[chart.chartUid] && 
+                                  <CIcon height={20} className='text-danger' name="cis-queue-remove" /> ||
+                                  <CIcon name='cil-queue-add' height={20} />  }
+                            </CLink>
+                          </CTooltip>
+                          <div onClick={(e) => {
+                            if (e.target.parentNode.classList.contains('chartTypes-option') ||
+                              e.target.parentNode.classList.contains('chartTypes-list')
+                            ) {
+                              let changeChartType = e.target.parentNode.classList.contains('chartTypes-option') ?
+                                e.target.parentNode.getAttribute('data-chartype') : e.target.getAttribute('data-chartype')
+
+                              SetChartSettings({
+                                chartType: changeChartType
+                              }, chart.chartUid, false, true)
+                            }
+                          }}>
+                            <CPopover
+                              content={React.createElement(
+                                  'ul', {
+                                      className: 'chartTypes-list',
+                                  },
+                                      React.createElement('div', {className: 'chartTypes-option' + 
+                                        (chart.chartSettings.chartType == 'ohlc' ? ' chartTypes-option-selected' : ''),
+                                        'data-chartype': 'ohlc'}, 
+                                        React.createElement('img', {src: React.icons.Tools.ohlc},null),
+                                        React.createElement('span', {},'OHLC'),
+                                      ),
+                                      React.createElement('div', {className: 'chartTypes-option' + 
+                                        (chart.chartSettings.chartType == 'candles' ? ' chartTypes-option-selected' : ''),
+                                        'data-chartype': 'candles'}, 
+                                        React.createElement('img', {src: React.icons.Tools.candles},null),
+                                        React.createElement('span', {},'Candles'),
+                                      ),
+                              )}
+                              placement={'bottom'}
+                              interactive={true}
+                              trigger='click'
+                            >
+                              <CImg
+                                className='card-header-action pl-1 pr-1 chartType-container'
+                                src={React.icons.Tools[chart.chartSettings.chartType]}
+                              />
+                            </CPopover>
+                          </div>
                           <CTooltip content='ScreenShot'>
                             <CLink className='card-header-action pl-1 pr-1'
                               onClick={() => {
                                 SetChartSettings({
                                   takeScreenShot: true
-                                }, chart.chartSymbol, false, false)
+                                }, chart.chartUid, false, false)
                                 updateProperty({showScreenShotModal: !showScreenShotModal})
                               }}>
                                 <CIcon name='cis-images' height={20} />
@@ -179,7 +513,7 @@ const ChartList = props => {
                               onClick={() => {
                                 SetChartSettings({
                                   blocksLine: !chart.chartSettings.blocksLine
-                                }, chart.chartSymbol, false, true)
+                                }, chart.chartUid, false, true)
                               }}>
                                 { !chart.chartSettings.blocksLine &&
                                   <CIcon name='cil-image-broken' height={20} />
@@ -194,7 +528,7 @@ const ChartList = props => {
                               onClick={() => {
                                 SetChartSettings({
                                   showDivergence: !chart.chartSettings.showDivergence
-                                }, chart.chartSymbol, false, true)
+                                }, chart.chartUid, false, true)
                               }}>
                                 { !chart.chartSettings.showDivergence &&
                                   <CIcon name='cil-call-split' height={20} />
@@ -209,7 +543,7 @@ const ChartList = props => {
                               onClick={() => {
                                 SetChartSettings({
                                   replayMarket: true
-                                }, chart.chartSymbol, false, false)
+                                }, chart.chartUid, false, false)
                               }}>
                                 <CIcon name='cis-media-play-circle' height={20} />
                             </CLink>
@@ -219,19 +553,33 @@ const ChartList = props => {
                               onClick={() => {
                                 SetChartSettings({
                                   chartSymbol : chart.chartSymbol
-                                }, chart.chartSymbol, false);
+                                }, chart.chartUid, false);
                                 updateProperty({settingsModelShow: !settingsModelShow})
                               }}>
                                 <CIcon name='cis-settings' height={20} />
                             </CLink>
                           </CTooltip>
-                          <CTooltip content='Full Screen'>
+                          {fullScreenMode && 
+                            <CTooltip content='Restore Screen'>
+                              <CLink className='card-header-action pl-1 pr-1'
+                                onClick={() => {
+                                  SetChartSettings({
+                                    fullScreenMode : false
+                                  }, chart.chartUid, true, false)
+                                  updateProperty({
+                                    fullScreenMode:!fullScreenMode
+                                  })
+                                }}>
+                                  <CIcon name='cis-window-restore' height={20} />
+                              </CLink>
+                            </CTooltip>}
+                          {!fullScreenMode && <CTooltip content='Full Screen'>
                             <CLink className='card-header-action pl-1 pr-1'
                               onClick={() => {
                                 let fullScreenBrandRef = chart
                                 SetChartSettings({
                                   fullScreenMode : true
-                                }, chart.chartSymbol, true, false)
+                                }, chart.chartUid, true, false)
                                 updateProperty({
                                   fullScreenBrand: fullScreenBrandRef, 
                                   fullScreenMode:!fullScreenMode
@@ -239,15 +587,15 @@ const ChartList = props => {
                               }}>
                                 <CIcon name='cis-window-maximize' height={20} />
                             </CLink>
-                          </CTooltip>
-                          <CTooltip content='Remove Chart'>
+                          </CTooltip>}
+                          {!fullScreenMode && <CTooltip content='Remove Chart'>
                             <CLink className='card-header-action pl-1 pr-1'
                               onClick={() => {
-                                EditMarket(chart.chartSymbol, true)
+                                EditMarket(chart.chartSymbol, chart.chartUid, true)
                               }}>
                                 <CIcon name='cis-x-circle' height={20} />
                             </CLink>
-                          </CTooltip>
+                          </CTooltip>}
                         </>
                       }
                     </div>
@@ -257,8 +605,10 @@ const ChartList = props => {
                       <CIcon content={React.icons.flowtradeDarkLogo} height="95" alt="Flowtrade"/>
                     </div>
                     <ChartRender 
-                      mainHeight={((mainHeight/2) - headerHeight)} 
+                      mainHeight={fullScreenMode ? (mainHeight - headerHeight) : ((mainHeight/2) - headerHeight)} 
                       currentSymbol={chart.chartSymbol}
+                      currentUid={chart.chartUid}
+                      currentEvent={(selectedChart == chart.chartUid) ? selectedChartEvent : null}
                     />
                   </CCardBody>
                 </CCard>
@@ -273,7 +623,9 @@ const ChartList = props => {
 const mapStateToProps = (state) => {
   return {
     charts: state.charts.charts,
+    brands: 'symbolMap1' in state.firebase.data ? state.firebase.data.symbolMap1.A : [],
     fullScreenMode: state.charts.fullScreenMode,
+    fullScreenBrand: state.charts.fullScreenBrand,
     mainHeight: state.charts.mainHeight,
     headerHeight: state.charts.headerHeight,
     settingsModelShow: state.charts.settingsModelShow,
@@ -281,7 +633,10 @@ const mapStateToProps = (state) => {
     currentChartSettings: state.charts.currentChartSettings,
     updateTheCharts: state.charts.updateTheCharts,
     selectedChart: state.charts.selectedChart,
-    brandsModelShow: state.charts.brandsModelShow
+    selectedChartEvent: state.charts.selectedChartEvent,
+    brandsModelShow: state.charts.brandsModelShow,
+    watchList: state.charts.watchList,
+    watchListChanged: state.charts.watchListChanged
   }
 }
 
@@ -289,13 +644,20 @@ const mapDispatchToProps = (dispatch) => {
   return {
     updateProperty: (property) => dispatch(updateProperty(property)),
     SetChartSettings: (
-      newChartSettings, chartSymbol, resetChartData, synchronizeChart
-    ) => dispatch(SetChartSettings(newChartSettings, chartSymbol, resetChartData, synchronizeChart)),
-    EditMarket: (brandSymbol, removeBrand) => dispatch(EditMarket(brandSymbol, removeBrand))
+      newChartSettings, chartUid, resetChartData, synchronizeChart
+    ) => dispatch(SetChartSettings(newChartSettings, chartUid, resetChartData, synchronizeChart)),
+    EditMarket: (brandSymbol, brandUid, removeBrand) => dispatch(EditMarket(brandSymbol, brandUid, removeBrand)),
+    SearchSymbol: (searchInput) => dispatch(SearchSymbol(searchInput)),
+    EditWatchList: (brandSymbol) => dispatch(EditWatchList(brandSymbol))
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  ),
+  firebaseConnect((props) => ([
+      `symbolMap1/A#limitToFirst=100`
+  ]))
 )(ChartList)

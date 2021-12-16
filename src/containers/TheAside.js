@@ -50,9 +50,15 @@ const TheAside = props => {
 
   const [divergencesListData, setDivergencesListData] = useState([])
 
-  const tableWrapperRef = useRef(null)
+  let tableWrapperRef = useRef(null),
+      divergenceFirebaseRef = useRef(null)
 
   useEffect(() => {
+    if (divergenceFirebaseRef.current == null) {
+      let requestDate = moment(new Date()).format('YYYY_MM_DD')
+      divergenceFirebaseRef.current = React.firebase.firebase.database(React.firebase.tracking).ref(`${requestDate}/one/latest`)
+    }
+
     getDivergences()
 
     if (tableWrapperRef.current) {
@@ -60,51 +66,55 @@ const TheAside = props => {
     }
   }, [symbolFilters, onlyWatchlist, divergenceVerified])
 
+  useEffect(() => {
+      return () => {
+          divergenceFirebaseRef.current.off('value', postGetDivergences)
+      }
+  }, [])
+
   const getDivergences = async() => {
     return new Promise((resolve, reject) => {
-      let requestDate = moment(new Date()).format('YYYY_MM_DD')
-
-      React.firebase.firebase.database(React.firebase.tracking)
-        .ref(`${requestDate}/one/latest`)
-        .on('value', (val) => {
-          let divergenceData = [];
-          val.forEach(function(childSnapshot) {
-            if (['priceDown', 'priceUp'].find(element => element == childSnapshot.key)) {
-              let divergenceColor = childSnapshot.key == 'priceDown' ? '#0ccf02' : '#d0021b'
-              childSnapshot.forEach(function(childSnapshotChild) {
-                let divergenceFrequency = +childSnapshotChild.key;
-                if (divergenceFrequency == 15) {
-                  childSnapshotChild.forEach(function(childSnapshotTimeStamp) {
-                    const childSnapShotValue = childSnapshotTimeStamp.val()
-
-                    if (symbolFilters.length > 0) {
-                      let filterSymbols = symbolFilters.map(Sy => {
-                        return Sy.value
-                      })
-                      
-                      if (!filterSymbols.find(SyElement => SyElement == childSnapShotValue.s.substring(1))) return
-                    }
-
-                    if (onlyWatchlist) {
-                      if (!watchList.find(SyElement => SyElement.symbol == childSnapShotValue.s.substring(1))) return
-                    }
-
-                    divergenceData.push({
-                      symbol: childSnapShotValue.s.substring(1),
-                      type: childSnapshot.key == 'priceDown' ? 'Bullish' : 'Bearish',
-                      price: childSnapShotValue.c,
-                      time: moment(changeTimezone(new Date(+childSnapShotValue.t), 'UTC')).format('HH:mm M/D'),
-                      epoch: +childSnapShotValue.t,
-                    })
-                  })
-                }
-              })
-            }
-          })
-
-        setDivergencesListData(divergenceData.sort( compare ))
-      })
+      divergenceFirebaseRef.current.on('value', postGetDivergences)
     })
+  }
+
+  const postGetDivergences = (val) => {
+    let divergenceData = []
+    val.forEach(function(childSnapshot) {
+      if (['priceDown', 'priceUp'].find(element => element == childSnapshot.key)) {
+        let divergenceColor = childSnapshot.key == 'priceDown' ? '#0ccf02' : '#d0021b'
+        childSnapshot.forEach(function(childSnapshotChild) {
+          let divergenceFrequency = +childSnapshotChild.key;
+          if (divergenceFrequency == 15) {
+            childSnapshotChild.forEach(function(childSnapshotTimeStamp) {
+              const childSnapShotValue = childSnapshotTimeStamp.val()
+
+              if (symbolFilters.length > 0) {
+                let filterSymbols = symbolFilters.map(Sy => {
+                  return Sy.value
+                })
+                
+                if (!filterSymbols.find(SyElement => SyElement == childSnapShotValue.s.substring(1))) return
+              }
+
+              if (onlyWatchlist) {
+                if (!watchList.find(SyElement => SyElement.symbol == childSnapShotValue.s.substring(1))) return
+              }
+
+              divergenceData.push({
+                symbol: childSnapShotValue.s.substring(1),
+                type: childSnapshot.key == 'priceDown' ? 'Bullish' : 'Bearish',
+                price: childSnapShotValue.c,
+                time: moment(changeTimezone(new Date(+childSnapShotValue.t), 'UTC')).format('HH:mm M/D'),
+                epoch: +childSnapShotValue.t,
+              })
+            })
+          }
+        })
+      }
+    })
+
+    setDivergencesListData(divergenceData.sort( compare ))
   }
 
   const fields = [
@@ -338,7 +348,7 @@ const TheAside = props => {
                       (item, index)=> {
                         return (
                           <td style={{fontWeight: 'bolder'}}>
-                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, false, {
+                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, 0, false, {
                               showDivergence: true
                             })}>
                               {item.symbol}
@@ -353,7 +363,7 @@ const TheAside = props => {
                             {/* <CTooltip content='Add to Watchlist'> */}
                               <div style={{cursor: 'pointer'}} onClick={() => EditWatchList(item.symbol)}>
                                 { !watchList.find(element => element.symbol == item.symbol) && 
-                                  <CIcon size={'sm'} className='text-success' name="cis-queue-add" />
+                                  <CIcon size={'sm'} className='text-success' name="cil-queue-add" />
                                 }
                                 { watchList.find(element => element.symbol == item.symbol) && 
                                   <CIcon size={'sm'} className='text-danger' name="cis-queue-remove" />
@@ -428,7 +438,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     updateProperty: (property) => dispatch(updateProperty(property)),
     EditWatchList: (brandSymbol) => dispatch(EditWatchList(brandSymbol)),
-    EditMarket: (brandSymbol, removeBrand, additionalSettings) => dispatch(EditMarket(brandSymbol, removeBrand, additionalSettings)),
+    EditMarket: (brandSymbol, brandUid, removeBrand, additionalSettings) => dispatch(EditMarket(brandSymbol, brandUid, removeBrand, additionalSettings)),
     SearchSymbol: (searchInput) => dispatch(SearchSymbol(searchInput))
   }
 }
