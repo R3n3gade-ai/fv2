@@ -1,5 +1,5 @@
-export const updateProperty = (property) => {
+export const updateProperty = (property, type = 'set') => {
   return (dispatch, getState) => {
-    dispatch({ type: 'set', ...property })
+    dispatch({ type: type, ...property })
   }
 };

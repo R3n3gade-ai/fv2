@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import { signIn } from '../../../store/actions/AuthActions'
+import { updateProperty } from '../../../store/actions/StylesActions'
 import { Link, Redirect } from 'react-router-dom'
 import {
   CButton,
@@ -34,13 +35,19 @@ const Login = props => {
   const {
     auth,
     loadedProfile,
+    profileInfo,
     authError,
     signinProgress,
-    signIn
+    signIn,
+    updateProperty
   } = props
 
-  if (auth.uid) {
-    return <Redirect to='/dashboard' />
+  if (auth.uid && profileInfo.isLoaded) {
+    if (profileInfo.mainStatus == 'Cancelled') {
+      updateProperty({ err: {message : 'Account Cancelled'} }, 'LOGIN_ERROR')
+    } else {
+      return <Redirect to='/dashboard' />
+    }    
   }
 
   const [email, setEmail] = useState('')
@@ -206,6 +213,7 @@ const mapStateToProps = (state) => {
   return{
     auth: state.firebase.auth,
     loadedProfile: state.firebase.auth.isLoaded,
+    profileInfo: state.firebase.profile,
     authError: state.auth.authError,
     signinProgress: state.auth.signinProgress
   }
@@ -213,7 +221,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    signIn: (creds) => dispatch(signIn(creds))
+    signIn: (creds) => dispatch(signIn(creds)),
+    updateProperty: (propery, type) => dispatch(updateProperty(propery, type))
   }
 }
 
