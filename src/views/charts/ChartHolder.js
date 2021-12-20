@@ -199,6 +199,7 @@ let ChartHolder = forwardRef((props, ref) => {
     const [rgbaColor, setRgbaColor] = useState(null)
 
     const chartData = useRef([])
+    const blocksDatesData = useRef(null)
 
     let chartSettingsRef = useRef({}),
         liveFirebaseRef = useRef(null),
@@ -215,7 +216,7 @@ let ChartHolder = forwardRef((props, ref) => {
             liveFirebaseRef.current = React.firebase.firebase.database(React.firebase['l' + symbolDatabase]).ref(`liveTick/e${chartKey}`)
             data1mFirebaseRef.current = React.firebase.firebase.database(React.firebase[symbolDatabase]).ref(`nanex/e${chartKey}`).limitToLast(2)
             data15mFirebaseRef.current = React.firebase.firebase.database(React.firebase[symbolDatabase]).ref(`bar15/e${chartKey}`).limitToLast(1440)
-            blocksFirebaseRef.current = React.firebase.firebase.database(React.firebase.blocks).ref(`/Symbol/e${chartKey}`).limitToLast(50)
+            blocksFirebaseRef.current = React.firebase.firebase.database(React.firebase.blocks).ref(`/Symbol/e${chartKey}`).limitToLast(250)
 			divergenceFirebaseRef.current = React.firebase.firebase.database(React.firebase.tracking).ref(`${requestDate}/one/latest`)
         }
 
@@ -247,7 +248,8 @@ let ChartHolder = forwardRef((props, ref) => {
             chartCanvasRef.current.subscribe('xScaleSubscriber', { listener: onXScaleChange })
         }
 
-        if (!chartBlocksTrackedRef.current) {
+        if (!chartBlocksTrackedRef.current || settings.blocktradesDates != blocksDatesData.current) {
+            blocksDatesData.current = settings.blocktradesDates
             chartBlocksTrackedRef.current = true
             getBlocks()
         }
@@ -548,16 +550,14 @@ let ChartHolder = forwardRef((props, ref) => {
     const end = xAccessor(data[0])
     let xExtents = localStorage.getItem(chartUid) !== null ? JSON.parse(localStorage.getItem(chartUid)) : [start, end]
     if (xExtentsStartLimitRef.current == 0 && xExtentsEndLimitRef.current == 0) {
-        xExtentsStartLimitRef.current = start
-        xExtentsEndLimitRef.current = end
-        // if (localStorage.getItem(chartUid) !== null) {
-        //     const localStorageExtents = JSON.parse(localStorage.getItem(chartUid))
-        //     xExtentsStartLimitRef.current = localStorageExtents[0]
-        //     xExtentsEndLimitRef.current = localStorageExtents[1]
-        // } else {
-        //     xExtentsStartLimitRef.current = start
-        //     xExtentsEndLimitRef.current = end
-        // }
+        if (localStorage.getItem(chartUid) !== null) {
+            const localStorageExtents = JSON.parse(localStorage.getItem(chartUid))
+            xExtentsStartLimitRef.current = localStorageExtents[0]
+            xExtentsEndLimitRef.current = localStorageExtents[1]
+        } else {
+            xExtentsStartLimitRef.current = start
+            xExtentsEndLimitRef.current = end
+        }
     }
 
     if (xExtentsReplay !== null) {
@@ -615,10 +615,15 @@ let ChartHolder = forwardRef((props, ref) => {
 	}
 
     const postGetBlocks = (val) => {
-        let chartBlocksDataRequest = []
+        let chartBlocksDataRequest = [],
+            currentTime = new Date().getTime()
         val.forEach(function(childSnapshot) {
             const blockData = childSnapshot.val()
+            const currentBlockDate = +blockData.t
             const utcTimeTick = moment.utc(+blockData.t).format('MM-DD HH:mm')
+
+            console.log(settings.blocktradesDates, currentBlockDate, currentTime - 60000 * 60 * 24 * settings.blocktradesDates, currentBlockDate < (currentTime - 60000 * 60 * 24 * settings.blocktradesDates))
+            if (currentBlockDate < (currentTime - 60000 * 60 * 24 * settings.blocktradesDates)) return
 
             chartBlocksDataRequest.push({
                 ...InteractiveYCoordinate.defaultProps.defaultPriceCoordinate,

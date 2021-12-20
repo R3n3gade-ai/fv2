@@ -20,7 +20,8 @@ import {
   CImg,
 
   CPopover,
-  CButton
+  CButton,
+  CInput
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import ChartRender from '../../charts/ChartRender.js'
@@ -361,13 +362,14 @@ const ChartList = props => {
                       <span onClick={() => updateProperty({brandsModelShow: true})}
                         className='h5 ml-2 mb-0 chart-symbol_container'>{chart.chartSymbol}</span>}
                     </div>
-                    <div className='card-header-actions d-flex'>
+                    <div className='card-header-actions d-flex align-items-center'>
                       <CTooltip content='Time Frame'>
                         <CBadge 
                           shape="pill"
                           style={{
                             outline: '1.5px solid ' + chart.chartSettings.priceBarsColor,
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            height: 20
                           }}
                           className="ml-1 mr-1 d-flex align-items-center justify-content-center"
                           onClick={() => {
@@ -385,7 +387,8 @@ const ChartList = props => {
                             outline: '1.5px solid ' + ( chart.chartSettings.flowIndex === 'normal' ? chart.chartSettings.flowIndexColor : (
                                 chart.chartSettings.flowIndex === 'dark-pool' ? chart.chartSettings.flowDarkIndexColor : chart.chartSettings.flowBothIndexColor
                             )),
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            height: 20
                           }}
                           className="ml-1 mr-1 d-flex align-items-center justify-content-center"
                           onClick={() => {
@@ -468,13 +471,13 @@ const ChartList = props => {
                       { !chart.chartSettings.replayMarket &&
                         <>
                           <CTooltip content='Watch List'>
-                            <CLink className='card-header-action pl-1 pr-1'
+                            <CLink className='d-flex card-header-action pl-1 pr-1'
                               onClick={() => {
                                 EditWatchList(chart.chartSymbol)
                               }}>
                                 {watchedState[chart.chartUid] && 
-                                  <CIcon height={20} className='text-danger' name="cis-queue-remove" /> ||
-                                  <CIcon name='cil-queue-add' height={20} />  }
+                                  <CIcon height={20} className='text-danger d-flex' name="cis-queue-remove" /> ||
+                                  <CIcon className='d-flex' name='cil-queue-add' height={20} />  }
                             </CLink>
                           </CTooltip>
                           <div onClick={(e) => {
@@ -512,76 +515,99 @@ const ChartList = props => {
                               trigger='click'
                             >
                               <CImg
-                                className='card-header-action pl-1 pr-1 chartType-container'
+                                className='d-flex card-header-action pl-1 pr-1 chartType-container'
                                 src={React.icons.Tools[chart.chartSettings.chartType]}
                               />
                             </CPopover>
                           </div>
                           <CTooltip content='ScreenShot'>
-                            <CLink className='card-header-action pl-1 pr-1'
+                            <CLink className='d-flex card-header-action pl-1 pr-1'
                               onClick={() => {
                                 SetChartSettings({
                                   takeScreenShot: true
                                 }, chart.chartUid, false, false)
                                 updateProperty({showScreenShotModal: !showScreenShotModal})
                               }}>
-                                <CIcon name='cis-images' height={20} />
+                                <CIcon className='d-flex' name='cis-images' height={20} />
                             </CLink>
                           </CTooltip>
+                          {!chart.chartSettings.blocksLine &&                           
                           <CTooltip content='Show BlockTrades'>
-                            <CLink className='card-header-action pl-1 pr-1'
+                            <CLink className='d-flex card-header-action pl-1 pr-1'
                               onClick={() => {
                                 SetChartSettings({
                                   blocksLine: !chart.chartSettings.blocksLine
                                 }, chart.chartUid, false, true)
                               }}>
-                                { !chart.chartSettings.blocksLine &&
-                                  <CIcon name='cil-image-broken' height={20} />
-                                }
-                                { chart.chartSettings.blocksLine &&
-                                  <CIcon name='cis-image-broken' height={20} />
-                                }
+                                <CIcon className='d-flex' name='cil-image-broken' height={20} />
+                            </CLink>
+                          </CTooltip>}
+                          {chart.chartSettings.blocksLine &&
+                          <div style={{
+                            backgroundColor: 'rgba(0, 0, 21, 0.2)',
+                            borderRadius: 5,
+                            padding: '5px 2px 5px 2px',
+                            display: 'flex',
+                            alignItems:'center'
+                          }}>
+                          <CTooltip content='Hide BlockTrades'>
+                            <CLink className='d-flex card-header-action pl-1 pr-1'
+                              onClick={() => {
+                                SetChartSettings({
+                                  blocksLine: !chart.chartSettings.blocksLine
+                                }, chart.chartUid, false, true)
+                              }}>
+                                <CIcon className='d-flex' name='cis-image-broken' height={20} />
                             </CLink>
                           </CTooltip>
+                          <CInput size='xs' type='number' value={chart.chartSettings.blocktradesDates} onChange={(e) => {
+                              let newBlocktradesDates = e.target.value
+                              if (newBlocktradesDates <= 30 && newBlocktradesDates > 0) {
+                                SetChartSettings({
+                                  blocktradesDates: newBlocktradesDates
+                                }, chart.chartUid, false, true)
+                              }
+                          }} />
+                          </div>}
                           <CTooltip content='Show Divergence'>
-                            <CLink className='card-header-action pl-1 pr-1'
+                            <CLink className='d-flex card-header-action pl-1 pr-1'
                               onClick={() => {
                                 SetChartSettings({
                                   showDivergence: !chart.chartSettings.showDivergence
                                 }, chart.chartUid, false, true)
                               }}>
                                 { !chart.chartSettings.showDivergence &&
-                                  <CIcon name='cil-call-split' height={20} />
+                                  <CIcon className='d-flex' name='cil-call-split' height={20} />
                                 }
                                 { chart.chartSettings.showDivergence &&
-                                  <CIcon name='cis-call-split' height={20} />
+                                  <CIcon className='d-flex' name='cis-call-split' height={20} />
                                 }
                             </CLink>
                           </CTooltip>
                           <CTooltip content='Replay Market'>
-                            <CLink className='card-header-action pl-1 pr-1'
+                            <CLink className='d-flex card-header-action pl-1 pr-1'
                               onClick={() => {
                                 SetChartSettings({
                                   replayMarket: true
                                 }, chart.chartUid, false, false)
                               }}>
-                                <CIcon name='cis-media-play-circle' height={20} />
+                                <CIcon className='d-flex' name='cis-media-play-circle' height={20} />
                             </CLink>
                           </CTooltip>
                           <CTooltip content='Chart Settings'>
-                            <CLink className='card-header-action pl-1 pr-1'
+                            <CLink className='d-flex card-header-action pl-1 pr-1'
                               onClick={() => {
                                 SetChartSettings({
                                   chartSymbol : chart.chartSymbol
                                 }, chart.chartUid, false);
                                 updateProperty({settingsModelShow: !settingsModelShow})
                               }}>
-                                <CIcon name='cis-settings' height={20} />
+                                <CIcon className='d-flex' name='cis-settings' height={20} />
                             </CLink>
                           </CTooltip>
                           {fullScreenMode && 
                             <CTooltip content='Restore Screen'>
-                              <CLink className='card-header-action pl-1 pr-1'
+                              <CLink className='d-flex card-header-action pl-1 pr-1'
                                 onClick={() => {
                                   SetChartSettings({
                                     fullScreenMode : false
@@ -590,11 +616,11 @@ const ChartList = props => {
                                     fullScreenMode:!fullScreenMode
                                   })
                                 }}>
-                                  <CIcon name='cis-window-restore' height={20} />
+                                  <CIcon className='d-flex' name='cis-window-restore' height={20} />
                               </CLink>
                             </CTooltip>}
                           {!fullScreenMode && <CTooltip content='Full Screen'>
-                            <CLink className='card-header-action pl-1 pr-1'
+                            <CLink className='d-flex card-header-action pl-1 pr-1'
                               onClick={() => {
                                 let fullScreenBrandRef = chart
                                 SetChartSettings({
@@ -605,16 +631,16 @@ const ChartList = props => {
                                   fullScreenMode:!fullScreenMode
                                 })
                               }}>
-                                <CIcon name='cis-window-maximize' height={20} />
+                                <CIcon className='d-flex' name='cis-window-maximize' height={20} />
                             </CLink>
                           </CTooltip>}
                           {!fullScreenMode && <CTooltip content='Remove Chart'>
-                            <CLink className='card-header-action pl-1 pr-1'
+                            <CLink className='d-flex card-header-action pl-1 pr-1'
                               onClick={() => {
                                 EditMarket(chart.chartSymbol, chart.chartUid, true)
                                 localStorage.removeItem(chart.chartUid)
                               }}>
-                                <CIcon name='cis-x-circle' height={20} />
+                                <CIcon className='d-flex' name='cis-x-circle' height={20} />
                             </CLink>
                           </CTooltip>}
                         </>

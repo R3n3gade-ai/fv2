@@ -71,7 +71,7 @@ select:focus {
       transform: translate(-50%, -50%);
     }
 }
-.custom-select-xs {
+.custom-select-xs, .form-control-xs {
   height: calc(1.5em + 0.26rem + 2px);
   padding-top: 0.13rem;
   padding-bottom: 0.13rem;
@@ -512,5 +512,12 @@ select:focus {
     img {
       padding-right: 5px
     }
+  }
+}
+
+.chartlist-container {
+  .card-header {
+    padding-top: 0;
+    padding-bottom: 0;
   }
 }

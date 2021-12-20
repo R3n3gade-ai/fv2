@@ -154,7 +154,8 @@ const TheLayout = props => {
           chartBrand: '',
           chartSettings: {
             ...{
-              chartType: 'ohlc'
+              chartType: 'ohlc',
+              blocktradesDates: 30
             },
             ...chartSettings,
             ...syncChartSettings,

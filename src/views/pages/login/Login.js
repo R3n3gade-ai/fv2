@@ -43,7 +43,7 @@ const Login = props => {
   } = props
 
   if (auth.uid && profileInfo.isLoaded) {
-    if (profileInfo.mainStatus == 'Cancelled') {
+    if (profileInfo.priormainStatus == 'Cancelled') {
       updateProperty({ err: {message : 'Account Cancelled'} }, 'LOGIN_ERROR')
     } else {
       return <Redirect to='/dashboard' />
