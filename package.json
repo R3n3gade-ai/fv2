@@ -6,6 +6,7 @@
   "scripts": {
     "webpack": "webpack",
     "start": "webpack serve",
+    "hot": "webpack serve --hot-only",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -17,17 +18,20 @@
     "@babel/plugin-proposal-class-properties": "^7.16.0",
     "@babel/preset-env": "^7.16.4",
     "@babel/preset-react": "^7.16.0",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.4",
     "babel-loader": "^8.2.3",
     "css-loader": "^5.2.7",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
     "image-webpack-loader": "^7.0.1",
     "node-sass": "^6.0.1",
+    "react-refresh": "^0.11.0",
     "sass-loader": "^12.3.0",
     "style-loader": "^3.3.1",
     "webpack": "^5.64.4",
     "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^3.11.3"
+    "webpack-dev-server": "^3.11.3",
+    "webpack-hot-client": "^4.2.0"
   },
   "dependencies": {
     "@coreui/coreui": "^4.1.0",

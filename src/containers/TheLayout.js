@@ -6,16 +6,14 @@ import { firebaseConnect } from 'react-redux-firebase'
 import { updateProperty } from '../store/actions/StylesActions'
 import { EditProfile } from '../store/actions/UserActions'
 import classNames from 'classnames'
-import {
-  TheContent,
-  TheSidebar,
-  TheAside,
-  TheScanAside,
-  TheWatchListAside,
-  TheFooter,
-  TheHeader,
-  TheLoader
-} from './index'
+import TheContent from './TheContent'
+import TheSidebar from './TheSidebar'
+import TheAside from './TheAside'
+import TheScanAside from './TheScanAside'
+import TheWatchListAside from './TheWatchListAside'
+import TheFooter from './TheFooter'
+import TheHeader from './TheHeader'
+import TheLoader from './TheLoader'
 
 import Joyride, { ACTIONS, CallBackProps, EVENTS, STATUS, Step } from 'react-joyride'
 
