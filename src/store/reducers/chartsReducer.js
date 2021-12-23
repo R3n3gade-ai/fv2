@@ -6,6 +6,7 @@ const initialState = {
   asideShow: false, // ONLINE
   scanAsideShow: false, // ONLINE
   watchlistAsideShow: false, // ONLINE
+  integrationsAsideShow: false, // ONLINE
   darkMode: true,
   fullScreenMode: false, // ONLINE
   fullScreenBrand: {}, // ONLINE

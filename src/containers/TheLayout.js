@@ -11,6 +11,7 @@ import TheSidebar from './TheSidebar'
 import TheAside from './TheAside'
 import TheScanAside from './TheScanAside'
 import TheWatchListAside from './TheWatchListAside'
+import TheIntegrationsAside from './TheIntegrationsAside'
 import TheFooter from './TheFooter'
 import TheHeader from './TheHeader'
 import TheLoader from './TheLoader'
@@ -208,6 +209,7 @@ const TheLayout = props => {
         <TheAside />
         <TheScanAside />
         <TheWatchListAside />
+        <TheIntegrationsAside />
         <div className="c-wrapper">
           <TheHeader/>
           <div className="c-body">
