@@ -540,6 +540,25 @@ select:focus {
   }
 }
 
+.integrations_nav {
+  li.nav-item a {
+    color: white;
+    height: 38px!important;
+  }
+}
+
+.twitter-feed-menu {
+  display: flex;
+  padding: 8px;
+  justify-content: end;
+  background-color: #23242c;
+}
+
+.twitter-feed_wrapper {
+  position: relative;
+  height: calc(100vh - 150px);
+}
+
 .twitter-feed {
   padding: 0;
 
@@ -587,7 +606,7 @@ select:focus {
     display: block;
   }
   .twitter-feed_text {
-    font-size: 0.85rem;
+    font-size: 0.80rem;
     color: $gray-100;
   }
 }

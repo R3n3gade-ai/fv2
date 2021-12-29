@@ -50,5 +50,10 @@ export const firebaseInstance = Object.assign({}, {
     }, 'ltz'),
     elTester: firebase.initializeApp({...config,
         databaseURL: "https://tradingproject19-eltester-b13d4.firebaseio.com/"
-    }, 'elTester')
+    }, 'elTester'),
+    twitter: firebase.initializeApp({...config,
+        databaseURL: "https://tradingproject19-twitter.firebaseio.com/"
+    }, 'twitter')
 })
+
+firebaseInstance.twitter.database().useEmulator("localhost", 5003)

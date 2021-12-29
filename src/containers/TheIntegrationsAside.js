@@ -10,7 +10,10 @@ import {
     CCol, 
     CNav,
     CNavItem, 
-    CNavLink
+    CTabs,
+    CNavLink,
+    CTabContent,
+    CTabPane,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import Twitter  from '../views/sidebar/Twitter'
@@ -40,23 +43,25 @@ const TheIntegrationsAside = props => {
           </div>
         </CCol>
         <CCol xs='12' sm='12' md='12'>
-          <CNav variant="underline" fill className="integrations-aside-nav">
-            <CNavItem>
-              <CNavLink href="#" className="active">
-                <CIcon
-                  name="cib-twitter"
-                  className="mr-2"
-                />
-                <span>Twitter</span>
-              </CNavLink>
-            </CNavItem>            
-            <CNavItem>
-              <CNavLink href="#">
-                <span>Zoom</span>
-              </CNavLink>
-            </CNavItem>
-          </CNav>
-          <Twitter />
+          <CTabs>
+            <CNav variant='tabs' className='nav-underline nav-underline-primary justify-content-center integrations_nav'>
+              <CNavItem>
+                <CNavLink>
+                  <CIcon
+                    name="cib-twitter"
+                    className="mr-2"
+                  />
+                  <span>Twitter</span>
+                </CNavLink>
+              </CNavItem>
+            </CNav>
+
+            <CTabContent>
+              <CTabPane>
+                <Twitter />
+              </CTabPane>
+            </CTabContent>
+          </CTabs>
         </CCol>
       </CRow>
     </CSidebar>
