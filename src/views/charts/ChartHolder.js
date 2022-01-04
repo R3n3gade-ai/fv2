@@ -89,6 +89,10 @@ const parseNanexData = (nanexDate, nanexData, nanexOffset) => {
 	if (+nanexData.C > 0 && (
 		parseInt(chartTimeTick.getHours()) >= 9 && parseInt(chartTimeTick.getHours()) < 16
 	)) {
+        if (chartTimeTick.getHours() == 9 && chartTimeTick.getMinutes() == 30) {
+            return false;
+        }
+
 		if (
 			[15, 30, 45].includes(chartTimeTick.getMinutes()) &&
 			(parseInt(chartTimeTick.getHours()) == 16)
