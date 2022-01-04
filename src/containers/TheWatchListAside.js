@@ -1,9 +1,10 @@
-import React, { useEffect, useReducer, useState } from 'react'
+import React, { useEffect, useReducer, useState, useRef } from 'react'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
 import { firebaseConnect } from 'react-redux-firebase'
 import { updateProperty } from '../store/actions/StylesActions'
 import { EditWatchList, EditMarket, SearchSymbol } from '../store/actions/ChartActions'
+import PerfectScrollbar from 'perfect-scrollbar'
 import {
     CSidebar,
     CSidebarClose,
@@ -17,6 +18,7 @@ import moment from 'moment'
 import { changeTimezone } from '@t0x1c3500/react-stockcharts/lib/utils'
 import AsyncSelect  from 'react-select/async'
 
+let watchlistPs = null
 const TheWatchListAside = props => {
   const {
     auth,
@@ -36,6 +38,8 @@ const TheWatchListAside = props => {
 
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0)
 
+  let wacthListTableWrapperRef = useRef(null)
+
   useEffect(() => {
     if (typeof dbWachList !== typeof undefined) {
       if (dbWachList[auth.uid] !== null) {
@@ -44,17 +48,22 @@ const TheWatchListAside = props => {
         })
       }
     }
+
+    if (wacthListTableWrapperRef.current) {
+      console.log('new scroll inti')
+      watchlistPs = new PerfectScrollbar('.option-table_wrapper')
+    }
   }, [dbWachList, watchListChanged])
 
   const getDatabase = (eSymbol) => {
     let eSymbolCodeCharachter = eSymbol.charAt(0)
     let eSymbolCode = (eSymbolCodeCharachter.toLowerCase()).charCodeAt( eSymbolCodeCharachter.length - 1 )
 
-    if (eSymbolCode >= 97 && eSymbolCode <= 101) {
+    if (eSymbolCode >= 97 && eSymbolCode <= 102) {
       return 'ae'
     }
 
-    if (eSymbolCode >= 102 && eSymbolCode <= 108) {
+    if (eSymbolCode > 102 && eSymbolCode <= 108) {
       return 'fl'
     }
 
@@ -338,55 +347,56 @@ const TheWatchListAside = props => {
                         />
                     </CCol>
                 </CRow>
-                <CDataTable
-                    items={watchList}
-                    fields={fields}
-                    striped
-                    hover
-                    pagination
-                    scopedSlots = {{
-                        'symbol':
-                        (item, index)=> {
-                            return (
-                              <td style={{fontWeight: 'bolder'}}>
-                                  <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, 0, false)}>
-                                      {item.symbol}
-                                  </div>
-                              </td>
-                            )
-                        },
-                        'action':
-                        (item, index)=> {
-                            return (
-                              <td className='add-to_watchlist pl-0 pr-0'>
-                                  <div style={{cursor: 'pointer'}} onClick={() => EditWatchList(item.symbol)}>
-                                    <CIcon size={'sm'} className='text-danger' name="cis-queue-remove" />
-                                  </div>
-                              </td>
-                            )
-                        },
-                        'last':
-                        (item, index)=> {
-                            return (
-                                <td>
-                                    <CBadge color={'info'}>
-                                        {item.last}
-                                    </CBadge>
+                <div className='option-table_wrapper' ref={wacthListTableWrapperRef}>
+                  <CDataTable
+                      items={watchList}
+                      fields={fields}
+                      striped
+                      hover
+                      scopedSlots = {{
+                          'symbol':
+                          (item, index)=> {
+                              return (
+                                <td style={{fontWeight: 'bolder'}}>
+                                    <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, 0, false)}>
+                                        {item.symbol}
+                                    </div>
                                 </td>
-                            )
-                        },
-                        'netdaily':
-                        (item, index)=> {
-                            return (
-                                <td>
-                                    <CBadge color={getBadge(item.positive)}>
-                                        {item.netdaily}
-                                    </CBadge>
+                              )
+                          },
+                          'action':
+                          (item, index)=> {
+                              return (
+                                <td className='add-to_watchlist pl-0 pr-0'>
+                                    <div style={{cursor: 'pointer'}} onClick={() => EditWatchList(item.symbol)}>
+                                      <CIcon size={'sm'} className='text-danger' name="cis-queue-remove" />
+                                    </div>
                                 </td>
-                            )
-                        }
-                    }}
-                />
+                              )
+                          },
+                          'last':
+                          (item, index)=> {
+                              return (
+                                  <td>
+                                      <CBadge color={'info'}>
+                                          {item.last}
+                                      </CBadge>
+                                  </td>
+                              )
+                          },
+                          'netdaily':
+                          (item, index)=> {
+                              return (
+                                  <td>
+                                      <CBadge color={getBadge(item.positive)}>
+                                          {item.netdaily}
+                                      </CBadge>
+                                  </td>
+                              )
+                          }
+                      }}
+                  />
+                </div>
             </div>
         </CCol>
       </CRow>

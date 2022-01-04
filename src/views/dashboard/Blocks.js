@@ -10,8 +10,11 @@ import {
   CBadge,
   CDataTable,
   CSelect,
-  CInput
+  CInput,
+
+  CButton
 } from '@coreui/react'
+import CIcon from '@coreui/icons-react'
 
 import moment from 'moment'
 import AsyncSelect  from 'react-select/async'
@@ -61,39 +64,96 @@ const Blocks = props => {
   const [sizeFilter, setSizeFilter] = useState(100)
   const [poolFilter, setPoolFilter] = useState('combo')
 
+  const [showLoadMoreButton, setShowLoadMoreButton] = useState(false)
+  const [isMoreResultLoading, setIsMoreResultLoading] = useState(false)
+
   let blocksTableWrapperRef = useRef(null),
-      blockFirebaseRef = useRef(null)
+      blockFirebaseRef = useRef(null),
+      blockFirebaseSymbols = useRef([]),
+      blockFirebaseSymbolsRefs = useRef([]),
+      blockFirebaseLastDocument = useRef([]),
+      blocksLastDocument = useRef(null),
+      blockChildListener = useRef(false),
+      paginationBlockListData = useRef([]),
+      blockListDataRef = useRef([]),
+      loopNumbers = useRef(50)
 
   useEffect(() => {
     if (blockFirebaseRef.current == null) {
-      blockFirebaseRef.current = React.firebase.firebase.database(React.firebase.blocks).ref(`/latest`).limitToLast(100)
+      blockFirebaseRef.current = React.firebase.firebase.database(React.firebase.blocks)
+        .ref(`/latest`)
+        .orderByKey()
+        .limitToLast(100)
     }
+
+    if (symbolFilters.length > 0) {
+      blockFirebaseSymbols.current = symbolFilters
+
+      let symbolRefs = []
+      symbolFilters.map(symbolFilter => {
+        symbolRefs.push({
+          symbol: symbolFilter.value,
+          ref: React.firebase.firebase.database(React.firebase.blocks).ref(`/Symbol/e${symbolFilter.value}`).orderByKey().limitToLast(100)
+        })
+      })
+      blockFirebaseSymbolsRefs.current = symbolRefs
+    } else {
+      blockFirebaseSymbols.current = []
+      blockFirebaseSymbolsRefs.current = []
+    }
+
+    updateProperty({blockListData: []})
+    blockListDataRef.current = []
+    paginationBlockListData.current = []
+
+    // let loopPagination = symbolFilters.length > 0 || sizeFilter > 100 || poolFilter != 'combo'
+    // getBlocks(loopPagination)
 
     getBlocks()
 
     if (blocksTableWrapperRef.current) {
       blocksPs = new PerfectScrollbar('.block-trades_table')
     }
-  }, [poolFilter, sizeFilter, symbolFilters])
+  }, [symbolFilters, sizeFilter, poolFilter])
 
     useEffect(() => {
         return () => {
-            blockFirebaseRef.current.off('value', postGetBlocks)
+            blockFirebaseRef.current.off('child_added', postGetBlock)
         }
     }, [])
 
-  const getBlocks = async() => {
-    return new Promise((resolve, reject) => {
-      blockFirebaseRef.current.on('value', postGetBlocks)
-    })
+  // const getBlocks = (loopPagination = false) => {
+  //   blockFirebaseRef.current.once('value', (val) => {
+  //     postGetBlocks(val, false, loopPagination)
+  //   })
+  // }
+
+  const getBlocks = () => {
+    if (blockFirebaseSymbolsRefs.current.length > 0) {
+      blockFirebaseSymbolsRefs.current.map(symbolRef => {
+        symbolRef.ref.once('value', (val) => {
+          postGetBlocks(val, true, symbolRef.symbol)
+        })
+      })
+    } else {
+      blockFirebaseRef.current.once('value', postGetBlocks)
+    }
   }
 
-  const postGetBlocks = (val) => {
-    let blocksData = []
+  const postGetBlocks = (val, paginateIt = false, paginateSymbol = null, loopPagination = false) => {
+    let blocksData = paginateIt ? blockListDataRef.current : [],
+        paginatedBlocksData = paginateIt ? paginationBlockListData.current : []
+
     val.forEach(function(childSnapshot) {
       const blockData = childSnapshot.val()
       const utcTimeTick = moment.utc(+blockData.t).format('HH:mm MMMM DD, YYYY')
       const blockValue = kmFormatter(Number(blockData.S) * Number(blockData.P))
+
+      paginatedBlocksData.push({
+        symbol: blockData.Sy.substring(1),
+        epoch: +blockData.t,
+        key: childSnapshot.key
+      })
 
       if (blockValue) {
           if (poolFilter !== 'combo') {
@@ -119,12 +179,114 @@ const Blocks = props => {
               value: blockValue,
               time: utcTimeTick,
               epoch: +blockData.t,
-              _classes: blockData.D ? 'dark-pool_row' : ''
+              _classes: blockData.D ? 'dark-pool_row' : '',
+              key: childSnapshot.key
           })
       }
     })
 
-    updateProperty({blockListData: blocksData.sort( compare )})
+    blocksData = Array.from(new Set(blocksData.map(JSON.stringify))).map(JSON.parse)
+    paginatedBlocksData = Array.from(new Set(paginatedBlocksData.map(JSON.stringify))).map(JSON.parse)
+
+    const sortedBlocksData = blocksData.sort( compare )
+    const sortedPaginatedBlocksData = paginatedBlocksData.sort( compare )
+    updateProperty({blockListData: sortedBlocksData})
+    if (paginateSymbol == null) {
+      blocksLastDocument.current = sortedPaginatedBlocksData.slice(-1)[0].key
+    } else {
+      blockFirebaseLastDocument.current[paginateSymbol] = sortedPaginatedBlocksData.slice(-1)[0].key
+    }
+    
+    paginationBlockListData.current = sortedPaginatedBlocksData
+    blockListDataRef.current = sortedBlocksData
+
+    setShowLoadMoreButton(true)
+    setIsMoreResultLoading(false)
+
+    if (!blockChildListener.current) {
+      blockChildListener.current = true
+      blockFirebaseRef.current.on('child_added', postGetBlock)
+    }
+    
+    // if (loopPagination && loopNumbers.current > 0) {
+    //   loopNumbers.current = loopNumbers.current - 1
+    //   paginate(true)
+    // } else {
+    //   loopNumbers.current = 100
+    // }
+  }
+
+  const postGetBlock = (val) => {
+    const childExists = paginationBlockListData.current.some(blockChild => {
+      return blockChild.key == val.key
+    })
+
+    if (childExists) return
+
+    const blockData = val.val()
+    const utcTimeTick = moment.utc(+blockData.t).format('HH:mm MMMM DD, YYYY')
+    const blockValue = kmFormatter(Number(blockData.S) * Number(blockData.P))
+
+    if (blockValue) {
+      let blocksData = blockListDataRef.current
+      
+      if (poolFilter !== 'combo') {
+        if (poolFilter == 'dark' && !blockData.D) return
+        if (poolFilter == 'regular' && blockData.D) return
+      }
+
+      if(Number(blockData.S) < ( Number(sizeFilter) * 1000 ) ) return
+
+      if (symbolFilters.length > 0) {
+        let filterSymbols = symbolFilters.map(Sy => {
+          return Sy.value
+        })
+        
+        if (!filterSymbols.find(SyElement => SyElement == blockData.Sy.substring(1))) return
+      }
+
+      blocksData.push({
+          symbol: blockData.Sy.substring(1),
+          dark_pool: blockData.D,
+          size: kmFormatter(Number(blockData.S)),
+          price: Number(blockData.P).toFixed(2),
+          value: blockValue,
+          time: utcTimeTick,
+          epoch: +blockData.t,
+          _classes: blockData.D ? 'dark-pool_row' : ''
+      })
+
+      updateProperty({blockListData: blocksData.sort( compare )})
+      blockListDataRef.current = blocksData.sort( compare )
+    }
+  }
+
+  const paginate = (loopPagination = false) => {
+    setIsMoreResultLoading(true)
+    if (blockFirebaseSymbolsRefs.current.length > 0) {
+      blockFirebaseSymbolsRefs.current.map(symbolRef => {
+        symbolRef.ref.endBefore(blockFirebaseLastDocument.current[symbolRef.symbol])
+          .once('value', (val) => {
+            postGetBlocks(val, true, symbolRef.symbol)
+          })
+      })
+    } else {
+      blockFirebaseRef.current.endBefore(blocksLastDocument.current)
+        .once('value', (val) => {
+          postGetBlocks(val, true)
+        })
+    }
+  }
+
+  const filterResults = (filterSymbols) => {
+    // console.log(filterSymbols)
+    // updateProperty({blockListData: []})
+    // setSymbolFilters(filterSymbols)
+    // getBlocks()
+    // do {
+    //   console.log(blockListData.length)
+    //   paginate()
+    // } while (blockListData.length < 100)
   }
 
   const fields = [
@@ -270,7 +432,6 @@ const Blocks = props => {
       resolve(resolveValues)
     })
   }
-
 
   const getBadge = (status)=>{
     switch (status) {
@@ -421,6 +582,17 @@ const Blocks = props => {
           'time': (<div></div>)
         }}
       />
+      <div className='d-flex justify-content-center'>
+        {showLoadMoreButton && <CButton 
+        onClick={() => {
+          paginate()
+        }}
+        className='font-weight-bold' style={{width: '35%'}} shape='pill' color='primary'
+        disabled={isMoreResultLoading}
+        >
+          {isMoreResultLoading ? 'Loading ...' : 'Load More'}
+        </CButton>}
+      </div>
     </CCardBody>
   )
 }
