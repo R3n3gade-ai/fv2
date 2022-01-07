@@ -118,7 +118,11 @@ const SubSettingsList = props => {
           {settingType == 'simple' && 
             settingAttribute.map((setting, i) => {
               return <CListGroupItem key={i} action className='h5 mb-0 d-flex flex-direction-row align-items-center justify-content-between'>
-                  <div onClick={() => changeCurrentSetting(setting, true, settingId, false)}>
+                  <div onClick={() => {
+                    setting.onClick ? changeCurrentSetting(setting, true, settingId, false) : undefined
+                  }} style={{
+                    cursor: setting.onClick ? 'pointer' : 'default'
+                  }}>
                     {setting.icon && 
                     <CIcon
                         className='pr-2'
@@ -126,6 +130,9 @@ const SubSettingsList = props => {
                         height={25}
                     />}
                     {setting.name}
+                    {setting.shortCode &&
+                      <small className='font-italic text-muted'>{' ( ' + setting.shortCode + ' )'}</small>
+                    }
                   </div>
                   { setting.options &&
                     <div>
@@ -205,15 +212,10 @@ const SubSettingsList = props => {
                           <SketchPicker color={ setting.value } onChange={ (color) => changeCurrentSetting(
                               {
                                 id: color.hex
-                              }, false, setting.id
+                              }, false, ( 'colorId' in setting ) ? setting.colorId : setting.id
                             ) } />
                         </div>
                       }
-                    </div>
-                  }
-                  { setting.shortCode &&
-                    <div className="card-header-action pl-1 pr-1">
-                      {setting.shortCode}
                     </div>
                   }
                   </CListGroupItem>

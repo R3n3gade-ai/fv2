@@ -29,8 +29,16 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import moment from 'moment'
+import tzmoment from 'moment-timezone'
 import { changeTimezone } from '@t0x1c3500/react-stockcharts/lib/utils'
 import AsyncSelect  from 'react-select/async'
+
+const calcTime = () => {
+    let d = new Date(),
+        myDatetimeString = tzmoment(d).tz('America/New_York').format('YYYY-MM-DD hh:mm:ss a z')
+
+    return myDatetimeString
+}
 
 let divergencePs = null
 const TheAside = props => {
@@ -58,7 +66,18 @@ const TheAside = props => {
 
   useEffect(() => {
     if (divergenceFirebaseRef.current == null) {
-      let requestDate = moment(new Date()).format('YYYY_MM_DD')
+      let requestDateOrigin = new Date(),
+          requestedMoment = tzmoment(requestDateOrigin).tz('America/New_York'),
+          requestDateEdited = ([0,6].includes(requestedMoment.day())) ? 
+            requestedMoment.subtract(
+              requestedMoment.day() == 0 ? 2 : 1, 
+              'days'
+            )
+            : (
+              requestedMoment.hour() < 9 ? requestedMoment.subtract(1, 'days') : requestedMoment
+            ),
+          requestDate = requestDateEdited.format('YYYY_MM_DD')
+
       divergenceFirebaseRef.current = React.firebase.firebase.database(React.firebase.tracking).ref(`${requestDate}/one/latest`)
     }
 

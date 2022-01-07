@@ -550,24 +550,24 @@ const ChartList = props => {
                             display: 'flex',
                             alignItems:'center'
                           }}>
-                          <CTooltip content='Hide BlockTrades'>
-                            <CLink className='d-flex card-header-action pl-1 pr-1'
-                              onClick={() => {
-                                SetChartSettings({
-                                  blocksLine: !chart.chartSettings.blocksLine
-                                }, chart.chartUid, false, true)
-                              }}>
-                                <CIcon className='d-flex' name='cis-image-broken' height={20} />
-                            </CLink>
-                          </CTooltip>
-                          <CInput size='xs' type='number' value={chart.chartSettings.blocktradesDates} onChange={(e) => {
-                              let newBlocktradesDates = e.target.value
-                              if (newBlocktradesDates <= 30 && newBlocktradesDates > 0) {
-                                SetChartSettings({
-                                  blocktradesDates: newBlocktradesDates
-                                }, chart.chartUid, false, true)
-                              }
-                          }} />
+                            <CInput style={{width: '60px'}} size='xs' type='number' value={chart.chartSettings.blocktradesDates} onChange={(e) => {
+                                let newBlocktradesDates = e.target.value
+                                if (newBlocktradesDates <= 30 && newBlocktradesDates > 0) {
+                                  SetChartSettings({
+                                    blocktradesDates: newBlocktradesDates
+                                  }, chart.chartUid, false, true)
+                                }
+                            }} />
+                            <CTooltip content='Hide BlockTrades'>
+                              <CLink className='d-flex card-header-action pl-1 pr-1'
+                                onClick={() => {
+                                  SetChartSettings({
+                                    blocksLine: !chart.chartSettings.blocksLine
+                                  }, chart.chartUid, false, true)
+                                }}>
+                                  <CIcon className='d-flex text-danger' name='cis-image-broken' height={20} />
+                              </CLink>
+                            </CTooltip>
                           </div>}
                           <CTooltip content='Show Divergence'>
                             <CLink className='d-flex card-header-action pl-1 pr-1'
@@ -580,7 +580,7 @@ const ChartList = props => {
                                   <CIcon className='d-flex' name='cil-call-split' height={20} />
                                 }
                                 { chart.chartSettings.showDivergence &&
-                                  <CIcon className='d-flex' name='cis-call-split' height={20} />
+                                  <CIcon className='d-flex text-danger' name='cis-call-split' height={20} />
                                 }
                             </CLink>
                           </CTooltip>
