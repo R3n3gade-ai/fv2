@@ -3,6 +3,8 @@ import { compose } from 'redux'
 import { connect } from 'react-redux'
 import { UpdateTwitterExclusions } from '../../store/actions/UserActions'
 import PerfectScrollbar from 'perfect-scrollbar'
+import Moment from 'react-moment';
+
 import {
   CCard,
   CCardBody,
@@ -15,8 +17,10 @@ import {
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
-import moment from "moment"
 
+/**
+ * Component that converts child nodes into text with external links (anchor tags)
+ */
 const AutoLink = ({children}) => {
   return <>
     {mapLinks(children, (url, i) => (
@@ -27,6 +31,11 @@ const AutoLink = ({children}) => {
   </>
 }
 
+/**
+ * Applies a callback to all text chunks matching a URL format
+ * 
+ * Used by AutoLink component
+ */
 const mapLinks = (text, fn) => {
   const EXP = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi; 
   
@@ -40,62 +49,90 @@ const mapLinks = (text, fn) => {
 }
 
 let twitterFeedPs = null;
+let twitterSettingsPs = null;
 
 const Twitter = props => {
   const {
     profile, 
     exclusions, 
-
     UpdateTwitterExclusions
   } = props;
 
-  const [loaded, setLoaded] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [timelines, setTimelines] = useState({});
+  const [timelines, setTimelines] = useState([]);
   const [tweets, setTweets] = useState([]);
   const [filteredTweets, setFilteredTweets] = useState([]);
+  const [loadingPrevious, setLoadingPrevious] = useState(false);
 
   useEffect(() => {
-    return new Promise((resolve, reject) => {
-      const ref = React.firebase.firebase.database(React.firebase.twitter)
-        .ref(`tweets`)
-        .limitToLast(10)
-        .on('value', (val) => {
-          setLoaded(true)
-          setTweets(Object.values(val.val() || {}).reverse())
-        });
-    });
+    listenForTweets()
   }, []);
+
+  function listenForTweets() {
+    React.firebase.firebase.database(React.firebase.twitter)
+      .ref(`tweets`)
+      .orderByKey()
+      .limitToLast(100)
+      .on('child_added', (val) => {
+        setTweets(tweets => [val.val(), ...tweets])
+      });
+  }
+
+  function loadPreviousTweets() {
+    if (loadingPrevious) {
+      return;
+    }
+
+    if (tweets.length === 0) {
+      return;
+    }
+
+    const [oldest] = tweets.slice(-1)
+
+    setLoadingPrevious(true)
+
+    React.firebase.firebase.database(React.firebase.twitter)
+      .ref(`tweets`)
+      .orderByKey()
+      .endBefore(oldest.id)
+      .limitToLast(100)
+      .once('value', (val) => {
+        setTweets(tweets => [
+          ...tweets,
+          ...Object.values(val.val() || {}).reverse()
+        ])
+        setLoadingPrevious(false)
+      });
+  }
 
   useEffect(() => {
     const ref = React.firebase.firebase.database(React.firebase.twitter)
       .ref(`timelines`)
       .on('value', (val) => {
-        setTimelines(val.val())
-        resolve()
+        setTimelines(
+          Object.values(val.val() || {})
+            .sort((a, b) => (a.name > b.name) ? 1 : -1)
+        )
       })
   }, []);
 
   useEffect(() => {
-    // if timelines aren't loaded yet, don't attempt to filter anything
-    if (timelines.length === 0) {
-      return
-    }
+    const validUsernames = Object.values(timelines)
+      .filter(timeline => !exclusions.includes(timeline.username))
+      .map(timeline => timeline.username)
 
-    const validUsernames = Object.keys(timelines)
-      .filter(key => !exclusions.includes(key))
-      .map(key => timelines[key].username)
-
-    setFilteredTweets(tweets.filter(tweet => {
+    const filtered = tweets.filter(tweet => {
       return validUsernames.includes(tweet.author.username)
-    }))
+    }).slice(0, 1000)
+
+    setFilteredTweets(filtered)
 
   }, [tweets, timelines, profile])
 
-  const toggleExclusion = (id) => {
-    const updated = exclusions.includes(id)
-      ? exclusions.filter(i => ![id].includes(i))
-      : [...exclusions, id]
+  const toggleExclusion = (username) => {
+    const updated = exclusions.includes(username)
+      ? exclusions.filter(i => ![username].includes(i))
+      : [...exclusions, username]
 
     UpdateTwitterExclusions(updated)
   }
@@ -105,10 +142,15 @@ const Twitter = props => {
   }
 
   const twitterFeedWrapperRef = useRef(null)
+  const twitterSettingsWrapperRef = useRef(null)
 
   useEffect(async() => {
-    twitterFeedWrapperRef.current && (twitterFeedPs = new PerfectScrollbar('.twitter-feed_wrapper'))
-  }, [loaded, showSettings, exclusions, timelines, tweets])
+    twitterFeedPs && twitterFeedPs.destroy();
+    twitterSettingsPs && twitterSettingsPs.destroy();
+
+    twitterFeedWrapperRef.current && (twitterFeedPs = new PerfectScrollbar('.twitter-feed-wrapper'))
+    twitterSettingsWrapperRef.current && (twitterSettingsPs = new PerfectScrollbar('.twitter-settings-wrapper'))
+  }, [showSettings, exclusions, timelines, filteredTweets])
 
   return (
     <>
@@ -124,78 +166,83 @@ const Twitter = props => {
       </div>
 
       {showSettings &&
-        <CCard>
-          <CCardBody className="pt-1">
-            <CListGroup>
-              {Object.keys(timelines).map((key) => {
-                return (
-                  <CListGroupItem
-                    className='h6 mb-0 d-flex justify-content-between align-items-center'
-                    key={key}
-                  >
-                    <span>
-                    { timelines[key].name }
-                    </span>
-                    <CSwitch 
-                      shape={'pill'} 
-                      color={'primary'} 
-                      checked={!exclusions.includes(key)}
-                      onChange={() => toggleExclusion(key)} 
-                    />
-                  </CListGroupItem>
-                )
-              })}
-            </CListGroup>
-          </CCardBody>
-        </CCard>
+        <div ref={twitterSettingsWrapperRef} className="twitter-settings-wrapper">
+          <CCard >
+            <CCardBody className="pt-1">
+              <CListGroup>
+                {timelines.map((timeline) => {
+                  return (
+                    <CListGroupItem
+                      className='h6 mb-0 d-flex justify-content-between align-items-center'
+                      key={timeline.username}
+                    >
+                      <span>
+                      { timeline.name }
+                      </span>
+                      <CSwitch 
+                        shape={'pill'} 
+                        color={'primary'} 
+                        checked={!exclusions.includes(timeline.username)}
+                        onChange={() => toggleExclusion(timeline.username)} 
+                      />
+                    </CListGroupItem>
+                  )
+                })}
+              </CListGroup>
+            </CCardBody>
+          </CCard>
+        </div>
       }
 
       {!showSettings &&
-        <div>
-          {!loaded &&
-            <CSpinner className='absolute-spinner'/>
-          }
+        <div
+          ref={twitterFeedWrapperRef}
+          className='twitter-feed-wrapper'
+        >
+          <CListGroup flush className="twitter-feed" >
+            {filteredTweets.length === 0 && 
+              <CListGroupItem className="text-center">
+                No tweets found for the selected filters
+              </CListGroupItem>
+            }
 
-          <div
-            ref={twitterFeedWrapperRef}
-            className='twitter-feed_wrapper'
-          >
-            <CListGroup flush className="twitter-feed" >
-              {filteredTweets.length === 0 && 
-                <CListGroupItem className="text-center">
-                  No tweets found for the selected filters
+            {filteredTweets.map(tweet => {
+              return ( 
+                <CListGroupItem
+                  key={tweet.id}
+                  tag="span"
+                  className="twitter-feed_tweet"
+                  >
+                  <div className="twitter-feed_image">
+                    <img src={tweet.author.profile_image_url} width="48" height="48"/>
+                  </div>
+                  <div className="twitter-feed_content">
+                    <a className="twitter-feed_title" href={'https://twitter.com/' + tweet.author.username} target="_blank">
+                      <span className="twitter-feed_author">{tweet.author.name}</span>
+                      <span className="twitter-feed_handle">@{tweet.author.username}</span>
+                    </a>
+                    <time className="twitter-feed_timestamp" dateTime={tweet.created_at}>
+                      <Moment interval={10000} fromNow>{tweet.created_at}</Moment>
+                    </time>
+                    <div className="twitter-feed_text">
+                      <AutoLink>
+                        { tweet.text }
+                      </AutoLink>
+                    </div>
+                  </div>
                 </CListGroupItem>
-              }
-
-              {filteredTweets.map(tweet => {
-                return ( 
-                  <CListGroupItem
-                    key={tweet.id}
-                    tag="span"
-                    className="twitter-feed_tweet"
-                    >
-                    <div className="twitter-feed_image">
-                      <img src={tweet.author.profile_image_url} width="48" height="48"/>
-                    </div>
-                    <div className="twitter-feed_content">
-                      <a className="twitter-feed_title" href={'https://twitter.com/' + tweet.author.username} target="_blank">
-                        <span className="twitter-feed_author">{tweet.author.name}</span>
-                        <span className="twitter-feed_handle">@{tweet.author.username}</span>
-                      </a>
-                      <time className="twitter-feed_timestamp" dateTime={tweet.created_at}>
-                        {moment(tweet.created_at).fromNow()}
-                      </time>
-                      <div className="twitter-feed_text">
-                        <AutoLink>
-                          { tweet.text }
-                        </AutoLink>
-                      </div>
-                    </div>
-                  </CListGroupItem>
-                )
-              })}
-            </CListGroup>
-          </div>
+              )
+            })} 
+            {filteredTweets.length > 0 && filteredTweets.length < 1000 &&
+              <CListGroupItem
+                onClick={loadPreviousTweets}
+                tag="button"
+                className="text-center shadow-none"
+                >
+                Load more Tweets
+              </CListGroupItem>
+            }
+          </CListGroup>
         </div>
       }
     </>

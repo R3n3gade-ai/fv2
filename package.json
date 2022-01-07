@@ -61,6 +61,7 @@
     "react-error-boundary": "^3.1.4",
     "react-hooks-firebase": "^1.0.1",
     "react-joyride": "^2.3.2",
+    "react-moment": "^1.1.1",
     "react-perfect-scrollbar": "^1.5.8",
     "react-rangeslider": "^2.2.0",
     "react-redux": "^5.1.2",

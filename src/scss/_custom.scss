@@ -554,7 +554,12 @@ select:focus {
   background-color: #23242c;
 }
 
-.twitter-feed_wrapper {
+.twitter-settings-wrapper {
+  position: relative;
+  height: calc(100vh - 150px);
+}
+
+.twitter-feed-wrapper {
   position: relative;
   height: calc(100vh - 150px);
 }
@@ -564,7 +569,6 @@ select:focus {
 
   .twitter-feed_tweet {
     display: flex;
-
   }
   
   .twitter-feed_content {
@@ -608,6 +612,10 @@ select:focus {
   .twitter-feed_text {
     font-size: 0.80rem;
     color: $gray-100;
+  }
+
+  button:focus {
+    outline: none;
   }
 }
 

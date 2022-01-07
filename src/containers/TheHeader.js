@@ -157,6 +157,7 @@ const mapStateToProps = (state) => {
     asideShow: state.charts.asideShow,
     scanAsideShow: state.charts.scanAsideShow,
     watchlistAsideShow: state.charts.watchlistAsideShow,
+    integrationsAsideShow: state.charts.integrationsAsideShow,
     darkMode: state.charts.darkMode,
     sidebarShow: state.charts.sidebarShow
   }

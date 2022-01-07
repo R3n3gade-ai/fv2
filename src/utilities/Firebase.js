@@ -13,6 +13,16 @@ var config = {
 firebase.initializeApp({...config,
     databaseURL: 'https://tradingproject19-f513b.firebaseio.com'
 })
+
+// transfer the user's auth state to additional database instances
+// so we can restrict database access based on the auth status
+// (currently just the twitter database)
+firebase.auth().onIdTokenChanged(function(user) {
+    user 
+        ? firebaseInstance.twitter.auth().updateCurrentUser(user)
+        : firebaseInstance.twitter.auth().signOut()
+});
+
 export const firebaseInstance = Object.assign({}, {
     firebase,
     primary: firebase.initializeApp({...config,
@@ -53,7 +63,5 @@ export const firebaseInstance = Object.assign({}, {
     }, 'elTester'),
     twitter: firebase.initializeApp({...config,
         databaseURL: "https://tradingproject19-twitter.firebaseio.com/"
-    }, 'twitter')
+    }, 'twitter'),
 })
-
-firebaseInstance.twitter.database().useEmulator("localhost", 5003)
