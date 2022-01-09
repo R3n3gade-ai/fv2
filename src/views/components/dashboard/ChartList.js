@@ -75,6 +75,10 @@ const ChartList = props => {
     const showAsyncSelect = useRef(false)
     const [viewAsyncSelect, setViewAsyncSelect] = useState(false)
 
+    const [blockdatesState, setBlockdatesState] = useState([])
+
+    const isCtrlKey = useRef(false)
+
     const headerRef = useCallback(node => {
       if (node !== null) {
         updateProperty({headerHeight: node.getBoundingClientRect().height})
@@ -82,16 +86,20 @@ const ChartList = props => {
     }, [])
 
     useEffect(() => {
-      let watchedMap = []
+      let watchedMap = [],
+          blockdates = []
+
       charts.map((chart, i) => {
         let symbolWatched = watchList.some(watchListElement => {
           return watchListElement.symbol == chart.chartSymbol
         })
 
         watchedMap[chart.chartUid] = symbolWatched
+        blockdates[chart.chartUid] = chart.chartSettings.blocktradesDates
       })
 
       setWatchedState(watchedMap)
+      setBlockdatesState(blockdates)
 
       currentSelectedChart.current = selectedChart
 
@@ -106,16 +114,22 @@ const ChartList = props => {
       if (!addEventListener.current) {
         addEventListener.current = true
         window.addEventListener('keydown', onKeyPress)
+        window.addEventListener('wheel', onWheel, { passive: false })
       }
     }, [charts, watchListChanged, selectedChart, fullScreenMode, disableEvent])
 
     useEffect(() => {
         return () => {
             window.removeEventListener('keydown', onKeyPress)
+            window.removeEventListener('wheel', onWheel, { passive: false })
         }
     }, [])
 
     const onKeyPress = (event) => {
+      // if (event.ctrlKey) {
+      //   event.preventDefault()
+      // }
+
       if (currentSelectedChart.current != null && !disableEventListener.current) {
         if (event.altKey) {
           event.preventDefault()
@@ -159,8 +173,11 @@ const ChartList = props => {
       }
     }
 
-    const handleChartOptionClick = (nodeEvent) => {
-      console.log(nodeEvent)
+    const onWheel = (event) => {
+      if (event.ctrlKey) {
+        event.stopPropagation()
+        event.preventDefault()
+      }
     }
 
     const customStyles = {
@@ -454,7 +471,6 @@ const ChartList = props => {
                                 value={chart.chartSettings.replayMarketSettings.speed}
                                 onChange={(e) => {
                                   SetChartSettings({
-                                    replayMarket: 'replay',
                                     replayMarketSettings: {
                                       speed: e.target.value
                                     }
@@ -550,9 +566,14 @@ const ChartList = props => {
                             display: 'flex',
                             alignItems:'center'
                           }}>
-                            <CInput style={{width: '60px'}} size='xs' type='number' value={chart.chartSettings.blocktradesDates} onChange={(e) => {
+                            <CInput 
+                              style={{width: '60px'}} size='xs' type='number' 
+                              value={blockdatesState[chart.chartUid]} onChange={(e) => {
                                 let newBlocktradesDates = e.target.value
                                 if (newBlocktradesDates <= 30 && newBlocktradesDates > 0) {
+                                  let newBlockdatesState = blockdatesState
+                                  newBlockdatesState[chart.chartUid] = newBlocktradesDates
+                                  setBlockdatesState(newBlockdatesState)
                                   SetChartSettings({
                                     blocktradesDates: newBlocktradesDates
                                   }, chart.chartUid, false, true)
@@ -639,6 +660,7 @@ const ChartList = props => {
                               onClick={() => {
                                 EditMarket(chart.chartSymbol, chart.chartUid, true)
                                 localStorage.removeItem(chart.chartUid)
+                                localStorage.removeItem('scale_' + chart.chartUid)
                               }}>
                                 <CIcon className='d-flex' name='cis-x-circle' height={20} />
                             </CLink>
