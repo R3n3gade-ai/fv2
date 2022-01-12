@@ -65,8 +65,11 @@ export const EditMarket = (brandSymbol, brandUid, removeBrand, additionalSetting
             blocksLine: currentChart.chartSettings.blocksLine,
             blocktradesDates: currentChart.chartSettings.blocktradesDates || 30,
             showDivergence: currentChart.chartSettings.showDivergence,
-            chartType: currentChart.chartSettings.chartType
+            chartType: currentChart.chartSettings.chartType,
+            ...additionalSettings
           }
+
+          console.log('same ok', sameChartSettings)
         }
       })
     } else {

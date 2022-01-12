@@ -107,6 +107,10 @@ const parseNanexData = (nanexDate, nanexData, nanexOffset) => {
 			nanexData.H = +nanexData.O;
 		}
 
+        const startOfDay = ( nanexOffset == 1 ) ? 
+            chartTimeTick.getHours() == 9 && chartTimeTick.getMinutes() == 31 :
+            chartTimeTick.getHours() == 9 && chartTimeTick.getMinutes() == 45
+
 		return {
 			date: chartTimeTick,
             timestamp: +nanexDate,
@@ -118,7 +122,8 @@ const parseNanexData = (nanexDate, nanexData, nanexOffset) => {
 			upTick: +nanexData.U,
 			downTick: +nanexData.D,
 			darkUpTick : +nanexData.DU,
-			darkDownTick: +nanexData.DD
+			darkDownTick: +nanexData.DD,
+            startOfDay: startOfDay
 		}
 	} else {
 		return false;
@@ -1144,7 +1149,7 @@ let ChartHolder = forwardRef((props, ref) => {
                             className: "blocktrades-marker",
                             text: "\ueb69",
                             y: ({ yScale, datum }) => yScale(datum.blockTradeValue),
-                            tooltip: d => timeFormat("%B")(d.date),
+                            tooltip: d => timeFormat("%b %d, %H:%M")(d.date),
                         }} />}
 
                 { settings.showDivergence &&
@@ -1173,6 +1178,18 @@ let ChartHolder = forwardRef((props, ref) => {
                         />
                     </>
                 }
+
+                <Annotate 
+                    with={LabelAnnotation}
+                    when={d => d.startOfDay}
+                    usingProps={{
+                        fontSize: 8,
+                        fill: "white",
+                        opacity: 1,
+                        text: "\u007C",
+                        y: ({ yScale, datum }) => yScale.range()[0],
+                        tooltip: d => timeFormat("%b %d, %H:%M")(d.date),
+                    }} />
 
                 <ZoomButtons
                     onReset={() => {
