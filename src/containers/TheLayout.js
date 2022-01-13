@@ -160,7 +160,10 @@ const TheLayout = props => {
             ...{
               chartDbIndex: mapIndex
             },
-            ...singleDefaultStyle
+            ...singleDefaultStyle,
+            ...{
+              chartType: syncChartSettings.chartType || singleDefaultStyle.chartType || 'ohlc'
+            }
           },
           chartData: []
       }
