@@ -61,8 +61,15 @@ export const EditMarket = (brandSymbol, brandUid, removeBrand, additionalSetting
           currentIndice = currentChart.chartSettings.chartDbIndex
           sameChartSettings = {
             periodicity: currentChart.chartSettings.periodicity,
-            flowIndex: currentChart.chartSettings.flowIndex
+            flowIndex: currentChart.chartSettings.flowIndex,
+            blocksLine: currentChart.chartSettings.blocksLine,
+            blocktradesDates: currentChart.chartSettings.blocktradesDates || 30,
+            showDivergence: currentChart.chartSettings.showDivergence,
+            chartType: currentChart.chartSettings.chartType,
+            ...additionalSettings
           }
+
+          console.log('same ok', sameChartSettings)
         }
       })
     } else {
@@ -98,6 +105,7 @@ export const EditMarket = (brandSymbol, brandUid, removeBrand, additionalSetting
           if (selectedChart !== null)  dispatch({type: 'set', selectedChart: null})
           deleteInteractiveNodes(brandUid)
           localStorage.removeItem(brandUid)
+          localStorage.removeItem('scale_' + brandUid)
         }).catch((err) => {
 
         })

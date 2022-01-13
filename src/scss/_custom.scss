@@ -243,7 +243,8 @@ select:focus {
     color: white;
   }
 }
-.option-table_wrapper {
+.option-table_wrapper,
+.watchlist-table_wrapper {
   position: relative;
   height: 80vh;
   overflow: auto;

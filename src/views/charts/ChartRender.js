@@ -64,6 +64,7 @@ const ChartRender = props => {
 		let resetCharts = false
 		if (chartDataSnap.chartSettings.periodicity !== currentChartData[0].chartSettings.periodicity) {
 			localStorage.removeItem(theUid)
+			localStorage.removeItem('scale_' + theUid)
 			resetCharts = true
 		}
 		chartRenderRef.current = {

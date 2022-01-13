@@ -1,6 +1,6 @@
 
-import React, { forwardRef, useRef, useState, useEffect, useReducer } from "react";
-import ReactDOM from "react-dom";
+import React, { forwardRef, useRef, useState, useEffect, useReducer } from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux'
 import { updateProperty } from '../../store/actions/StylesActions'
 import { SetChartSettings } from '../../store/actions/ChartActions'
@@ -10,54 +10,54 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 
-import { scaleTime } from "d3-scale";
+import { scaleTime } from 'd3-scale';
 
-import { format } from "d3-format";
-import { timeFormat } from "d3-time-format";
+import { format } from 'd3-format';
+import { timeFormat } from 'd3-time-format';
 
-import moment from "moment";
+import moment from 'moment';
 import tzmoment from 'moment-timezone';
-import shortid from "shortid";
+import shortid from 'shortid';
 
-import { ChartCanvas, Chart } from "@t0x1c3500/react-stockcharts";
+import { ChartCanvas, Chart, ZoomButtons } from '@t0x1c3500/react-stockcharts';
 import {
 	OHLCSeries,
     LineSeries,
     AreaSeries,
     CandlestickSeries
-} from "@t0x1c3500/react-stockcharts/lib/series";
+} from '@t0x1c3500/react-stockcharts/lib/series';
 import {
 	OHLCTooltip
-} from "@t0x1c3500/react-stockcharts/lib/tooltip";
-import { XAxis, YAxis } from "@t0x1c3500/react-stockcharts/lib/axes";
-import { fitWidth, SaveChartAsImage } from "@t0x1c3500/react-stockcharts/lib/helper";
-import { last,toObject,hexToRGBA,createVerticalLinearGradient,changeTimezone } from "@t0x1c3500/react-stockcharts/lib/utils";
-import { discontinuousTimeScaleProvider } from "@t0x1c3500/react-stockcharts/lib/scale";
+} from '@t0x1c3500/react-stockcharts/lib/tooltip';
+import { XAxis, YAxis } from '@t0x1c3500/react-stockcharts/lib/axes';
+import { fitWidth, SaveChartAsImage } from '@t0x1c3500/react-stockcharts/lib/helper';
+import { last,toObject,hexToRGBA,createVerticalLinearGradient,changeTimezone } from '@t0x1c3500/react-stockcharts/lib/utils';
+import { discontinuousTimeScaleProvider } from '@t0x1c3500/react-stockcharts/lib/scale';
 import {
 	CrossHairCursor,
     CurrentCoordinate,
     EdgeIndicator,
 	MouseCoordinateX,
 	MouseCoordinateY,
-} from "@t0x1c3500/react-stockcharts/lib/coordinates";
-import { flowTrade, flowTradeAvg } from "@t0x1c3500/react-stockcharts/lib/indicator";
+} from '@t0x1c3500/react-stockcharts/lib/coordinates';
+import { flowTrade, flowTradeAvg } from '@t0x1c3500/react-stockcharts/lib/indicator';
 import { 
     InteractiveYCoordinate,
     TrendLine,
     FibonacciRetracement,
     DrawingObjectSelector,
     Zones
-} from "@t0x1c3500/react-stockcharts/lib/interactive";
+} from '@t0x1c3500/react-stockcharts/lib/interactive';
 import {
 	saveInteractiveNodes,
 	getInteractiveNodes,
-} from "./Utils/InteractiveUtils";
+} from './Utils/InteractiveUtils';
 import {
 	Label,
 	Annotate,
 	LabelAnnotation,
-} from "@t0x1c3500/react-stockcharts/lib/annotation";
-import HoverTextNearMouse from "@t0x1c3500/react-stockcharts/lib/interactive/components/HoverTextNearMouse";
+} from '@t0x1c3500/react-stockcharts/lib/annotation';
+import HoverTextNearMouse from '@t0x1c3500/react-stockcharts/lib/interactive/components/HoverTextNearMouse';
 
 import Slider from 'react-rangeslider'
 import 'react-rangeslider/lib/index.css'
@@ -107,6 +107,10 @@ const parseNanexData = (nanexDate, nanexData, nanexOffset) => {
 			nanexData.H = +nanexData.O;
 		}
 
+        const startOfDay = ( nanexOffset == 1 ) ? 
+            chartTimeTick.getHours() == 9 && chartTimeTick.getMinutes() == 31 :
+            chartTimeTick.getHours() == 9 && chartTimeTick.getMinutes() == 45
+
 		return {
 			date: chartTimeTick,
             timestamp: +nanexDate,
@@ -118,7 +122,8 @@ const parseNanexData = (nanexDate, nanexData, nanexOffset) => {
 			upTick: +nanexData.U,
 			downTick: +nanexData.D,
 			darkUpTick : +nanexData.DU,
-			darkDownTick: +nanexData.DD
+			darkDownTick: +nanexData.DD,
+            startOfDay: startOfDay
 		}
 	} else {
 		return false;
@@ -178,6 +183,7 @@ let ChartHolder = forwardRef((props, ref) => {
     const xExtentsStartLimitRef = useRef(0)
     const xExtentsEndLimitRef = useRef(0)
     const replayMarketRef = useRef(false)
+    const replayMarketSpeedChanged = useRef(false)
     const replayMarketSpeedRef = useRef(0)
     const pausedMarketRef = useRef(false)
 
@@ -201,6 +207,8 @@ let ChartHolder = forwardRef((props, ref) => {
     const eventUid = useRef(null)
 
     const [rgbaColor, setRgbaColor] = useState(null)
+
+    const [suffixState, setSuffixState] = useState(1)
 
     const chartData = useRef([])
     const blocksDatesData = useRef(null)
@@ -250,6 +258,11 @@ let ChartHolder = forwardRef((props, ref) => {
         }
 
         replayMarketRef.current = settings.replayMarket
+        if (replayMarketSpeedRef.current > 0 && 
+            parseInt(replayMarketSpeedRef.current) != parseInt(settings.replayMarketSettings.speed)
+        ) {
+            replayMarketSpeedChanged.current = true
+        }
         replayMarketSpeedRef.current = parseInt(settings.replayMarketSettings.speed)
         triggerReplayMarket()
 
@@ -257,10 +270,6 @@ let ChartHolder = forwardRef((props, ref) => {
         triggerScreenShot()
 
         showGridRef.current = settings.showGrid
-
-        if (chartCanvasRef.current !== null) {
-            chartCanvasRef.current.subscribe('xScaleSubscriber', { listener: onXScaleChange })
-        }
 
         if (!chartBlocksTrackedRef.current || settings.blocktradesDates != blocksDatesData.current) {
             blocksDatesData.current = settings.blocktradesDates
@@ -280,10 +289,6 @@ let ChartHolder = forwardRef((props, ref) => {
 
     useEffect(() => {
         return () => {
-            if (chartCanvasRef.current != null) {
-                chartCanvasRef.current.unsubscribe('xScaleSubscriber')
-            }
-
             liveFirebaseRef.current.off('value', postTrackLivePrice)
             data1mFirebaseRef.current.off('value', postGetData1m)
             data15mFirebaseRef.current.off('value', postGetData15m)
@@ -336,15 +341,6 @@ let ChartHolder = forwardRef((props, ref) => {
         }
     }
 
-    const onXScaleChange = (type, moreProps, state) => {
-        if (typeof moreProps !== typeof undefined) {
-            if (typeof moreProps.xScale !== typeof undefined) {
-                console.log(moreProps.xScale.domain(), moreProps.xScale.range())
-                localStorage.setItem(chartUid, JSON.stringify(moreProps.xScale.domain()))
-            }
-        }
-    }
-
     const triggerScreenShot = () => {
         if (takeScreenShotRef.current) {
             takeScreenShotRef.current = false;
@@ -363,10 +359,10 @@ let ChartHolder = forwardRef((props, ref) => {
 
     const triggerReplayMarket = () => {
         if (replayMarketRef.current && !startReplayRef.current) {
-            startReplayRef.current = true;
+            startReplayRef.current = true
             intervalId = window.setInterval(function() {
-                replayMarket();
-            }, replayMarketSpeedRef.current);
+                replayMarket()
+            }, replayMarketSpeedRef.current)
         } else if ( !replayMarketRef.current && pausedMarketRef.current ) {
             editSettings({
                 replayMarket: false,
@@ -374,38 +370,35 @@ let ChartHolder = forwardRef((props, ref) => {
                     speed: 250
                 }
             })
-            xExtentsStartRef.current = 2;
-            xExtentsEndRef.current = -150;
+            xExtentsStartRef.current = 2
+            xExtentsEndRef.current = -150
 
             setXExtentsReplay(
                 [xExtentsStartLimitRef.current, xExtentsEndLimitRef.current]
             )
             
-            pausedMarketRef.current = false;
+            pausedMarketRef.current = false
         }
     }
 
     const replayMarket = () => {
+        console.log(replayMarketSpeedRef.current)
         setXExtentsReplay(
             [xExtentsStartRef.current, xExtentsEndRef.current]
         )
 
-        xExtentsStartRef.current = xExtentsStartRef.current + 1;
-        xExtentsEndRef.current = xExtentsEndRef.current + 1;
+        xExtentsStartRef.current = xExtentsStartRef.current + 1
+        xExtentsEndRef.current = xExtentsEndRef.current + 1
 
         if (
-            (xExtentsStartRef.current == xExtentsStartLimitRef.current) ||
-            (xExtentsEndRef.current == xExtentsEndLimitRef.current) ||
-            (!replayMarketRef.current || replayMarketRef.current == 'pause' || replayMarketRef.current == 'replay')
+            xExtentsStartRef.current > chartData.current.length ||
+            (!replayMarketRef.current || replayMarketRef.current == 'pause' || replayMarketSpeedChanged.current )
         ) {
-            clearInterval(intervalId);
-            startReplayRef.current = false;
+            clearInterval(intervalId)
+            startReplayRef.current = false
 
-            if (
-                (xExtentsStartRef.current == xExtentsStartLimitRef.current) ||
-                (xExtentsEndRef.current == xExtentsEndLimitRef.current)
-            ) {
-                replayMarketRef.current = false;
+            if ( xExtentsStartRef.current > chartData.current.length ) {
+                replayMarketRef.current = false
             }
 
             if (!replayMarketRef.current) {
@@ -415,20 +408,20 @@ let ChartHolder = forwardRef((props, ref) => {
                         speed: 250
                     }
                 })
-                xExtentsStartRef.current = 2;
-                xExtentsEndRef.current = -150;
+
+                xExtentsStartRef.current = 2
+                xExtentsEndRef.current = -150
 
                 setXExtentsReplay(
                     [xExtentsStartLimitRef.current, xExtentsEndLimitRef.current]
                 )
 
-                pausedMarketRef.current = false;
-            } else if (replayMarketRef.current == 'replay') {
-                editSettings({
-                    replayMarket: 'play'
-                })
+                pausedMarketRef.current = false
+            } else if (replayMarketSpeedChanged.current) {
+                replayMarketSpeedChanged.current = false
+                triggerReplayMarket()
             } else if (replayMarketRef.current == 'pause') {
-                pausedMarketRef.current = true;
+                pausedMarketRef.current = true
             }
         } 
     }
@@ -545,6 +538,33 @@ let ChartHolder = forwardRef((props, ref) => {
 		}
 	}
 
+    const handleReset = (dataLength) => {
+        localStorage.setItem(chartUid, JSON.stringify([0, dataLength]))
+        localStorage.setItem('scale_' + chartUid, JSON.stringify({
+            'length': dataLength,
+            'end': 0
+        }))
+        setSuffixState(
+            suffixState + 1
+        )
+    }
+
+    const handleFirst = (dataLength) => {
+        let savedScale = localStorage.getItem('scale_' + chartUid)
+        if (savedScale !== null) {
+            let parsedSavedScale = JSON.parse(savedScale)
+            localStorage.setItem('scale_' + chartUid, JSON.stringify({
+                'length': parsedSavedScale.length,
+                'end': 0
+            }))
+            setSuffixState(
+                suffixState + 1
+            )
+        } else {
+            handleReset(dataLength)
+        }
+    }
+
     const applyDivergence = (chartData) => {
         let returnChartData = chartData
         if (chartDivergencesValuesRef.current.length && chartData.length) {
@@ -643,16 +663,22 @@ let ChartHolder = forwardRef((props, ref) => {
 
     const start = xAccessor(last(data))
     const end = xAccessor(data[0])
-    let xExtents = localStorage.getItem(chartUid) !== null ? JSON.parse(localStorage.getItem(chartUid)) : [start, end]
-    if (xExtentsStartLimitRef.current == 0 && xExtentsEndLimitRef.current == 0) {
-        if (localStorage.getItem(chartUid) !== null) {
-            const localStorageExtents = JSON.parse(localStorage.getItem(chartUid))
-            xExtentsStartLimitRef.current = localStorageExtents[0]
-            xExtentsEndLimitRef.current = localStorageExtents[1]
-        } else {
-            xExtentsStartLimitRef.current = start
-            xExtentsEndLimitRef.current = end
-        }
+
+    let savedScale = localStorage.getItem('scale_' + chartUid),
+        xExtents
+    if (savedScale !== null) {
+        let parsedSavedScale = JSON.parse(savedScale),
+            endScale = chartData.current.length + parsedSavedScale.end,
+            startScale = endScale - parsedSavedScale.length
+
+        xExtents = [startScale, endScale]
+    } else {
+        xExtents =  [start, end]
+    }
+
+    if (!replayMarketRef.current) {
+        xExtentsStartLimitRef.current = xExtents[0]
+        xExtentsEndLimitRef.current = xExtents[1]
     }
 
     if (xExtentsReplay !== null) {
@@ -964,10 +990,11 @@ let ChartHolder = forwardRef((props, ref) => {
                 ref={chartCanvasRef}
                 ratio={ratio}
                 width={width}
+                chartUid={chartUid}
                 margin={margin}
                 padding={15}
                 type={type}
-                seriesName="MSFT"
+                seriesName={'MSFT_' + suffixState}
                 data={data}
                 xScale={xScale}
                 xAccessor={xAccessor}
@@ -985,8 +1012,7 @@ let ChartHolder = forwardRef((props, ref) => {
                     strokeWidth={0.15}
                     opacity={0.1}
                     tickStroke={darkMode ? whiteColor : primaryLightBackground}
-                    ticks={5}
-                    tickFormat={d=> timeFormat('%H:%M')(data[d].date)}
+                    ticks={10}
                     {...xGrid} />
                 <YAxis 
                     axisAt='right' 
@@ -1068,7 +1094,6 @@ let ChartHolder = forwardRef((props, ref) => {
                     type={settings.trendLineType}
                     snap={false}
                     snapTo={d => [d.high, d.low]}
-                    onStart={() => console.log("START")}
                     onComplete={onDrawCompleteChart}
                     trends={settings.trends}
                     appearance={{
@@ -1124,9 +1149,7 @@ let ChartHolder = forwardRef((props, ref) => {
                             className: "blocktrades-marker",
                             text: "\ueb69",
                             y: ({ yScale, datum }) => yScale(datum.blockTradeValue),
-                            onClick: console.log.bind(console),
-                            tooltip: d => timeFormat("%B")(d.date),
-                            // onMouseOver: console.log.bind(console),
+                            tooltip: d => timeFormat("%b %d, %H:%M")(d.date),
                         }} />}
 
                 { settings.showDivergence &&
@@ -1155,6 +1178,28 @@ let ChartHolder = forwardRef((props, ref) => {
                         />
                     </>
                 }
+
+                <Annotate 
+                    with={LabelAnnotation}
+                    when={d => d.startOfDay}
+                    usingProps={{
+                        fontSize: 8,
+                        fill: "white",
+                        opacity: 1,
+                        text: "\u007C",
+                        y: ({ yScale, datum }) => yScale.range()[0],
+                        tooltip: d => timeFormat("%b %d, %H:%M")(d.date),
+                    }} />
+
+                <ZoomButtons
+                    onReset={() => {
+                        handleReset(data.length)
+                    }}
+                    onFirst={() => {
+                        handleFirst(data.length)
+                    }}
+                    dataLength={data.length}
+                />
             </Chart>
             <Chart id={`${chartUid}2`}
                 yExtents={flowindex.accessor()}
