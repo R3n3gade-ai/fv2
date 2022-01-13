@@ -19,3 +19,23 @@ export const EditProfile = (propertyUpdate) => {
         })
   }
 }
+
+export const UpdateTwitterExclusions = (twitterExclusions) => {
+  return (dispatch, getState, {getFirebase}) => {
+    dispatch({ type: 'UPDATE_RESET' })
+    const firebase = getFirebase()
+    const authorId = getState().firebase.auth.uid
+
+    firebase
+        .database()
+        .ref('users/' + authorId)
+        .update({
+          twitterExclusions
+        })
+        .then(() => {
+
+        }).catch((err) => {
+          dispatch({ type: 'UPDATE_ERROR', err })
+        })
+  }
+}
