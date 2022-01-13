@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { firebaseConnect } from 'react-redux-firebase'
 import { updateProperty } from '../store/actions/StylesActions'
 import { EditWatchList, EditMarket, SearchSymbol } from '../store/actions/ChartActions'
+import { EditProfile } from '../store/actions/UserActions'
 import PerfectScrollbar from 'perfect-scrollbar'
 import {
   CNav,
@@ -28,8 +29,16 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import moment from 'moment'
+import tzmoment from 'moment-timezone'
 import { changeTimezone } from '@t0x1c3500/react-stockcharts/lib/utils'
 import AsyncSelect  from 'react-select/async'
+
+const calcTime = () => {
+    let d = new Date(),
+        myDatetimeString = tzmoment(d).tz('America/New_York').format('YYYY-MM-DD hh:mm:ss a z')
+
+    return myDatetimeString
+}
 
 let divergencePs = null
 const TheAside = props => {
@@ -39,10 +48,12 @@ const TheAside = props => {
     divergenceVerified,
     watchList,
     watchListChanged,
+    disableEvent,
     updateProperty,
     EditWatchList,
     EditMarket,
-    SearchSymbol
+    SearchSymbol,
+    EditProfile
   } = props;
 
   const [symbolFilters, setSymbolFilters] = useState([])
@@ -50,9 +61,26 @@ const TheAside = props => {
 
   const [divergencesListData, setDivergencesListData] = useState([])
 
-  const tableWrapperRef = useRef(null)
+  let tableWrapperRef = useRef(null),
+      divergenceFirebaseRef = useRef(null)
 
   useEffect(() => {
+    if (divergenceFirebaseRef.current == null) {
+      let requestDateOrigin = new Date(),
+          requestedMoment = tzmoment(requestDateOrigin).tz('America/New_York'),
+          requestDateEdited = ([0,6].includes(requestedMoment.day())) ? 
+            requestedMoment.subtract(
+              requestedMoment.day() == 0 ? 2 : 1, 
+              'days'
+            )
+            : (
+              requestedMoment.hour() < 9 ? requestedMoment.subtract(1, 'days') : requestedMoment
+            ),
+          requestDate = requestDateEdited.format('YYYY_MM_DD')
+
+      divergenceFirebaseRef.current = React.firebase.firebase.database(React.firebase.tracking).ref(`${requestDate}/one/latest`)
+    }
+
     getDivergences()
 
     if (tableWrapperRef.current) {
@@ -60,51 +88,55 @@ const TheAside = props => {
     }
   }, [symbolFilters, onlyWatchlist, divergenceVerified])
 
+  useEffect(() => {
+      return () => {
+          divergenceFirebaseRef.current.off('value', postGetDivergences)
+      }
+  }, [])
+
   const getDivergences = async() => {
     return new Promise((resolve, reject) => {
-      let requestDate = moment(new Date()).format('YYYY_MM_DD')
-
-      React.firebase.firebase.database(React.firebase.tracking)
-        .ref(`${requestDate}/one/latest`)
-        .on('value', (val) => {
-          let divergenceData = [];
-          val.forEach(function(childSnapshot) {
-            if (['priceDown', 'priceUp'].find(element => element == childSnapshot.key)) {
-              let divergenceColor = childSnapshot.key == 'priceDown' ? '#0ccf02' : '#d0021b'
-              childSnapshot.forEach(function(childSnapshotChild) {
-                let divergenceFrequency = +childSnapshotChild.key;
-                if (divergenceFrequency == 15) {
-                  childSnapshotChild.forEach(function(childSnapshotTimeStamp) {
-                    const childSnapShotValue = childSnapshotTimeStamp.val()
-
-                    if (symbolFilters.length > 0) {
-                      let filterSymbols = symbolFilters.map(Sy => {
-                        return Sy.value
-                      })
-                      
-                      if (!filterSymbols.find(SyElement => SyElement == childSnapShotValue.s.substring(1))) return
-                    }
-
-                    if (onlyWatchlist) {
-                      if (!watchList.find(SyElement => SyElement.symbol == childSnapShotValue.s.substring(1))) return
-                    }
-
-                    divergenceData.push({
-                      symbol: childSnapShotValue.s.substring(1),
-                      type: childSnapshot.key == 'priceDown' ? 'Bullish' : 'Bearish',
-                      price: childSnapShotValue.c,
-                      time: moment(changeTimezone(new Date(+childSnapShotValue.t), 'UTC')).format('HH:mm M/D'),
-                      epoch: +childSnapShotValue.t,
-                    })
-                  })
-                }
-              })
-            }
-          })
-
-        setDivergencesListData(divergenceData.sort( compare ))
-      })
+      divergenceFirebaseRef.current.on('value', postGetDivergences)
     })
+  }
+
+  const postGetDivergences = (val) => {
+    let divergenceData = []
+    val.forEach(function(childSnapshot) {
+      if (['priceDown', 'priceUp'].find(element => element == childSnapshot.key)) {
+        let divergenceColor = childSnapshot.key == 'priceDown' ? '#0ccf02' : '#d0021b'
+        childSnapshot.forEach(function(childSnapshotChild) {
+          let divergenceFrequency = +childSnapshotChild.key;
+          if (divergenceFrequency == 15) {
+            childSnapshotChild.forEach(function(childSnapshotTimeStamp) {
+              const childSnapShotValue = childSnapshotTimeStamp.val()
+
+              if (symbolFilters.length > 0) {
+                let filterSymbols = symbolFilters.map(Sy => {
+                  return Sy.value
+                })
+                
+                if (!filterSymbols.find(SyElement => SyElement == childSnapShotValue.s.substring(1))) return
+              }
+
+              if (onlyWatchlist) {
+                if (!watchList.find(SyElement => SyElement.symbol == childSnapShotValue.s.substring(1))) return
+              }
+
+              divergenceData.push({
+                symbol: childSnapShotValue.s.substring(1),
+                type: childSnapshot.key == 'priceDown' ? 'Bullish' : 'Bearish',
+                price: childSnapShotValue.c,
+                time: moment(changeTimezone(new Date(+childSnapShotValue.t), 'UTC')).format('HH:mm M/D'),
+                epoch: +childSnapShotValue.t,
+              })
+            })
+          }
+        })
+      }
+    })
+
+    setDivergencesListData(divergenceData.sort( compare ))
   }
 
   const fields = [
@@ -314,6 +346,8 @@ const TheAside = props => {
                     loadOptions={promiseOptions}
                     onChange={setSymbolFilters}
                     isMulti
+                    onFocus={() => updateProperty({disableEvent: true})}
+                    onBlur={() => updateProperty({disableEvent: false})}
                     theme={(theme) => ({
                       ...theme,
                       colors: {
@@ -338,7 +372,7 @@ const TheAside = props => {
                       (item, index)=> {
                         return (
                           <td style={{fontWeight: 'bolder'}}>
-                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, false, {
+                            <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, 0, false, {
                               showDivergence: true
                             })}>
                               {item.symbol}
@@ -353,7 +387,7 @@ const TheAside = props => {
                             {/* <CTooltip content='Add to Watchlist'> */}
                               <div style={{cursor: 'pointer'}} onClick={() => EditWatchList(item.symbol)}>
                                 { !watchList.find(element => element.symbol == item.symbol) && 
-                                  <CIcon size={'sm'} className='text-success' name="cis-queue-add" />
+                                  <CIcon size={'sm'} className='text-success' name="cil-queue-add" />
                                 }
                                 { watchList.find(element => element.symbol == item.symbol) && 
                                   <CIcon size={'sm'} className='text-danger' name="cis-queue-remove" />
@@ -401,7 +435,7 @@ const TheAside = props => {
               <h6>BETA FEATURE</h6>
               <p className='pl-3 pr-3'>The divergence tool is currently in Beta form as we develop the functionality. As such, it should not be used as a stand alone reference. You are solely responsible for confirming divergence exists manually. Only regular divergence is detected, not trend divergence. Click the button below only if you agree to use this tool at your own risk. Please submit any issues or feedback for this tool in the '#divergence-tool' channel of the Discord server.</p>
               <CButton 
-              onClick={() => updateProperty({divergenceVerified: !divergenceVerified})}
+              onClick={() => EditProfile({divergenceVerified: !divergenceVerified})}
               className='font-weight-bold' shape='pill' color='primary'
               >
                 I Do Agree
@@ -420,15 +454,17 @@ const mapStateToProps = (state) => {
     divergenceVerified: state.firebase.profile.divergenceVerified || false,
     asideShow: state.charts.asideShow,
     watchList: state.charts.watchList,
-    watchListChanged: state.charts.watchListChanged
+    watchListChanged: state.charts.watchListChanged,
+    disableEvent: state.charts.disableEvent
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
     updateProperty: (property) => dispatch(updateProperty(property)),
+    EditProfile: (propertyUpdate) => dispatch(EditProfile(propertyUpdate)),
     EditWatchList: (brandSymbol) => dispatch(EditWatchList(brandSymbol)),
-    EditMarket: (brandSymbol, removeBrand, additionalSettings) => dispatch(EditMarket(brandSymbol, removeBrand, additionalSettings)),
+    EditMarket: (brandSymbol, brandUid, removeBrand, additionalSettings) => dispatch(EditMarket(brandSymbol, brandUid, removeBrand, additionalSettings)),
     SearchSymbol: (searchInput) => dispatch(SearchSymbol(searchInput))
   }
 }

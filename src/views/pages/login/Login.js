@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { signIn } from '../../../store/actions/AuthActions'
-import { Link, Redirect } from 'react-router-dom'
+import { updateProperty } from '../../../store/actions/StylesActions'
+import { Redirect } from 'react-router-dom'
 import {
   CButton,
   CCard,
@@ -34,13 +35,19 @@ const Login = props => {
   const {
     auth,
     loadedProfile,
+    profileInfo,
     authError,
     signinProgress,
-    signIn
+    signIn,
+    updateProperty
   } = props
 
-  if (auth.uid) {
-    return <Redirect to='/dashboard' />
+  if (auth.uid && profileInfo.isLoaded) {
+    if (profileInfo.priormainStatus == 'Cancelled') {
+      updateProperty({ err: {message : 'Account Cancelled'} }, 'LOGIN_ERROR')
+    } else {
+      return <Redirect to='/dashboard' />
+    }    
   }
 
   const [email, setEmail] = useState('')
@@ -54,11 +61,21 @@ const Login = props => {
   const [closeButton, setCloseButton] = useState(true)
   const [fade, setFade] = useState(true)
 
+  const loginButtonRef = useRef(null)
+
   useEffect(() => {
     if (authError !== null) {
       addToast('Login Failed', authError)
     }
+
+    window.addEventListener('keyup', onKeyPress)
   }, [authError])
+
+  useEffect(() => {
+    return () => {
+      window.removeEventListener('keyup', onKeyPress)
+    }
+  }, [])
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -88,6 +105,18 @@ const Login = props => {
     ])
   }
 
+  const onKeyPress = (event) => {
+    const keyCode = event.which
+    
+    if (loginButtonRef.current == null) return
+
+    switch (keyCode) {
+      case 13:
+        loginButtonRef.current.click()
+        break
+    }
+  }
+
   const toasters = (()=>{
     return toasts.reduce((toasters, toast) => {
       toasters[toast.position] = toasters[toast.position] || []
@@ -98,7 +127,7 @@ const Login = props => {
 
   return (
     <>
-      {!loadedProfile && <TheLoader/>}
+      {!profileInfo.isLoaded && <TheLoader/>}
       <div className="c-app c-dark-theme c-default-layout flex-row align-items-center login-app-bg">
         <CContainer>
           <CRow className="justify-content-center">
@@ -106,7 +135,7 @@ const Login = props => {
               <CCardGroup>
                 <CCard className="p-4">
                   <CCardBody>
-                    <CForm noValidate wasValidated={validated} name='simpleForm'>
+                    <CForm noValidate wasValidated={validated} id='loginForm' name='simpleForm'>
                       <h1 className='text-center'>Login</h1>
                       <p className="text-muted text-center">Sign In to your account</p>
                       <CFormGroup>
@@ -147,12 +176,12 @@ const Login = props => {
                       </CFormGroup>
                       <CRow>
                         <CCol xs="6">
-                          <CButton type="button" onClick={handleSubmit} color="primary" className="px-4"
+                          <CButton type="button" innerRef={loginButtonRef} onClick={handleSubmit} color="primary" className="px-4"
                             disabled={signinProgress}>{signinProgress ? 'Loading...' : 'Login'}</CButton>
                         </CCol>
-                        <CCol xs="6" className="text-right">
+                        {/* <CCol xs="6" className="text-right">
                           <CButton color="link" className="px-0">Forgot password?</CButton>
-                        </CCol>
+                        </CCol> */}
                       </CRow>
                     </CForm>
                   </CCardBody>
@@ -206,6 +235,7 @@ const mapStateToProps = (state) => {
   return{
     auth: state.firebase.auth,
     loadedProfile: state.firebase.auth.isLoaded,
+    profileInfo: state.firebase.profile,
     authError: state.auth.authError,
     signinProgress: state.auth.signinProgress
   }
@@ -213,7 +243,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    signIn: (creds) => dispatch(signIn(creds))
+    signIn: (creds) => dispatch(signIn(creds)),
+    updateProperty: (propery, type) => dispatch(updateProperty(propery, type))
   }
 }
 

@@ -27,7 +27,7 @@ const TheSidebar = props => {
   return (
     <CSidebar
       show={show}
-      unfoldable
+      unfoldable={false}
       minimize={minimize}
       onShowChange={(val) => updateProperty({sidebarShow: !show})}
       onMinimizeChange={(val) => updateProperty({sidebarMinimize: !minimize})}

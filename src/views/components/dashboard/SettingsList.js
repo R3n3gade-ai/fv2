@@ -54,7 +54,8 @@ const SettingsList = props => {
                                             name: 'Both',
                                             id: 'both'
                                         }
-                                    ]
+                                    ],
+                                    onClick: false
                                 },
                                 {
                                     name: 'Time Frame',
@@ -69,25 +70,45 @@ const SettingsList = props => {
                                             name: '15 Minutes',
                                             id: '15m'
                                         }
-                                    ]
+                                    ],
+                                    onClick: false
+                                },
+                                {
+                                    name: 'Chart Type',
+                                    id: 'chartType',
+                                    value: currentChartSettings.chartType,
+                                    options: [
+                                        {
+                                            name: 'OHLC',
+                                            id: 'ohlc'
+                                        },
+                                        {
+                                            name: 'Candles',
+                                            id: 'candles'
+                                        }
+                                    ],
+                                    onClick: false
                                 },
                                 {
                                     name: 'Show Average',
                                     id: 'showAverage',
                                     value: currentChartSettings.showAverage,
-                                    switch: true
+                                    switch: true,
+                                    onClick: false
                                 },
                                 {
                                     name: 'Show Grid',
                                     id: 'showGrid',
                                     value: currentChartSettings.showGrid,
-                                    switch: true
+                                    switch: true,
+                                    onClick: false
                                 },
                                 {
                                     name: 'Show BlockTrades',
                                     id: 'blocksLine',
                                     value: currentChartSettings.blocksLine,
-                                    switch: true
+                                    switch: true,
+                                    onClick: false
                                 }
                             ]}
                             settingApplyToAll={true}
@@ -102,49 +123,57 @@ const SettingsList = props => {
                                     name: 'Background Color',
                                     id: 'backgroundColor',
                                     value: currentChartSettings.backgroundColor,
-                                    colors: true
+                                    colors: true,
+                                    onClick: false
                                 },
                                 {
                                     name: 'Price Bars Color',
                                     id: 'priceBarsColor',
                                     value: currentChartSettings.priceBarsColor,
-                                    colors: true
+                                    colors: true,
+                                    onClick: false
                                 },
                                 {
                                     name: 'Normal Flow Index',
                                     id: 'flowIndexColor',
                                     value: currentChartSettings.flowIndexColor,
-                                    colors: true
+                                    colors: true,
+                                    onClick: false
                                 },
                                 {
                                     name: 'Average Flow Index',
                                     id: 'flowIndexAvgColor',
                                     value: currentChartSettings.flowIndexAvgColor,
-                                    colors: true
+                                    colors: true,
+                                    onClick: false
                                 },
                                 {
                                     name: 'Dark Flow Index',
                                     id: 'flowDarkIndexColor',
                                     value: currentChartSettings.flowDarkIndexColor,
-                                    colors: true
+                                    colors: true,
+                                    onClick: false
                                 },
                                 {
                                     name: 'Combo Flow Index',
                                     id: 'flowBothIndexColor',
                                     value: currentChartSettings.flowBothIndexColor,
-                                    colors: true
+                                    colors: true,
+                                    onClick: false
                                 },
                                 {
                                     name: 'Dark Pool BlockTrade',
                                     id: 'blockTradesDarkPoolColor',
                                     value: currentChartSettings.blockTradesDarkPoolColor,
-                                    colors: true
+                                    colors: true,
+                                    onClick: false
                                 },
                                 {
                                     name: 'Regular Pool BlockTrade',
                                     id: 'blockTradesRegularPoolColor',
                                     value: currentChartSettings.blockTradesRegularPoolColor,
-                                    colors: true
+                                    colors: true,
+                                    onClick: false
                                 }
                             ]}
                             settingApplyToAll={true}
@@ -158,33 +187,57 @@ const SettingsList = props => {
                                 {
                                     name: 'Fibonacci Retracements',
                                     id: {
-                                        fibonacciRetracements: true
+                                        fibonacciRetracements: true,
+                                        fibonacciTrendLineColor: currentChartSettings.fibonacciRetracementsColor || '#2ec2ff'
                                     },
-                                    icon: 'fibonacci'
+                                    icon: 'fibonacci',
+                                    shortCode: 'ALT+F',
+                                    colorId: 'fibonacciRetracementsColor',
+                                    colors: true,
+                                    value: currentChartSettings.fibonacciRetracementsColor || '#2ec2ff',
+                                    onClick: true
                                 },
                                 {
                                     name: 'Finite Line',
                                     id: {
                                         trendLine: true,
-                                        trendLineType: 'LINE'
+                                        trendLineType: 'LINE',
+                                        trendLineColor: currentChartSettings.trendLineLineColor || '#2ec2ff'
                                     },
-                                    icon: 'sLine'
+                                    icon: 'sLine',
+                                    shortCode: 'ALT+L',
+                                    colorId: 'trendLineLineColor',
+                                    colors: true,
+                                    value: currentChartSettings.trendLineLineColor || '#2ec2ff',
+                                    onClick: true
                                 },
                                 {
                                     name: 'Semi-Infinite Line',
                                     id: {
                                         trendLine: true,
-                                        trendLineType: 'RAY'
+                                        trendLineType: 'RAY',
+                                        trendLineColor: currentChartSettings.trendLineRayColor || '#2ec2ff'
                                     },
-                                    icon: 'siLine'
+                                    icon: 'siLine',
+                                    shortCode: 'ALT+R',
+                                    colorId: 'trendLineRayColor',
+                                    colors: true,
+                                    value: currentChartSettings.trendLineRayColor || '#2ec2ff',
+                                    onClick: true
                                 },
                                 {
                                     name: 'Infinite Line',
                                     id: {
                                         trendLine: true,
-                                        trendLineType: 'XLINE'
+                                        trendLineType: 'XLINE',
+                                        trendLineColor: currentChartSettings.trendLineXlineColor || '#2ec2ff'
                                     },
-                                    icon: 'iLine'
+                                    icon: 'iLine',
+                                    shortCode: 'ALT+X',
+                                    colorId: 'trendLineXlineColor',
+                                    colors: true,
+                                    value: currentChartSettings.trendLineXlineColor || '#2ec2ff',
+                                    onClick: true
                                 }
                             ]}
                         />     

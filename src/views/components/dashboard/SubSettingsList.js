@@ -63,7 +63,7 @@ const SubSettingsList = props => {
       }
 
       for (var j = 0; j < editedCharts; j++) {
-        let loopChartSymbol = applyToAllChart ? chartSetting[j].chartSymbol : currentChartSettings.chartSymbol
+        let loopChartSymbol = applyToAllChart ? chartSetting[j].chartUid : currentChartSettings.chartUid
         if (typeof setting.id === 'object') {
           SetChartSettings({
               ...setting.id,
@@ -94,7 +94,7 @@ const SubSettingsList = props => {
             <div>
               {settingTitle}
             </div>
-            { settingApplyToAll && 
+            {/* { settingApplyToAll && 
               <div>
                 <CSwitch
                   className=""
@@ -106,7 +106,7 @@ const SubSettingsList = props => {
                   labelOff="ONE"
                   onChange={() => updateProperty({applyToAllChart: !applyToAllChart})}
                 />
-              </div>}
+              </div>} */}
           </CListGroupItem>
           {settingType == 'multiple' &&
             settingAttribute.map((setting, i) => {
@@ -118,7 +118,11 @@ const SubSettingsList = props => {
           {settingType == 'simple' && 
             settingAttribute.map((setting, i) => {
               return <CListGroupItem key={i} action className='h5 mb-0 d-flex flex-direction-row align-items-center justify-content-between'>
-                  <div onClick={() => changeCurrentSetting(setting, true, settingId, false)}>
+                  <div onClick={() => {
+                    setting.onClick ? changeCurrentSetting(setting, true, settingId, false) : undefined
+                  }} style={{
+                    cursor: setting.onClick ? 'pointer' : 'default'
+                  }}>
                     {setting.icon && 
                     <CIcon
                         className='pr-2'
@@ -126,6 +130,9 @@ const SubSettingsList = props => {
                         height={25}
                     />}
                     {setting.name}
+                    {setting.shortCode &&
+                      <small className='font-italic text-muted'>{' ( ' + setting.shortCode + ' )'}</small>
+                    }
                   </div>
                   { setting.options &&
                     <div>
@@ -205,7 +212,7 @@ const SubSettingsList = props => {
                           <SketchPicker color={ setting.value } onChange={ (color) => changeCurrentSetting(
                               {
                                 id: color.hex
-                              }, false, setting.id
+                              }, false, ( 'colorId' in setting ) ? setting.colorId : setting.id
                             ) } />
                         </div>
                       }
@@ -232,8 +239,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     updateProperty: (property) => dispatch(updateProperty(property)),
     SetChartSettings: (
-          newChartSettings, chartSymbol, resetChartData, synchronizeChart, synchronizeChartOnly, saveDefault
-        ) => dispatch(SetChartSettings(newChartSettings, chartSymbol, resetChartData, synchronizeChart, synchronizeChartOnly, saveDefault))
+          newChartSettings, chartUid, resetChartData, synchronizeChart, synchronizeChartOnly, saveDefault
+        ) => dispatch(SetChartSettings(newChartSettings, chartUid, resetChartData, synchronizeChart, synchronizeChartOnly, saveDefault))
   }
 }
 

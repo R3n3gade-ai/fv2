@@ -71,7 +71,7 @@ select:focus {
       transform: translate(-50%, -50%);
     }
 }
-.custom-select-xs {
+.custom-select-xs, .form-control-xs {
   height: calc(1.5em + 0.26rem + 2px);
   padding-top: 0.13rem;
   padding-bottom: 0.13rem;
@@ -116,8 +116,10 @@ select:focus {
   padding-left: 0.07rem !important;
 }
 
-.tippy-box, .tippy-content {
-  background-color: #50adec!important;
+.tippy-box:not(.tippy-box[data-theme~='cpopover']) {
+  .tippy-content {
+    background-color: #50adec!important;
+  }
 }
 
 .tippy-arrow {
@@ -241,7 +243,8 @@ select:focus {
     color: white;
   }
 }
-.option-table_wrapper {
+.option-table_wrapper,
+.watchlist-table_wrapper {
   position: relative;
   height: 80vh;
   overflow: auto;
@@ -476,4 +479,46 @@ select:focus {
   //   background-repeat: no-repeat;
   //   background-position: center;
   // }
+}
+
+.chartType-container {
+  cursor: pointer;
+}
+.popover-body {
+  padding: 0
+}
+.chartTypes-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  .chartTypes-option-selected {
+    background-color: rgba(0,0,0, .25);
+  }
+
+  .chartTypes-option {
+    padding: 7px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(0,0,0, .25);
+    }
+
+    img {
+      padding-right: 5px
+    }
+  }
+}
+
+.chartlist-container {
+  .card-header {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
 }

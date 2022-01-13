@@ -1,9 +1,10 @@
-import React, { useEffect, useReducer, useState } from 'react'
+import React, { useEffect, useReducer, useState, useRef } from 'react'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
 import { firebaseConnect } from 'react-redux-firebase'
 import { updateProperty } from '../store/actions/StylesActions'
-import { EditWatchList, SearchSymbol } from '../store/actions/ChartActions'
+import { EditWatchList, EditMarket, SearchSymbol } from '../store/actions/ChartActions'
+import PerfectScrollbar from 'perfect-scrollbar'
 import {
     CSidebar,
     CSidebarClose,
@@ -14,9 +15,13 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import moment from 'moment'
+import tzmoment from 'moment-timezone'
 import { changeTimezone } from '@t0x1c3500/react-stockcharts/lib/utils'
 import AsyncSelect  from 'react-select/async'
 
+let watchlistPs = null,
+    theWatchListViewEdit = [],
+    filterSymbols = []
 const TheWatchListAside = props => {
   const {
     auth,
@@ -25,8 +30,10 @@ const TheWatchListAside = props => {
     watchList,
     watchListChanged,
     dbWachList,
+    disableEvent,
     updateProperty,
     EditWatchList,
+    EditMarket,
     SearchSymbol
   } = props;
 
@@ -34,7 +41,25 @@ const TheWatchListAside = props => {
 
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0)
 
+  let wacthListTableWrapperRef = useRef(null)
+
   useEffect(() => {
+    // if (symbolFilters.length > 0) {
+    //   filterSymbols = symbolFilters.map(Sy => {
+    //     return Sy.value
+    //   })
+
+    //   theWatchListViewEdit = watchList
+    //   // theWatchListViewEdit = watchList.filter(watchListItem => {
+    //   //   return filterSymbols.some(SyElement => SyElement == watchListItem.symbol)
+    //   // })
+    // } else {
+    //   filterSymbols = []
+    //   theWatchListViewEdit = watchList
+    // }
+
+    theWatchListViewEdit = watchList
+
     if (typeof dbWachList !== typeof undefined) {
       if (dbWachList[auth.uid] !== null) {
         Object.keys(dbWachList[auth.uid]).map((singleDbWachList) => {
@@ -42,17 +67,21 @@ const TheWatchListAside = props => {
         })
       }
     }
+
+    if (wacthListTableWrapperRef.current) {
+      watchlistPs = new PerfectScrollbar('.watchlist-table_wrapper')
+    }
   }, [dbWachList, watchListChanged])
 
   const getDatabase = (eSymbol) => {
     let eSymbolCodeCharachter = eSymbol.charAt(0)
     let eSymbolCode = (eSymbolCodeCharachter.toLowerCase()).charCodeAt( eSymbolCodeCharachter.length - 1 )
 
-    if (eSymbolCode >= 97 && eSymbolCode <= 101) {
+    if (eSymbolCode >= 97 && eSymbolCode <= 102) {
       return 'ae'
     }
 
-    if (eSymbolCode >= 102 && eSymbolCode <= 108) {
+    if (eSymbolCode > 102 && eSymbolCode <= 108) {
       return 'fl'
     }
 
@@ -66,8 +95,7 @@ const TheWatchListAside = props => {
   }
 
   const mapSymbolWatchlist  = (watchedSymbol) => {
-    var theWatchListViewEdit = watchList
-    var symbolExists = theWatchListViewEdit.some(WatchedSymbolView => {
+    const symbolExists = theWatchListViewEdit.some(WatchedSymbolView => {
       return WatchedSymbolView.symbol == watchedSymbol
     })
 
@@ -78,27 +106,34 @@ const TheWatchListAside = props => {
         netdaily: 0
       })
 
-      getLatestValue(watchedSymbol, theWatchListViewEdit)
+      getLatestValue(watchedSymbol)
     }
   }
 
-  const getLatestValue = async(watchedSymbol, theWatchListViewEdit) => {
+  const getLatestValue = async(watchedSymbol) => {
     let symbolDatabase = getDatabase(watchedSymbol),
-        currentMoment = (new Date()).getTime(),
-        workingMoment = !['Sunday', 'Saturday'].includes(moment(currentMoment).format('dddd')) ? currentMoment : (
-          moment(currentMoment).format('dddd') == 'Saturday' ? currentMoment - 60000 * 60 * 24 : currentMoment - 60000 * 60 * 48
-        ),
-        requestDate = moment(workingMoment).format('YYYY_MM_DD')
+        requestDateOrigin = new Date(),
+        requestedMoment = tzmoment(requestDateOrigin).tz('America/New_York'),
+        requestDateEdited = ([0,6].includes(requestedMoment.day())) ? 
+          requestedMoment.subtract(
+            requestedMoment.day() == 0 ? 2 : 1, 
+            'days'
+          )
+          : (
+            ( requestedMoment.hour() < 9 || ( requestedMoment.hour() == 9 && requestedMoment.minutes() < 31 ) ) ? 
+              requestedMoment.subtract(1, 'days') : requestedMoment
+          ),
+        requestDate = requestDateEdited.format('YYYY_MM_DD')
 
     React.firebase.firebase.database(React.firebase[symbolDatabase])
       .ref(`nanex/e${watchedSymbol}/${requestDate}`)
       .limitToLast(1)
       .on('value', (latestValueSnap) => {
-        gotLatestValue(latestValueSnap, watchedSymbol, theWatchListViewEdit)
+        gotLatestValue(latestValueSnap, watchedSymbol)
       })
   }
 
-  const gotLatestValue = async(latestValueSnap, watchedSymbol, theWatchListViewEdit) => {
+  const gotLatestValue = async(latestValueSnap, watchedSymbol) => {
     latestValueSnap.forEach(function(childSnapshot) {
       let snapShoptValues = childSnapshot.val()
       let symbolLatestValue = snapShoptValues.C.toFixed(2)
@@ -321,6 +356,8 @@ const TheWatchListAside = props => {
                             loadOptions={promiseOptions}
                             onChange={setSymbolFilters}
                             isMulti
+                            onFocus={() => updateProperty({disableEvent: true})}
+                            onBlur={() => updateProperty({disableEvent: false})}
                             theme={(theme) => ({
                                 ...theme,
                                 colors: {
@@ -334,53 +371,56 @@ const TheWatchListAside = props => {
                         />
                     </CCol>
                 </CRow>
-                <CDataTable
-                    items={watchList}
-                    fields={fields}
-                    striped
-                    hover
-                    pagination
-                    scopedSlots = {{
-                        'symbol':
-                        (item, index)=> {
-                            return (
+                <div className='watchlist-table_wrapper' ref={wacthListTableWrapperRef}>
+                  <CDataTable
+                      items={theWatchListViewEdit}
+                      fields={fields}
+                      striped
+                      hover
+                      scopedSlots = {{
+                          'symbol':
+                          (item, index)=> {
+                              return (
                                 <td style={{fontWeight: 'bolder'}}>
-                                    {item.symbol}
+                                    <div style={{cursor: 'pointer'}} onClick={() => EditMarket(item.symbol, 0, false)}>
+                                        {item.symbol}
+                                    </div>
                                 </td>
-                            )
-                        },
-                        'action':
-                        (item, index)=> {
-                            return (
-                              <td className='add-to_watchlist pl-0 pr-0'>
-                                  <div style={{cursor: 'pointer'}} onClick={() => EditWatchList(item.symbol)}>
-                                    <CIcon size={'sm'} className='text-danger' name="cis-queue-remove" />
-                                  </div>
-                              </td>
-                            )
-                        },
-                        'last':
-                        (item, index)=> {
-                            return (
-                                <td>
-                                    <CBadge color={'info'}>
-                                        {item.last}
-                                    </CBadge>
+                              )
+                          },
+                          'action':
+                          (item, index)=> {
+                              return (
+                                <td className='add-to_watchlist pl-0 pr-0'>
+                                    <div style={{cursor: 'pointer'}} onClick={() => EditWatchList(item.symbol)}>
+                                      <CIcon size={'sm'} className='text-danger' name="cis-queue-remove" />
+                                    </div>
                                 </td>
-                            )
-                        },
-                        'netdaily':
-                        (item, index)=> {
-                            return (
-                                <td>
-                                    <CBadge color={getBadge(item.positive)}>
-                                        {item.netdaily}
-                                    </CBadge>
-                                </td>
-                            )
-                        }
-                    }}
-                />
+                              )
+                          },
+                          'last':
+                          (item, index)=> {
+                              return (
+                                  <td>
+                                      <CBadge color={'info'}>
+                                          {item.last}
+                                      </CBadge>
+                                  </td>
+                              )
+                          },
+                          'netdaily':
+                          (item, index)=> {
+                              return (
+                                  <td>
+                                      <CBadge color={getBadge(item.positive)}>
+                                          {item.netdaily}
+                                      </CBadge>
+                                  </td>
+                              )
+                          }
+                      }}
+                  />
+                </div>
             </div>
         </CCol>
       </CRow>
@@ -395,6 +435,7 @@ const mapStateToProps = (state) => {
     watchlistAsideShow: state.charts.watchlistAsideShow,
     watchList: state.charts.watchList,
     watchListChanged: state.charts.watchListChanged,
+    disableEvent: state.charts.disableEvent,
     dbWachList: state.firebase.data.mySymbols
   }
 }
@@ -403,6 +444,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     updateProperty: (property) => dispatch(updateProperty(property)),
     EditWatchList: (brandSymbol) => dispatch(EditWatchList(brandSymbol)),
+    EditMarket: (brandSymbol, brandUid, removeBrand) => dispatch(EditMarket(brandSymbol, brandUid, removeBrand)),
     SearchSymbol: (searchInput) => dispatch(SearchSymbol(searchInput))
   }
 }

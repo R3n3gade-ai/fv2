@@ -1,6 +1,6 @@
 
-import React, { forwardRef, useRef, useState, useEffect, useReducer } from "react";
-import ReactDOM from "react-dom";
+import React, { forwardRef, useRef, useState, useEffect, useReducer } from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux'
 import { updateProperty } from '../../store/actions/StylesActions'
 import { SetChartSettings } from '../../store/actions/ChartActions'
@@ -10,63 +10,67 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 
-import { scaleTime } from "d3-scale";
+import { scaleTime } from 'd3-scale';
 
-import { format } from "d3-format";
-import { timeFormat } from "d3-time-format";
+import { format } from 'd3-format';
+import { timeFormat } from 'd3-time-format';
 
-import moment from "moment";
+import moment from 'moment';
 import tzmoment from 'moment-timezone';
-import shortid from "shortid";
+import shortid from 'shortid';
 
-import { ChartCanvas, Chart } from "@t0x1c3500/react-stockcharts";
+import { ChartCanvas, Chart, ZoomButtons } from '@t0x1c3500/react-stockcharts';
 import {
 	OHLCSeries,
     LineSeries,
-    AreaSeries
-} from "@t0x1c3500/react-stockcharts/lib/series";
+    AreaSeries,
+    CandlestickSeries
+} from '@t0x1c3500/react-stockcharts/lib/series';
 import {
 	OHLCTooltip
-} from "@t0x1c3500/react-stockcharts/lib/tooltip";
-import { XAxis, YAxis } from "@t0x1c3500/react-stockcharts/lib/axes";
-import { fitWidth, SaveChartAsImage } from "@t0x1c3500/react-stockcharts/lib/helper";
-import { last,toObject,hexToRGBA,createVerticalLinearGradient,changeTimezone } from "@t0x1c3500/react-stockcharts/lib/utils";
-import { discontinuousTimeScaleProvider } from "@t0x1c3500/react-stockcharts/lib/scale";
+} from '@t0x1c3500/react-stockcharts/lib/tooltip';
+import { XAxis, YAxis } from '@t0x1c3500/react-stockcharts/lib/axes';
+import { fitWidth, SaveChartAsImage } from '@t0x1c3500/react-stockcharts/lib/helper';
+import { last,toObject,hexToRGBA,createVerticalLinearGradient,changeTimezone } from '@t0x1c3500/react-stockcharts/lib/utils';
+import { discontinuousTimeScaleProvider } from '@t0x1c3500/react-stockcharts/lib/scale';
 import {
 	CrossHairCursor,
     CurrentCoordinate,
     EdgeIndicator,
 	MouseCoordinateX,
 	MouseCoordinateY,
-} from "@t0x1c3500/react-stockcharts/lib/coordinates";
-import { flowTrade, flowTradeAvg } from "@t0x1c3500/react-stockcharts/lib/indicator";
+} from '@t0x1c3500/react-stockcharts/lib/coordinates';
+import { flowTrade, flowTradeAvg } from '@t0x1c3500/react-stockcharts/lib/indicator';
 import { 
     InteractiveYCoordinate,
     TrendLine,
     FibonacciRetracement,
     DrawingObjectSelector,
     Zones
-} from "@t0x1c3500/react-stockcharts/lib/interactive";
+} from '@t0x1c3500/react-stockcharts/lib/interactive';
 import {
 	saveInteractiveNodes,
 	getInteractiveNodes,
-} from "./Utils/InteractiveUtils";
+} from './Utils/InteractiveUtils';
 import {
 	Label,
 	Annotate,
 	LabelAnnotation,
-} from "@t0x1c3500/react-stockcharts/lib/annotation";
-import HoverTextNearMouse from "@t0x1c3500/react-stockcharts/lib/interactive/components/HoverTextNearMouse";
+} from '@t0x1c3500/react-stockcharts/lib/annotation';
+import HoverTextNearMouse from '@t0x1c3500/react-stockcharts/lib/interactive/components/HoverTextNearMouse';
+
+import Slider from 'react-rangeslider'
+import 'react-rangeslider/lib/index.css'
 
 const getDatabase = (eSymbol) => {
 	let eSymbolCodeCharachter = eSymbol.charAt(0)
 	let eSymbolCode = (eSymbolCodeCharachter.toLowerCase()).charCodeAt( eSymbolCodeCharachter.length - 1 )
 
-	if (eSymbolCode >= 97 && eSymbolCode <= 101) {
+	if (eSymbolCode >= 97 && eSymbolCode <= 102) {
 		return 'ae'
 	}
 
-	if (eSymbolCode >= 102 && eSymbolCode <= 108) {
+	if (eSymbolCode > 102 && eSymbolCode <= 108) {
 		return 'fl'
 	}
 
@@ -78,13 +82,17 @@ const getDatabase = (eSymbol) => {
 		return 'tz'
 	}
 }
-const parseNanexData = (nanexDate, nanexData) => {
-	const utcTimeTick = moment.utc(+nanexDate).format();
+const parseNanexData = (nanexDate, nanexData, nanexOffset) => {
+	const utcTimeTick = moment.utc(+nanexDate - ( nanexOffset * 60000 )).format();
 	const chartTimeTick = new Date(new Date(utcTimeTick).toUTCString().substr(0, 25));
 
-	if (+nanexData.O > 0 && (
-		parseInt(chartTimeTick.getHours()) >= 9 && parseInt(chartTimeTick.getHours()) <= 16
+	if (+nanexData.C > 0 && (
+		parseInt(chartTimeTick.getHours()) >= 9 && parseInt(chartTimeTick.getHours()) < 16
 	)) {
+        if (chartTimeTick.getHours() == 9 && chartTimeTick.getMinutes() == 30) {
+            return false;
+        }
+
 		if (
 			[15, 30, 45].includes(chartTimeTick.getMinutes()) &&
 			(parseInt(chartTimeTick.getHours()) == 16)
@@ -99,8 +107,13 @@ const parseNanexData = (nanexDate, nanexData) => {
 			nanexData.H = +nanexData.O;
 		}
 
+        const startOfDay = ( nanexOffset == 1 ) ? 
+            chartTimeTick.getHours() == 9 && chartTimeTick.getMinutes() == 31 :
+            chartTimeTick.getHours() == 9 && chartTimeTick.getMinutes() == 45
+
 		return {
 			date: chartTimeTick,
+            timestamp: +nanexDate,
 			open: +nanexData.O,
 			high: +nanexData.H,
 			low: +nanexData.L,
@@ -109,11 +122,27 @@ const parseNanexData = (nanexDate, nanexData) => {
 			upTick: +nanexData.U,
 			downTick: +nanexData.D,
 			darkUpTick : +nanexData.DU,
-			darkDownTick: +nanexData.DD
-		};
+			darkDownTick: +nanexData.DD,
+            startOfDay: startOfDay
+		}
 	} else {
 		return false;
 	}
+}
+const getMarketHoursTimeZone = () => {
+    let offset = -5.0,
+        clientDate = new Date(),
+        utc = clientDate.getTime() + (clientDate.getTimezoneOffset() * 60000);
+
+    return new Date(utc + (3600000*offset))
+}
+const hexToRgb = (hex) => {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
 }
 
 let intervalId;
@@ -126,6 +155,8 @@ let ChartHolder = forwardRef((props, ref) => {
         ratio: ratio,
         settings: settings,
         chartKey: chartKey,
+        chartUid : chartUid,
+        chartEvent: chartEvent,
 
         charts,
         chartState,
@@ -139,6 +170,8 @@ let ChartHolder = forwardRef((props, ref) => {
         screenShotSrc,
         showScreenShotModal,
         updateTheCharts,
+        selectedChart,
+        selectedChartEvent,
         updateProperty,
         SetChartSettings
     } = props
@@ -150,6 +183,7 @@ let ChartHolder = forwardRef((props, ref) => {
     const xExtentsStartLimitRef = useRef(0)
     const xExtentsEndLimitRef = useRef(0)
     const replayMarketRef = useRef(false)
+    const replayMarketSpeedChanged = useRef(false)
     const replayMarketSpeedRef = useRef(0)
     const pausedMarketRef = useRef(false)
 
@@ -162,36 +196,83 @@ let ChartHolder = forwardRef((props, ref) => {
 
     const takeScreenShotRef = useRef(false)
 
+    const showGridRef = useRef(false)
+
     const [xExtentsReplay, setXExtentsReplay] = useState(null)
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0)
 
 	const [chartLoaded, setChartLoaded] = useState(false)
 	const [unavailableChart, setUnavailableChart] = useState(false)
+
+    const eventUid = useRef(null)
+
+    const [rgbaColor, setRgbaColor] = useState(null)
+
+    const [suffixState, setSuffixState] = useState(1)
+
     const chartData = useRef([])
+    const blocksDatesData = useRef(null)
+
+    let chartSettingsRef = useRef({}),
+        liveFirebaseRef = useRef(null),
+        data1mFirebaseRef = useRef(null),
+        data15mFirebaseRef = useRef(null),
+        blocksFirebaseRef = useRef(null),
+        divergenceFirebaseRef = useRef(null)
 
     useEffect(() => {
-        chartData.current.length == 0 && getData() || setChartLoaded(true)
+        if (liveFirebaseRef.current == null) {
+            let symbolDatabase = getDatabase(chartKey),
+                requestDateOrigin = new Date(),
+                requestedMoment = tzmoment(requestDateOrigin).tz('America/New_York'),
+                requestDateEdited = ([0,6].includes(requestedMoment.day())) ? 
+                    requestedMoment.subtract(
+                    requestedMoment.day() == 0 ? 2 : 1, 
+                    'days'
+                    )
+                    : (
+                        requestedMoment.hour() < 9 ? requestedMoment.subtract(1, 'days') : requestedMoment
+                    ),
+                requestDate = requestDateEdited.format('YYYY_MM_DD')
+            
+            liveFirebaseRef.current = React.firebase.firebase.database(React.firebase['l' + symbolDatabase]).ref(`liveTick/e${chartKey}`)
+            data1mFirebaseRef.current = React.firebase.firebase.database(React.firebase[symbolDatabase]).ref(`nanex/e${chartKey}`).limitToLast(2)
+            data15mFirebaseRef.current = React.firebase.firebase.database(React.firebase[symbolDatabase]).ref(`bar15/e${chartKey}`).limitToLast(1440)
+            blocksFirebaseRef.current = React.firebase.firebase.database(React.firebase.blocks).ref(`/Symbol/e${chartKey}`).limitToLast(250)
+			divergenceFirebaseRef.current = React.firebase.firebase.database(React.firebase.tracking).ref(`${requestDate}/one/latest`)
+        }
 
-        window.addEventListener("keyup", onKeyPress)
+        if (chartData.current.length == 0) {
+            getData()
+        } else {
+            if (chartSettingsRef.current.periodicity != settings.periodicity) {
+                getData()
+            } else {
+                setChartLoaded(true)
+            }
+        }
+
+        if (chartEvent != null && chartEvent.chart == chartUid && chartEvent.uid != eventUid.current) {
+            eventUid.current = chartEvent.uid
+            onKeyPress(chartEvent.code)
+        }
 
         replayMarketRef.current = settings.replayMarket
+        if (replayMarketSpeedRef.current > 0 && 
+            parseInt(replayMarketSpeedRef.current) != parseInt(settings.replayMarketSettings.speed)
+        ) {
+            replayMarketSpeedChanged.current = true
+        }
         replayMarketSpeedRef.current = parseInt(settings.replayMarketSettings.speed)
         triggerReplayMarket()
 
         takeScreenShotRef.current = settings.takeScreenShot;
         triggerScreenShot()
 
-        if (chartCanvasRef.current !== null) {
-            chartCanvasRef.current.subscribe("xScaleSubscriber", { listener: onXScaleChange })
-        }
+        showGridRef.current = settings.showGrid
 
-        // if (!chartTrackedRef.current) {
-        //     chartTrackedRef.current = true
-        //     chartTrackedLastRef.current = initialData[ initialData.length - 1 ].close
-        //     trackLivePrice()
-        // }
-
-        if (!chartBlocksTrackedRef.current) {
+        if (!chartBlocksTrackedRef.current || settings.blocktradesDates != blocksDatesData.current) {
+            blocksDatesData.current = settings.blocktradesDates
             chartBlocksTrackedRef.current = true
             getBlocks()
         }
@@ -201,48 +282,62 @@ let ChartHolder = forwardRef((props, ref) => {
             getDivergence()
         }
 
-        return () => {
-            window.removeEventListener("keyup", onKeyPress)
-        }
+        setRgbaColor(
+            hexToRgb(settings.priceBarsColor)
+        )
     }, [props])
 
-
-    const trackLivePriceTest = () => {
-		React.firebase.firebase.database(React.firebase['elTester'])
-			.ref(`liveTick/e${chartKey}`)
-			.on('value', (val) => {
-                chartTrackedLastRef.current = val.val().C
-                forceUpdate()
-
-		})
-    }
+    useEffect(() => {
+        return () => {
+            liveFirebaseRef.current.off('value', postTrackLivePrice)
+            data1mFirebaseRef.current.off('value', postGetData1m)
+            data15mFirebaseRef.current.off('value', postGetData15m)
+            blocksFirebaseRef.current.off('value', postGetBlocks)
+            divergenceFirebaseRef.current.off('value', postGetDivergence)
+        }
+    }, [])
 
 	const trackLivePrice = () => {
-        let chartSymbolDatabase = getDatabase(chartKey)
-		React.firebase.firebase.database(React.firebase['l' + chartSymbolDatabase])
-			.ref(`liveTick/e${chartKey}`)
-			.on('value', (val) => {
-                const previousChartValues = chartData.current[ chartData.current.length - 1 ]
-                if (typeof previousChartValues !== typeof undefined) {
-                    chartData.current[ chartData.current.length - 1 ] = {
-                        ...previousChartValues,
-                        ...{
-                            close: val.val().C,
-                            high: val.val().C > previousChartValues.high ? val.val().C : previousChartValues.high,
-                            low: val.val().C < previousChartValues.low ? val.val().C : previousChartValues.low
-                        }
-                    }
-
-                    forceUpdate()
-                }
-		})
+        liveFirebaseRef.current.on('value', postTrackLivePrice)
 	}
 
-    const onXScaleChange = (type, moreProps, state) => {
-        if (typeof moreProps !== typeof undefined) {
-            if (typeof moreProps.xScale !== typeof undefined) {
-                localStorage.setItem(chartKey, JSON.stringify(moreProps.xScale.domain()))
+    const onceTrackLivePrice = () => {        
+        liveFirebaseRef.current.once('value', (val) => {
+            const nanexData = val.val()
+            const previousNanexData = chartData.current[ chartData.current.length - 1 ]
+            const utcTimeTick = moment.utc(previousNanexData.timestamp).format()
+            const chartTimeTick = new Date(new Date(utcTimeTick).toUTCString().substr(0, 25))
+
+            if (chartTimeTick.getHours() == 16) return
+
+            chartData.current.push({
+                date: chartTimeTick,
+                open: +previousNanexData.close,
+                high: +previousNanexData.close,
+                low: +nanexData.C,
+                close: +nanexData.C,
+                volume: +previousNanexData.volume,
+                upTick: +nanexData.U,
+                downTick: +nanexData.D,
+                darkUpTick : +previousNanexData.darkUpTick,
+                darkDownTick: +previousNanexData.darkDownTick
+            })
+        })
+    }
+
+    const postTrackLivePrice = (val) => {
+        const previousChartValues = chartData.current[ chartData.current.length - 1 ]
+        if (typeof previousChartValues !== typeof undefined) {
+            chartData.current[ chartData.current.length - 1 ] = {
+                ...previousChartValues,
+                ...{
+                    close: val.val().C,
+                    high: val.val().C > previousChartValues.high ? val.val().C : previousChartValues.high,
+                    low: val.val().C < previousChartValues.low ? val.val().C : previousChartValues.low
+                }
             }
+
+            forceUpdate()
         }
     }
 
@@ -264,10 +359,10 @@ let ChartHolder = forwardRef((props, ref) => {
 
     const triggerReplayMarket = () => {
         if (replayMarketRef.current && !startReplayRef.current) {
-            startReplayRef.current = true;
+            startReplayRef.current = true
             intervalId = window.setInterval(function() {
-                replayMarket();
-            }, replayMarketSpeedRef.current);
+                replayMarket()
+            }, replayMarketSpeedRef.current)
         } else if ( !replayMarketRef.current && pausedMarketRef.current ) {
             editSettings({
                 replayMarket: false,
@@ -275,38 +370,35 @@ let ChartHolder = forwardRef((props, ref) => {
                     speed: 250
                 }
             })
-            xExtentsStartRef.current = 2;
-            xExtentsEndRef.current = -150;
+            xExtentsStartRef.current = 2
+            xExtentsEndRef.current = -150
 
             setXExtentsReplay(
                 [xExtentsStartLimitRef.current, xExtentsEndLimitRef.current]
             )
             
-            pausedMarketRef.current = false;
+            pausedMarketRef.current = false
         }
     }
 
     const replayMarket = () => {
+        console.log(replayMarketSpeedRef.current)
         setXExtentsReplay(
             [xExtentsStartRef.current, xExtentsEndRef.current]
         )
 
-        xExtentsStartRef.current = xExtentsStartRef.current + 1;
-        xExtentsEndRef.current = xExtentsEndRef.current + 1;
+        xExtentsStartRef.current = xExtentsStartRef.current + 1
+        xExtentsEndRef.current = xExtentsEndRef.current + 1
 
         if (
-            (xExtentsStartRef.current == xExtentsStartLimitRef.current) ||
-            (xExtentsEndRef.current == xExtentsEndLimitRef.current) ||
-            (!replayMarketRef.current || replayMarketRef.current == 'pause' || replayMarketRef.current == 'replay')
+            xExtentsStartRef.current > chartData.current.length ||
+            (!replayMarketRef.current || replayMarketRef.current == 'pause' || replayMarketSpeedChanged.current )
         ) {
-            clearInterval(intervalId);
-            startReplayRef.current = false;
+            clearInterval(intervalId)
+            startReplayRef.current = false
 
-            if (
-                (xExtentsStartRef.current == xExtentsStartLimitRef.current) ||
-                (xExtentsEndRef.current == xExtentsEndLimitRef.current)
-            ) {
-                replayMarketRef.current = false;
+            if ( xExtentsStartRef.current > chartData.current.length ) {
+                replayMarketRef.current = false
             }
 
             if (!replayMarketRef.current) {
@@ -316,27 +408,27 @@ let ChartHolder = forwardRef((props, ref) => {
                         speed: 250
                     }
                 })
-                xExtentsStartRef.current = 2;
-                xExtentsEndRef.current = -150;
+
+                xExtentsStartRef.current = 2
+                xExtentsEndRef.current = -150
 
                 setXExtentsReplay(
                     [xExtentsStartLimitRef.current, xExtentsEndLimitRef.current]
                 )
 
-                pausedMarketRef.current = false;
-            } else if (replayMarketRef.current == 'replay') {
-                editSettings({
-                    replayMarket: 'play'
-                })
+                pausedMarketRef.current = false
+            } else if (replayMarketSpeedChanged.current) {
+                replayMarketSpeedChanged.current = false
+                triggerReplayMarket()
             } else if (replayMarketRef.current == 'pause') {
-                pausedMarketRef.current = true;
+                pausedMarketRef.current = true
             }
         } 
     }
 
     const handleSelection = (interactives) => {
         interactives.map(interactive => {
-            if (interactive.chartId == chartKey) {
+            if (interactive.chartId == chartUid) {
                 if (interactive.type == 'Trendline') {
                     editSettings({
                         trends: interactive.objects
@@ -344,7 +436,7 @@ let ChartHolder = forwardRef((props, ref) => {
 
                     SetChartSettings({
                         trends: interactive.objects
-                    }, chartKey, false, true, true)
+                    }, chartUid, false, true, true)
                 } else if (interactive.type == 'FibonacciRetracement') {
                     editSettings({
                         retracements: interactive.objects
@@ -352,15 +444,13 @@ let ChartHolder = forwardRef((props, ref) => {
 
                     SetChartSettings({
                         retracements: interactive.objects
-                    }, chartKey, false, true, true)
+                    }, chartUid, false, true, true)
                 }
             }
         });
 	}
 
-	const onKeyPress = (event) => {
-		const keyCode = event.which;
-
+	const onKeyPress = (keyCode) => {
 		switch (keyCode) {
             case 46: { // DEL
                 let keyTrends = [],
@@ -377,7 +467,7 @@ let ChartHolder = forwardRef((props, ref) => {
                         .filter(each => !each.selected)
                 }
 
-                chartCanvasRef.current.cancelDrag()
+                if (chartCanvasRef.current != null) chartCanvasRef.current.cancelDrag()
                 editSettings({
                     trends: keyTrends,
                     retracements: keyRetracements
@@ -386,31 +476,146 @@ let ChartHolder = forwardRef((props, ref) => {
                 SetChartSettings({
                     trends: keyTrends,
                     retracements: keyRetracements
-                }, chartKey, false, true, true)
-                break;
+                }, chartUid, false, true, true)
+                break
+            }
+            case 9: { // TAB    
+                let currentIndex = charts.findIndex(mapChart => {
+                        return mapChart.chartUid == chartUid
+                    }),
+                    nextSelectChartIndex = (typeof charts[currentIndex + 1] != typeof undefined) ? currentIndex + 1 : 0
+                
+                updateProperty({selectedChartEvent: null, selectedChart: charts[nextSelectChartIndex].chartUid})
+                break
+            }
+            case 32: { // SPACE
+                updateProperty({selectedChartEvent: null, selectedChart: null})
+                break
             }
             case 27: { // ESC
-                chartCanvasRef.current.cancelDrag()
+                if (chartCanvasRef.current != null) chartCanvasRef.current.cancelDrag()
                 editSettings({
                     trendLine: false,
                     fibonacciRetracements: false
                 })
+                break
+            }
+            case 70: { // F
+                editSettings({
+                    fibonacciRetracements: true,
+                    fibonacciTrendLineColor: settings.fibonacciRetracementsColor || '#2ec2ff'
+                })
                 break;
             }
-            case 68:   // D - Draw trendline
-            case 69: { // E - Enable trendline
+            case 76: { // L
                 editSettings({
                     trendLine: true,
-                    fibonacciRetracements: true
+                    trendLineType: 'LINE',
+                    trendLineColor: settings.trendLineLineColor || '#2ec2ff'
+                })
+                break;
+            }
+            case 82: { // R
+                editSettings({
+                    trendLine: true,
+                    trendLineType: 'RAY',
+                    trendLineColor: settings.trendLineRayColor || '#2ec2ff'
+                })
+                break;
+            }
+            case 88: { // X
+                editSettings({
+                    trendLine: true,
+                    trendLineType: 'XLINE',
+                    trendLineColor: settings.trendLineXlineColor || '#2ec2ff'
                 })
                 break;
             }
             default: {
-                chartCanvasRef.current.cancelDrag()
+                if(chartCanvasRef.current != null) chartCanvasRef.current.cancelDrag()
                 break;
             }
 		}
 	}
+
+    const handleReset = (dataLength) => {
+        localStorage.setItem(chartUid, JSON.stringify([0, dataLength]))
+        localStorage.setItem('scale_' + chartUid, JSON.stringify({
+            'length': dataLength,
+            'end': 0
+        }))
+        setSuffixState(
+            suffixState + 1
+        )
+    }
+
+    const handleFirst = (dataLength) => {
+        let savedScale = localStorage.getItem('scale_' + chartUid)
+        if (savedScale !== null) {
+            let parsedSavedScale = JSON.parse(savedScale)
+            localStorage.setItem('scale_' + chartUid, JSON.stringify({
+                'length': parsedSavedScale.length,
+                'end': 0
+            }))
+            setSuffixState(
+                suffixState + 1
+            )
+        } else {
+            handleReset(dataLength)
+        }
+    }
+
+    const applyDivergence = (chartData) => {
+        let returnChartData = chartData
+        if (chartDivergencesValuesRef.current.length && chartData.length) {
+            chartDivergencesValuesRef.current.map(chartDivergence => {
+                chartData.map((singleChartData, sIndex) => {
+                    if (
+                        singleChartData.timestamp >= +chartDivergence.startTimeStamp &&
+                        singleChartData.timestamp <= +chartDivergence.endTimeStamp
+                    ) {
+                        returnChartData[sIndex] = {
+                            ...returnChartData[sIndex],
+                            ...{
+                                divergenceDetected: true,
+                                divergenceTrend: chartDivergence.trend
+                            }
+                        }
+                    }
+                })
+            })
+        }
+
+        return returnChartData
+    }
+
+    const applyBlockTrades = (chartData) => {
+        let returnChartData = chartData
+        if (chartBlocksValuesRef.current && chartData.length) {
+            chartData.map((singleChartData, sIndex) => {
+                let timeDateCondition = 
+                    ("0" + (singleChartData.date.getMonth()+1)).slice(-2) + '-' +
+                    ("0" + singleChartData.date.getDate()).slice(-2) + ' ' + 
+                    ("0" + singleChartData.date.getHours()).slice(-2) + ':' + ("0" + singleChartData.date.getMinutes()).slice(-2);
+                
+                const blocksCondition = chartBlocksValuesRef.current.filter(singleBlock => {
+                    return singleBlock.timeCondition == timeDateCondition
+                })
+
+                if (blocksCondition.length > 0) {
+                    returnChartData[sIndex] = {
+                        ...returnChartData[sIndex],
+                        ...{
+                            blockTrade: true,
+                            blockTradeValue: blocksCondition[0].yValue
+                        }
+                    }
+                }
+            })
+        }
+
+        return returnChartData
+    }
 
     const flowindex = flowTrade()
         .id(0)
@@ -432,20 +637,20 @@ let ChartHolder = forwardRef((props, ref) => {
     var gridHeight = height - margin.top - margin.bottom
     var gridWidth = width - margin.left - margin.right
 
-    var yGrid = settings.showGrid ? { 
+    var yGrid = showGridRef.current ? { 
         innerTickSize: -1 * gridWidth,
         tickStrokeDasharray: 'Solid',
         tickStrokeOpacity: 0.1,
         tickStrokeWidth: 1
     } : {}
-    var xGrid = settings.showGrid ? { 
+    var xGrid = showGridRef.current ? { 
         innerTickSize: -1 * gridHeight,
         tickStrokeDasharray: 'Solid',
         tickStrokeOpacity: 0.1,
         tickStrokeWidth: 1
     } : {}
 
-    const calculatedData = flowindexavg(flowindex(chartData.current));
+    const calculatedData = applyBlockTrades(applyDivergence(flowindexavg(flowindex(chartData.current))))
     const xScaleProvider = discontinuousTimeScaleProvider
         .inputDateAccessor(d => d.date);
 
@@ -458,17 +663,22 @@ let ChartHolder = forwardRef((props, ref) => {
 
     const start = xAccessor(last(data))
     const end = xAccessor(data[0])
-    let xExtents = localStorage.getItem(chartKey) !== null ? JSON.parse(localStorage.getItem(chartKey)) : [start, end]
-    if (xExtentsStartLimitRef.current == 0 && xExtentsEndLimitRef.current == 0) {
-        
-        if (localStorage.getItem(chartKey) !== null) {
-            const localStorageExtents = JSON.parse(localStorage.getItem(chartKey))
-            xExtentsStartLimitRef.current = localStorageExtents[0]
-            xExtentsEndLimitRef.current = localStorageExtents[1]
-        } else {
-            xExtentsStartLimitRef.current = start
-            xExtentsEndLimitRef.current = end
-        }
+
+    let savedScale = localStorage.getItem('scale_' + chartUid),
+        xExtents
+    if (savedScale !== null) {
+        let parsedSavedScale = JSON.parse(savedScale),
+            endScale = chartData.current.length + parsedSavedScale.end,
+            startScale = endScale - parsedSavedScale.length
+
+        xExtents = [startScale, endScale]
+    } else {
+        xExtents =  [start, end]
+    }
+
+    if (!replayMarketRef.current) {
+        xExtentsStartLimitRef.current = xExtents[0]
+        xExtentsEndLimitRef.current = xExtents[1]
     }
 
     if (xExtentsReplay !== null) {
@@ -483,7 +693,7 @@ let ChartHolder = forwardRef((props, ref) => {
 
         SetChartSettings({
             trends: trendsChart
-        }, chartKey, false, true, true)
+        }, chartUid, false, true, true)
 	}
 
     const onDrawCompleteRetracement = (retracementsChart) => {
@@ -494,14 +704,15 @@ let ChartHolder = forwardRef((props, ref) => {
 
         SetChartSettings({
             retracements: retracementsChart
-        }, chartKey, false, true, true)
+        }, chartUid, false, true, true)
 	}
 
     const editSettings = (changesObject) => {
         const chartSetting = charts.filter(chartSet => {
-            return chartSet.chartSymbol === chartKey
+            return chartSet.chartUid === chartUid
         })
 
+        if (typeof chartSetting[0] == typeof undefined) return
         chartSetting[0].chartSettings = {
             ...chartSetting[0].chartSettings,
             ...changesObject
@@ -512,7 +723,7 @@ let ChartHolder = forwardRef((props, ref) => {
 
     const getSettings = (field) => {
         const chartSetting = charts.filter(chartSet => {
-            return chartSet.chartSymbol === chartKey
+            return chartSet.chartUid === chartUid
         })
 
         return chartSetting[0].chartSettings[field];
@@ -520,169 +731,171 @@ let ChartHolder = forwardRef((props, ref) => {
 
     const getBlocks = props => {
 		return new Promise((resolve, reject) => {
-			React.firebase.firebase.database(React.firebase.blocks)
-				.ref(`/Symbol/e${chartKey}`)
-				.limitToLast(50)
-				.on('value', (val) => {
-                    let chartBlocksDataRequest = []
-					val.forEach(function(childSnapshot) {
-						const blockData = childSnapshot.val()
-						const utcTimeTick = moment.utc(+blockData.t).format('MM-DD HH:mm')
-
-                        chartBlocksDataRequest.push({
-                            ...InteractiveYCoordinate.defaultProps.defaultPriceCoordinate,
-                            fontSize: 9,
-                            bgFill: blockData.D ? 
-                                settings.blockTradesDarkPoolColor : 
-                                settings.blockTradesRegularPoolColor,
-                            stroke: blockData.D ? 
-                                settings.blockTradesDarkPoolColor : 
-                                settings.blockTradesRegularPoolColor,
-                            textFill: '#ffffff',
-                            timeCondition: utcTimeTick,
-                            text: Number(blockData.P).toFixed(2),
-                            textBox: {
-                                ...InteractiveYCoordinate.defaultProps.defaultPriceCoordinate.textBox,
-                                Radius: 8,
-                                show: true,
-                                fontSize: 9,
-                                height: 15,
-                                left: 0,
-                                padding: {
-                                    left: 3,
-                                    right: 3
-                                },
-                                closeIcon: {
-                                    padding: {
-                                        left: 0,
-                                        right: 0
-                                    },
-                                    width: 0
-                                }
-                            },
-                            edge: {
-                                ...InteractiveYCoordinate.defaultProps.defaultPriceCoordinate.edge,
-                                fill: blockData.D ? 
-                                    settings.blockTradesDarkPoolColor : 
-                                    settings.blockTradesRegularPoolColor,
-                                strokeWidth: 0,
-                                strokeOpacity: 0,
-                                arrowWidth: 0,
-                                rectWidth: 25,
-                                rectHeight: 15,
-                                rectRadius: 7
-                            },
-                            yValue: blockData.P,
-                            id: shortid.generate(),
-                            draggable: false,
-                            hoverText: {
-                                ...HoverTextNearMouse.defaultProps,
-                                bgFill: blockData.D ? 
-                                    settings.blockTradesDarkPoolColor : 
-                                    settings.blockTradesRegularPoolColor,
-                                fill: '#ffffff',
-                                bgOpacity: 1,
-                                enable: true,
-                                bgHeight: 18,
-                                bgWidth: 120,
-                                text: utcTimeTick + ' | ' + blockData.P.toFixed(2),
-                            }
-                        })
-					})
-
-                    chartBlocksValuesRef.current = chartBlocksDataRequest
-					forceUpdate()
-			})
+			blocksFirebaseRef.current.on('value', postGetBlocks)
 		})
 	}
+
+    const postGetBlocks = (val) => {
+        let chartBlocksDataRequest = [],
+            currentTime = new Date().getTime()
+        val.forEach(function(childSnapshot) {
+            const blockData = childSnapshot.val()
+            const currentBlockDate = +blockData.t
+            const utcTimeTick = moment.utc(+blockData.t).format('MM-DD HH:mm')
+
+            if (currentBlockDate < (currentTime - 60000 * 60 * 24 * settings.blocktradesDates)) return
+
+            chartBlocksDataRequest.push({
+                ...InteractiveYCoordinate.defaultProps.defaultPriceCoordinate,
+                fontSize: 9,
+                bgFill: blockData.D ? 
+                    settings.blockTradesDarkPoolColor : 
+                    settings.blockTradesRegularPoolColor,
+                stroke: blockData.D ? 
+                    settings.blockTradesDarkPoolColor : 
+                    settings.blockTradesRegularPoolColor,
+                textFill: '#ffffff',
+                timeCondition: utcTimeTick,
+                text: Number(blockData.P).toFixed(2),
+                textBox: {
+                    ...InteractiveYCoordinate.defaultProps.defaultPriceCoordinate.textBox,
+                    Radius: 8,
+                    show: true,
+                    fontSize: 9,
+                    height: 15,
+                    left: 0,
+                    padding: {
+                        left: 3,
+                        right: 3
+                    },
+                    closeIcon: {
+                        padding: {
+                            left: 0,
+                            right: 0
+                        },
+                        width: 0
+                    }
+                },
+                edge: {
+                    ...InteractiveYCoordinate.defaultProps.defaultPriceCoordinate.edge,
+                    fill: blockData.D ? 
+                        settings.blockTradesDarkPoolColor : 
+                        settings.blockTradesRegularPoolColor,
+                    strokeWidth: 0,
+                    strokeOpacity: 0,
+                    arrowWidth: 0,
+                    rectWidth: 25,
+                    rectHeight: 15,
+                    rectRadius: 7
+                },
+                yValue: blockData.P,
+                id: shortid.generate(),
+                draggable: false,
+                hoverText: {
+                    ...HoverTextNearMouse.defaultProps,
+                    bgFill: blockData.D ? 
+                        settings.blockTradesDarkPoolColor : 
+                        settings.blockTradesRegularPoolColor,
+                    fill: '#ffffff',
+                    bgOpacity: 1,
+                    enable: true,
+                    bgHeight: 18,
+                    bgWidth: 120,
+                    text: utcTimeTick + ' | ' + blockData.P.toFixed(2),
+                }
+            })
+        })
+
+        chartBlocksValuesRef.current = chartBlocksDataRequest
+        forceUpdate()
+    }
 
     const getDivergence = props => {
 		return new Promise((resolve, reject) => {
-			let requestDate = tzmoment(new Date()).format('YYYY_MM_DD')
-
-			React.firebase.firebase.database(React.firebase.tracking)
-				.ref(`${requestDate}/one/latest`)
-				.on('value', async(val) => {
-                    let chartDivergencesDataRequest = []
-					val.forEach(function(childSnapshot) {
-						if (['priceDown', 'priceUp'].find(element => element == childSnapshot.key)) {
-							let divergenceColor = childSnapshot.key == 'priceDown' ? '#0ccf02' : '#d0021b'
-							childSnapshot.forEach(function(childSnapshotChild) {
-								let divergenceFrequency = +childSnapshotChild.key
-								childSnapshotChild.forEach(function(childSnapshotTimeStamp) {
-									const childSnapShotValue = childSnapshotTimeStamp.val()
-									if (childSnapShotValue.s == `e${chartKey}`) {
-                                        let divergenceAlreadyAdded = chartDivergencesDataRequest.some(divergenceData => {
-                                            return divergenceData.endTimeStamp == childSnapShotValue.t && divergenceData.fill == divergenceColor
-                                        })
-
-                                        if (!divergenceAlreadyAdded) {
-                                            chartDivergencesDataRequest.push({
-                                                id: childSnapshotTimeStamp.key,
-                                                startTimeStamp: String(+childSnapShotValue.t - (60000 * divergenceFrequency)),
-                                                endTimeStamp: childSnapShotValue.t,
-                                                // gradientFill: [
-                                                // 	{ stop: 0, color: hexToRGBA(divergenceColor, 0.025) },
-                                                // 	{ stop: 0.5, color: hexToRGBA(divergenceColor, 0.15) },
-                                                // 	{ stop: 1, color: hexToRGBA(divergenceColor, 0.35) }
-                                                // ],
-                                                fill: divergenceColor,
-                                                canvasGradient: createVerticalLinearGradient([
-                                                    { stop: 0, color: hexToRGBA(divergenceColor, 0.025) },
-                                                    { stop: 0.5, color: hexToRGBA(divergenceColor, 0.15) },
-                                                    { stop: 1, color: hexToRGBA(divergenceColor, 0.5) }
-                                                ]),
-                                                opacity: 0.1,
-                                                startLine: {
-                                                    stroke: divergenceColor,
-                                                    strokeWidth: 1,
-                                                    strokeOpacity: 0.7,
-                                                    strokeDasharray: "ShortDash",
-                                                }
-                                            })
-                                        }
-									}
-								})
-							})
-						}
-					})
-
-                    const finalDivergenceList = new Promise(resolve => {
-                        let finalDivergenceReturnData = []
-                        chartDivergencesDataRequest.map((divergenceDataMap, v) => {
-                            if (v == 0) {
-                                finalDivergenceReturnData.push(divergenceDataMap)
-                            } else {
-                                let previousDivergenceData = chartDivergencesDataRequest[ v - 1]
-                                if (
-                                    +previousDivergenceData.endTimeStamp > +divergenceDataMap.startTimeStamp &&
-                                    previousDivergenceData.fill == divergenceDataMap.fill
-                                ) {
-                                    finalDivergenceReturnData.push({
-                                        ...divergenceDataMap,
-                                        ...{
-                                            startTimeStamp: previousDivergenceData.startTimeStamp
-                                        }
-                                    })
-                                    finalDivergenceReturnData = finalDivergenceReturnData.filter((divElement) => {
-                                        return divElement.id !== previousDivergenceData.id
-                                    })
-                                } else {
-                                    finalDivergenceReturnData.push(divergenceDataMap)
-                                }
-                            }
-
-                        })
-
-                        resolve(finalDivergenceReturnData)
-                    })
-
-                    const finalChartDivergencesDataRequest = await finalDivergenceList
-                    chartDivergencesValuesRef.current = finalChartDivergencesDataRequest
-					forceUpdate()
-			})
+            divergenceFirebaseRef.current.on('value', postGetDivergence)				
 		})
 	}
+
+    const postGetDivergence = async(val) => {
+        let chartDivergencesDataRequest = []
+        val.forEach(function(childSnapshot) {
+            if (['priceDown', 'priceUp'].find(element => element == childSnapshot.key)) {
+                let divergenceColor = childSnapshot.key == 'priceDown' ? '#0ccf02' : '#d0021b'
+                childSnapshot.forEach(function(childSnapshotChild) {
+                    let divergenceFrequency = +childSnapshotChild.key
+                    childSnapshotChild.forEach(function(childSnapshotTimeStamp) {
+                        const childSnapShotValue = childSnapshotTimeStamp.val()
+                        if (childSnapShotValue.s == `e${chartKey}`) {
+                            let divergenceAlreadyAdded = chartDivergencesDataRequest.some(divergenceData => {
+                                return divergenceData.endTimeStamp == childSnapShotValue.t && divergenceData.fill == divergenceColor
+                            })
+
+                            if (!divergenceAlreadyAdded) {
+                                chartDivergencesDataRequest.push({
+                                    id: childSnapshotTimeStamp.key,
+                                    startTimeStamp: String(+childSnapShotValue.t - (60000 * divergenceFrequency)),
+                                    endTimeStamp: childSnapShotValue.t,
+                                    // gradientFill: [
+                                    // 	{ stop: 0, color: hexToRGBA(divergenceColor, 0.025) },
+                                    // 	{ stop: 0.5, color: hexToRGBA(divergenceColor, 0.15) },
+                                    // 	{ stop: 1, color: hexToRGBA(divergenceColor, 0.35) }
+                                    // ],
+                                    fill: divergenceColor,
+                                    canvasGradient: createVerticalLinearGradient([
+                                        { stop: 0, color: hexToRGBA(divergenceColor, 0.025) },
+                                        { stop: 0.5, color: hexToRGBA(divergenceColor, 0.15) },
+                                        { stop: 1, color: hexToRGBA(divergenceColor, 0.5) }
+                                    ]),
+                                    trend: childSnapshot.key,
+                                    opacity: 0.1,
+                                    startLine: {
+                                        stroke: divergenceColor,
+                                        strokeWidth: 1,
+                                        strokeOpacity: 0.7,
+                                        strokeDasharray: "ShortDash",
+                                    }
+                                })
+                            }
+                        }
+                    })
+                })
+            }
+        })
+
+        const finalDivergenceList = new Promise(resolve => {
+            let finalDivergenceReturnData = []
+            chartDivergencesDataRequest.map((divergenceDataMap, v) => {
+                if (v == 0) {
+                    finalDivergenceReturnData.push(divergenceDataMap)
+                } else {
+                    let previousDivergenceData = chartDivergencesDataRequest[ v - 1]
+                    if (
+                        +previousDivergenceData.endTimeStamp > +divergenceDataMap.startTimeStamp &&
+                        previousDivergenceData.fill == divergenceDataMap.fill
+                    ) {
+                        finalDivergenceReturnData.push({
+                            ...divergenceDataMap,
+                            ...{
+                                startTimeStamp: previousDivergenceData.startTimeStamp
+                            }
+                        })
+                        finalDivergenceReturnData = finalDivergenceReturnData.filter((divElement) => {
+                            return divElement.id !== previousDivergenceData.id
+                        })
+                    } else {
+                        finalDivergenceReturnData.push(divergenceDataMap)
+                    }
+                }
+
+            })
+
+            resolve(finalDivergenceReturnData)
+        })
+
+        const finalChartDivergencesDataRequest = await finalDivergenceList
+        chartDivergencesValuesRef.current = finalChartDivergencesDataRequest
+        forceUpdate()
+    }
 
 	const getData = () => {
 		return new Promise((resolve, reject) => {
@@ -692,64 +905,70 @@ let ChartHolder = forwardRef((props, ref) => {
 			chartData.current = []
 
 			if (settings.periodicity == '15m') {
-				React.firebase.firebase.database(React.firebase[symbolDatabase])
-					.ref(`bar15/e${chartKey}`)
-					.limitToLast(1440)
-					.on('value', (val) => {
-						let chartDataRequest = []
-						val.forEach(function(dayTicks) {
-							const currentTick = parseNanexData(
-								dayTicks.key,
-								dayTicks.val()
-							)
-
-							if (currentTick !== false) {
-								chartDataRequest.push(currentTick)
-							}
-						})
-
-						if (chartDataRequest.length == 0) {
-							setUnavailableChart(true)
-							setChartLoaded(true)
-						} else {
-							chartData.current = chartDataRequest
-							setChartLoaded(true)
-						}
-				})
+				data15mFirebaseRef.current.on('value', postGetData15m)
 			} else if (settings.periodicity == '1m') {
-				React.firebase.firebase.database(React.firebase[symbolDatabase])
-					.ref(`nanex/e${chartKey}`)
-					.limitToLast(2)
-					.on('value', (val) => {
-						let chartDataRequest = []
-						val.forEach(function(childSnapshot) {
-							// if (childSnapshot.key == '2021_09_17') {
-								childSnapshot.forEach(function(dayTicks) {
-									const currentTick = parseNanexData(
-										dayTicks.key,
-										dayTicks.val()
-									)
-
-									if (currentTick !== false) {
-										chartDataRequest.push(currentTick)
-									}
-								})
-							// }
-						})
-
-						if (chartDataRequest.length == 0) {
-							setUnavailableChart(true)
-							setChartLoaded(true)
-						} else {
-							chartData.current = chartDataRequest
-							setChartLoaded(true)
-						}
-				})
+				data1mFirebaseRef.current.on('value', postGetData1m)
 			}
 
 			trackLivePrice()
 		})
 	}
+
+    const postGetData1m = (val) => {
+        let chartDataRequest = []
+        val.forEach(function(childSnapshot) {
+            // if (childSnapshot.key == '2021_09_17') {
+                childSnapshot.forEach(function(dayTicks) {
+                    const currentTick = parseNanexData(
+                        dayTicks.key,
+                        dayTicks.val(),
+                        1
+                    )
+
+                    if (currentTick !== false) {
+                        chartDataRequest.push(currentTick)
+                    }
+                })
+            // }
+        })
+
+        if (chartDataRequest.length == 0) {
+            setUnavailableChart(true)
+            setChartLoaded(true)
+        } else {
+            chartData.current = chartDataRequest
+            onceTrackLivePrice()
+            setChartLoaded(true)
+        }
+        forceUpdate()
+        chartSettingsRef.current = settings
+    }
+
+    const postGetData15m = (val) => {
+        let chartDataRequest = []
+        val.forEach(function(dayTicks) {
+            const currentTick = parseNanexData(
+                dayTicks.key,
+                dayTicks.val(),
+                15
+            )
+
+            if (currentTick !== false) {
+                chartDataRequest.push(currentTick)
+            }
+        })
+
+        if (chartDataRequest.length == 0) {
+            setUnavailableChart(true)
+            setChartLoaded(true)
+        } else {
+            chartData.current = chartDataRequest
+            onceTrackLivePrice()
+            setChartLoaded(true)
+        }
+        forceUpdate()
+        chartSettingsRef.current = settings
+    }
 
 	if (unavailableChart) {
 		return (
@@ -771,17 +990,18 @@ let ChartHolder = forwardRef((props, ref) => {
                 ref={chartCanvasRef}
                 ratio={ratio}
                 width={width}
+                chartUid={chartUid}
                 margin={margin}
                 padding={15}
                 type={type}
-                seriesName="MSFT"
+                seriesName={'MSFT_' + suffixState}
                 data={data}
                 xScale={xScale}
                 xAccessor={xAccessor}
                 displayXAccessor={displayXAccessor}
                 xExtents={xExtents}>
 
-            <Chart id={chartKey} 
+            <Chart id={chartUid} 
                 yExtents={d => [d.high, d.low]}
                 padding={{ top: 10, bottom: 10 }}>
 
@@ -792,7 +1012,7 @@ let ChartHolder = forwardRef((props, ref) => {
                     strokeWidth={0.15}
                     opacity={0.1}
                     tickStroke={darkMode ? whiteColor : primaryLightBackground}
-                    ticks={4}
+                    ticks={10}
                     {...xGrid} />
                 <YAxis 
                     axisAt='right' 
@@ -811,7 +1031,7 @@ let ChartHolder = forwardRef((props, ref) => {
                     rectWidth={25}
                     rectHeight={15}
                     rectRadius={7}
-                    displayFormat={timeFormat("%H:%M")} 
+                    displayFormat={timeFormat("%b %d, %H:%M")} 
                     fill={darkMode ? primaryDarkColor : primaryLightColor}/>
                 <MouseCoordinateY
                     at="right"
@@ -824,13 +1044,32 @@ let ChartHolder = forwardRef((props, ref) => {
                     rectRadius={7}
                     fill={darkMode ? primaryDarkColor : primaryLightColor} />
 
-                <OHLCSeries 
-                    stroke={settings.priceBarsColor} />
+                {settings.chartType == 'ohlc' && 
+                    <OHLCSeries 
+                        stroke={settings.priceBarsColor} />}
+                {settings.chartType == 'candles' && 
+                    <CandlestickSeries {...{
+                        wickStroke: settings.priceBarsColor,
+                        fill: function fill(d) {
+                            return rgbaColor ? (
+                                d.close > d.open ? "rgba(" + rgbaColor.r + ", " + rgbaColor.g + ", " + rgbaColor.b + ", 0.8)" : 
+                                    "rgba(" + rgbaColor.r + ", " + rgbaColor.g + ", " + rgbaColor.b + ", 0.1)"
+                            ) : (
+                                d.close > d.open ? "rgba(196, 205, 211, 0.8)" : "rgba(22, 22, 22, 0.8)"
+                            )
+                        },
+                        stroke: settings.priceBarsColor,
+                        candleStrokeWidth: 1,
+                        widthRatio: 0.8,
+                        opacity: 1,
+                    }}/>}
 
                 <EdgeIndicator 
                     itemType="last" 
                     orient="right" 
                     edgeAt="right"
+                    lineStroke="#ffffff"
+                    lineOpacity={0.5}
                     arrowWidth={0}
                     fontSize={10}
                     rectWidth={25}
@@ -850,61 +1089,58 @@ let ChartHolder = forwardRef((props, ref) => {
                     />}
 
                 <TrendLine
-                    ref={saveInteractiveNodes('Trendline', chartKey)}
+                    ref={saveInteractiveNodes('Trendline', chartUid)}
                     enabled={settings.trendLine}
                     type={settings.trendLineType}
                     snap={false}
                     snapTo={d => [d.high, d.low]}
-                    onStart={() => console.log("START")}
                     onComplete={onDrawCompleteChart}
                     trends={settings.trends}
                     appearance={{
-                        stroke: darkMode ? primaryDarkColor : primaryLightColor,
-                        strokeOpacity: 1,
-                        strokeWidth: 1,
-                        strokeDasharray: "Solid",
-                        edgeStrokeWidth: 1,
-                        edgeFill: "#FFFFFF",
-                        edgeStroke: "#000000",
-                        r: 6
+                        ...{
+                            stroke: settings.trendLineColor || primaryDarkColor
+                        },
+                        ...{
+                            strokeOpacity: 1,
+                            strokeWidth: 1,
+                            strokeDasharray: 'Solid',
+                            edgeStrokeWidth: 1,
+                            edgeFill: '#FFFFFF',
+                            edgeStroke: '#000000',
+                            r: 6
+                        }
                     }}
                 />
 
                 <FibonacciRetracement
-                    ref={saveInteractiveNodes('FibonacciRetracement', chartKey)}
+                    ref={saveInteractiveNodes('FibonacciRetracement', chartUid)}
                     enabled={settings.fibonacciRetracements}
+                    type={'EXTEND'}
                     retracements={settings.retracements}
                     onComplete={onDrawCompleteRetracement}
                     appearance={{
-                        stroke: darkMode ? primaryDarkColor : primaryLightColor,
-                        strokeWidth: 1,
-                        strokeOpacity: 1,
-                        fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
-                        fontSize: 11,
-                        fontFill: darkMode ? '#FFFFFF' : '#000000',
-                        edgeStroke: '#000000',
-                        edgeFill: '#FFFFFF',
-                        nsEdgeFill: darkMode ? primaryDarkColor : primaryLightColor,
-                        edgeStrokeWidth: 1,
-                        r: 5
+                        ...{
+                            stroke: settings.fibonacciTrendLineColor || primaryDarkColor
+                        },
+                        ...{
+                            strokeWidth: 1,
+                            strokeOpacity: 1,
+                            fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                            fontSize: 11,
+                            fontFill: darkMode ? '#FFFFFF' : '#000000',
+                            edgeStroke: '#000000',
+                            edgeFill: '#FFFFFF',
+                            nsEdgeFill: settings.fibonacciTrendLineColor || primaryDarkColor,
+                            edgeStrokeWidth: 1,
+                            r: 5
+                        }
                     }}
                 />
 
                 { settings.blocksLine &&
                     <Annotate 
                         with={LabelAnnotation}
-                        when={d => {
-                            let timeDateCondition = 
-                                ("0" + (d.date.getMonth()+1)).slice(-2) + '-' +
-                                ("0" + d.date.getDate()).slice(-2) + ' ' + 
-                                ("0" + d.date.getHours()).slice(-2) + ':' + ("0" + d.date.getMinutes()).slice(-2);
-                            
-                            const blocksCondition = chartBlocksValuesRef.current.filter(singleBlock => {
-                                return singleBlock.timeCondition == timeDateCondition
-                            });
-
-                            return blocksCondition.length > 0;
-                        }}
+                        when={d => d.blockTrade}
                         usingProps={{
                             fontFamily: "coreui-icons-solid",
                             fontSize: 8,
@@ -912,44 +1148,60 @@ let ChartHolder = forwardRef((props, ref) => {
                             opacity: 1,
                             className: "blocktrades-marker",
                             text: "\ueb69",
-                            y: ({ yScale, datum }) => {
-                                let timeDateCondition = 
-                                    ("0" + (datum.date.getMonth()+1)).slice(-2) + '-' +
-                                    ("0" + datum.date.getDate()).slice(-2) + ' ' + 
-                                    ("0" + datum.date.getHours()).slice(-2) + ':' + ("0" + datum.date.getMinutes()).slice(-2);
-                                
-                                const blocksCondition = chartBlocksValuesRef.current.filter(singleBlock => {
-                                    return singleBlock.timeCondition == timeDateCondition
-                                });
-
-                                return yScale(blocksCondition[0].yValue);
-                            },
-                            onClick: console.log.bind(console),
-                            tooltip: d => timeFormat("%B")(d.date),
-                            // onMouseOver: console.log.bind(console),
+                            y: ({ yScale, datum }) => yScale(datum.blockTradeValue),
+                            tooltip: d => timeFormat("%b %d, %H:%M")(d.date),
                         }} />}
 
                 { settings.showDivergence &&
-                    chartDivergencesValuesRef.current.map(singleDivergence => {
-                        return <AreaSeries
-                            key={singleDivergence.id}
-                            yAccessor={d => {
-                                if (
-                                    d.date >= changeTimezone(new Date(+singleDivergence.startTimeStamp), "UTC") &&
-                                    d.date <= changeTimezone(new Date(+singleDivergence.endTimeStamp), "UTC")
-                                ) {
-                                    return d.close;
-                                }
-                            }}
+                    <>
+                        <AreaSeries
+                            key={`${chartUid}priceDown`}
+                            yAccessor={d => d.divergenceDetected && d.divergenceTrend == 'priceDown' && d.close}
                             strokeWidth={0}
                             strokeOpacity={0}
-                            // fill={singleDivergence.fill}
-                            canvasGradient={singleDivergence.canvasGradient}
+                            canvasGradient={createVerticalLinearGradient([
+                                { stop: 0, color: hexToRGBA('#0ccf02', 0.025) },
+                                { stop: 0.5, color: hexToRGBA('#0ccf02', 0.15) },
+                                { stop: 1, color: hexToRGBA('#0ccf02', 0.85) }
+                            ])}
                         />
-                    })    
+                        <AreaSeries
+                            key={`${chartUid}priceUp`}
+                            yAccessor={d => d.divergenceDetected && d.divergenceTrend == 'priceUp' && d.close}
+                            strokeWidth={0}
+                            strokeOpacity={0}
+                            canvasGradient={createVerticalLinearGradient([
+                                { stop: 0, color: hexToRGBA('#d0021b', 0.025) },
+                                { stop: 0.5, color: hexToRGBA('#d0021b', 0.15) },
+                                { stop: 1, color: hexToRGBA('#d0021b', 0.85) }
+                            ])}
+                        />
+                    </>
                 }
+
+                <Annotate 
+                    with={LabelAnnotation}
+                    when={d => d.startOfDay}
+                    usingProps={{
+                        fontSize: 8,
+                        fill: "white",
+                        opacity: 1,
+                        text: "\u007C",
+                        y: ({ yScale, datum }) => yScale.range()[0],
+                        tooltip: d => timeFormat("%b %d, %H:%M")(d.date),
+                    }} />
+
+                <ZoomButtons
+                    onReset={() => {
+                        handleReset(data.length)
+                    }}
+                    onFirst={() => {
+                        handleFirst(data.length)
+                    }}
+                    dataLength={data.length}
+                />
             </Chart>
-            <Chart id={`${chartKey}2`}
+            <Chart id={`${chartUid}2`}
                 yExtents={flowindex.accessor()}
                 padding={{ top: 10, bottom: 20 }}
             >
@@ -994,7 +1246,9 @@ const mapStateToProps = (state) => {
     xEventsState: state.charts.xEventsState,
     screenShotSrc: state.charts.screenShotSrc,
     showScreenShotModal: state.charts.showScreenShotModal,
-    updateTheCharts: state.charts.updateTheCharts
+    updateTheCharts: state.charts.updateTheCharts,
+    selectedChart: state.charts.selectedChart,
+    selectedChartEvent: state.charts.selectedChartEvent
   }
 }
 
@@ -1002,8 +1256,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     updateProperty: (property) => dispatch(updateProperty(property)),
     SetChartSettings: (
-          newChartSettings, chartSymbol, resetChartData, synchronizeChart, synchronizeChartOnly
-        ) => dispatch(SetChartSettings(newChartSettings, chartSymbol, resetChartData, synchronizeChart, synchronizeChartOnly))
+          newChartSettings, chartUid, resetChartData, synchronizeChart, synchronizeChartOnly
+        ) => dispatch(SetChartSettings(newChartSettings, chartUid, resetChartData, synchronizeChart, synchronizeChartOnly))
   }
 }
 

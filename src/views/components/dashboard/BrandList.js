@@ -13,6 +13,27 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 
+const getDatabase = (eSymbol) => {
+	let eSymbolCodeCharachter = eSymbol.charAt(0)
+	let eSymbolCode = (eSymbolCodeCharachter.toLowerCase()).charCodeAt( eSymbolCodeCharachter.length - 1 )
+
+	if (eSymbolCode >= 97 && eSymbolCode <= 102) {
+		return 'ae'
+	}
+
+	if (eSymbolCode > 102 && eSymbolCode <= 108) {
+		return 'fl'
+	}
+
+	if (eSymbolCode >= 109 && eSymbolCode <= 115) {
+		return 'ms'
+	}
+
+	if (eSymbolCode >= 116 && eSymbolCode <= 122) {
+		return 'tz'
+	}
+}
+
 const BrandList = props => {
     const {
         brands,
@@ -27,11 +48,18 @@ const BrandList = props => {
     const parentSearchInputRef = useRef(null)
 
     const [searchBrands, setSearchBrands] = useState([])
+    const [showRipple, setShowRipple] = useState(false)
 
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0)
 
     useEffect(() => {
         window.addEventListener("keyup", onKeyPress)
+
+        if (searchInputRef.current != null && brandsModelShow) {
+            setTimeout(function() { 
+                document.querySelector('#searchSymbols').focus()
+             }, 500)
+        }
 
         if (!brandsModelShow) {
             searchInputRef.current.value = ''
@@ -46,21 +74,45 @@ const BrandList = props => {
 	const onKeyPress = async(event) => {
 		const keyCode = event.which;
         if (brandsModelShow && keyCode == 13) {
-            const getSymbolValue = new Promise(resolve => {
+            setShowRipple(true)
+            const getSymbolValue = new Promise(async(resolve, reject) => {
                 let searchInputValue = searchInputRef.current.value.toUpperCase(),
                     searchSymbolExists = Object.keys(searchBrands).includes(searchInputValue),
-                    finalSymbol = ( searchInputValue == '' || !searchSymbolExists ) ? Object.keys(searchBrands)[0] : searchInputValue
+                    finalSymbol = !searchSymbolExists ? false : (
+                        searchInputValue == '' ? Object.keys(searchBrands)[0] : searchInputValue
+                    )
 
-                resolve(finalSymbol)
+                if (!finalSymbol) {
+                    let finalSymbolExists = await checkDataSymbol(searchInputValue)
+                    resolve(finalSymbolExists ? searchInputValue : Object.keys(searchBrands)[0])
+                } else {
+                    resolve(finalSymbol)
+                }
             })
 
             const finalSymbol = await getSymbolValue
-            EditMarket(finalSymbol, existingCharts.includes(finalSymbol))
+            EditMarket(finalSymbol, 0, false)
+            setShowRipple(false)
         }
+	}
+
+	const checkDataSymbol = (chartKey) => {
+		return new Promise((resolve, reject) => {
+			let symbolDatabase = getDatabase(chartKey)
+            React.firebase.firebase.database(React.firebase[symbolDatabase])
+                .ref(`nanex/e${chartKey}`)
+                .limitToLast(1)
+                .once('value', (snapshot) => {
+                    resolve(snapshot.exists())
+            })
+		})
 	}
 
     return (
         <>
+            {showRipple && <div className='c-custom_loader'>
+                <div className='lds-ripple'><div></div><div></div></div>
+            </div>}
             <CCol key={'searchBrandList'} xs="12" sm="12" md="12" className="p-0 mb-1">
                 <CCard className="m-0">
                     <CCardBody innerRef={parentSearchInputRef} className="d-flex align-items-center p-0 justify-content-between">
@@ -73,7 +125,7 @@ const BrandList = props => {
                             onChange={async(e) => {
                                 const brandsSearch = await SearchSymbol(e.target.value)
                                 setSearchBrands(
-                                    brandsSearch !== false ? brandsSearch : brands
+                                    typeof brandsSearch === 'object' && brandsSearch !== null ? brandsSearch : brands
                                 )
                             }}
                         />
@@ -96,9 +148,9 @@ const BrandList = props => {
                             </div>
                             <div className="mr-3 text-info">
                                 <CLink
-                                onClick={() => EditMarket(brand, existingCharts.includes(brand)) }>
+                                onClick={() => EditMarket(brand, 0, false) }>
                                     <CIcon
-                                        name={existingCharts.includes(brand) ? 'cis-check-circle' : 'cil-plus-circle'}
+                                        name={'cil-plus-circle'}
                                         size={'2xl'}
                                     />
                                 </CLink>
@@ -122,7 +174,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     updateProperty: (property) => dispatch(updateProperty(property)),
-    EditMarket: (brandSymbol, removeBrand) => dispatch(EditMarket(brandSymbol, removeBrand)),
+    EditMarket: (brandSymbol, brandUid, removeBrand) => dispatch(EditMarket(brandSymbol, brandUid, removeBrand)),
     SearchSymbol: (searchInput) => dispatch(SearchSymbol(searchInput))
   }
 }

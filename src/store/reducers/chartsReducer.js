@@ -14,6 +14,7 @@ const initialState = {
   updateTheCharts : false,
   watchList: [], // ONLINE
   watchListChanged: false,
+  newChartLoaded: false,
 
   brands: [],
   existingCharts: [],
@@ -80,7 +81,9 @@ const initialState = {
     fullScreenMode: false
   },
   selectedChart: null,
-  applyToAllChart: false,
+  selectedChartEvent: null,
+  disableEvent: false,
+  applyToAllChart: true,
   currentChartSettings: {},
 
   tz: null,

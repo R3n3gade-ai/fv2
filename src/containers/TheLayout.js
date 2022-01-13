@@ -20,7 +20,9 @@ import {
 import Joyride, { ACTIONS, CallBackProps, EVENTS, STATUS, Step } from 'react-joyride'
 
 let loadCharts = [],
-    loadSymbols = []
+    loadSymbols = [],
+    loadFullScreenBrand = {}
+
 const TheLayout = props => {
   const {
     auth,
@@ -33,6 +35,9 @@ const TheLayout = props => {
     dbCharts,
     defaultChart,
     showTourSteps,
+    fullScreenBrand,
+    fullScreenMode,
+    newChartLoaded,
     updateProperty,
     EditProfile
   } = props;
@@ -105,6 +110,7 @@ const TheLayout = props => {
     }
   ])
   const [stepIndex, setStepIndex] = useState(0)
+  const [firstLoad, setFirstLoad] = useState(true)
 
   const classes = classNames(
     'c-app c-default-layout',
@@ -119,39 +125,61 @@ const TheLayout = props => {
               singleDefaultStyle = defaultChart[auth.uid] !== null ? defaultChart[auth.uid] : {},
               dbIndex = parseInt(theDbIndex)
 
-          addMarket(singleDbChart.name, singleDbChart.chartSettings, dbIndex, singleDefaultStyle)
+          addMarket(singleDbChart.name, singleDbChart.uid, singleDbChart.chartSettings, dbIndex, singleDefaultStyle)
         })
 
-        updateProperty({charts: loadCharts, existingCharts: loadSymbols,updateTheCharts: !updateTheCharts})
+        updateProperty({
+          charts: loadCharts, 
+          fullScreenBrand: loadFullScreenBrand,
+          newChartLoaded: Object.keys(loadFullScreenBrand).length > 0 ? true : false,
+          existingCharts: loadSymbols,
+          updateTheCharts: !updateTheCharts
+        })
+        
         loadCharts = []
         loadSymbols = []
+        loadFullScreenBrand = {}
       } else {
         updateProperty({charts: [], updateTheCharts: !updateTheCharts})
       }
     }
   }, [dbCharts, defaultChart, showTourSteps])
 
-  const addMarket = (brandSymbol, syncChartSettings, mapIndex, singleDefaultStyle) => {
+  const addMarket = (brandSymbol, brandUid, syncChartSettings, mapIndex, singleDefaultStyle) => {
     // if (currentBrand.length > 0 && !existingChart) {
+      let instantChartSetting = {
+          chartUid: brandUid,
+          chartIcon: brandSymbol.toLowerCase(),
+          chartSymbol: brandSymbol,
+          chartBrand: '',
+          chartSettings: {
+            ...{
+              chartType: 'ohlc',
+              blocktradesDates: 30
+            },
+            ...chartSettings,
+            ...syncChartSettings,
+            ...{
+              chartDbIndex: mapIndex
+            },
+            ...singleDefaultStyle,
+            ...{
+              chartType: syncChartSettings.chartType || singleDefaultStyle.chartType || 'ohlc'
+            }
+          },
+          chartData: []
+      }
+
+      if (fullScreenMode && fullScreenBrand.chartSettings.chartDbIndex == mapIndex) {
+        loadFullScreenBrand = instantChartSetting
+      }
+
       loadCharts = [
         ...loadCharts,
-        ...[{
-            chartIcon: brandSymbol.toLowerCase(),
-            chartSymbol: brandSymbol,
-            chartBrand: '',
-            chartSettings: {
-              ...chartSettings,
-              ...syncChartSettings,
-              ...{
-                chartDbIndex: mapIndex
-              },
-              ...singleDefaultStyle
-            },
-            chartData: []
-        }]
+        ...[instantChartSetting]
       ]
 
-      if (!loadSymbols.includes(brandSymbol)) loadSymbols.push(brandSymbol)
+      if (!loadSymbols.includes(brandUid)) loadSymbols.push(brandUid)
     // }
   }
 
@@ -172,42 +200,49 @@ const TheLayout = props => {
     }
   }
 
-  return (
-    <div className={classes}>
-      {!loadedProfile && <TheLoader/>}
-      <TheSidebar/>
-      <TheAside />
-      <TheScanAside />
-      <TheWatchListAside />
-      <div className="c-wrapper">
-        <TheHeader/>
-        <div className="c-body">
-          <TheContent/>
-        </div>
-        <Joyride
-          continuous={true}
-          steps={tourSteps}
-          run={showTourSteps}
-          stepIndex={stepIndex}
-          scrollToFirstStep={true}
-          showProgress={true}
-          showSkipButton={true}
-          styles={{
-            options: {
-              arrowColor: 'rgb(42, 43, 54)',
-              backgroundColor: 'rgb(42, 43, 54)',
-              overlayColor: 'rgba(0, 0, 0, 0.55)',
-              primaryColor: '#1992e3',
-              textColor: 'rgba(255, 255, 255, 0.75)',
-              zIndex: 10000,
-            }
-          }}
-          callback={handleJoyrideCallback}
-        />
-        {/* <TheFooter/> */}
+  if (!loadedProfile) {
+    return (
+      <div className={classes}>
+        <TheLoader/>
       </div>
-    </div>
-  )
+    )
+  } else {
+    return (
+      <div className={classes}>
+        <TheSidebar/>
+        <TheAside />
+        <TheScanAside />
+        <TheWatchListAside />
+        <div className="c-wrapper">
+          <TheHeader/>
+          <div className="c-body">
+            <TheContent/>
+          </div>
+          <Joyride
+            continuous={true}
+            steps={tourSteps}
+            run={showTourSteps}
+            stepIndex={stepIndex}
+            scrollToFirstStep={true}
+            showProgress={true}
+            showSkipButton={true}
+            styles={{
+              options: {
+                arrowColor: 'rgb(42, 43, 54)',
+                backgroundColor: 'rgb(42, 43, 54)',
+                overlayColor: 'rgba(0, 0, 0, 0.55)',
+                primaryColor: '#1992e3',
+                textColor: 'rgba(255, 255, 255, 0.75)',
+                zIndex: 10000,
+              }
+            }}
+            callback={handleJoyrideCallback}
+          />
+          {/* <TheFooter/> */}
+        </div>
+      </div>
+    )
+  }
 }
 
 const mapStateToProps = (state) => {
@@ -221,7 +256,10 @@ const mapStateToProps = (state) => {
     updateTheCharts: state.charts.updateTheCharts,
     dbCharts: state.firebase.data.favoritesv2,
     defaultChart: state.firebase.data.defaultv2,
-    showTourSteps: state.charts.showTourSteps
+    showTourSteps: state.charts.showTourSteps,
+    fullScreenMode: state.charts.fullScreenMode,
+    fullScreenBrand: state.charts.fullScreenBrand,
+    newChartLoaded: state.charts.newChartLoaded
   }
 }
 
