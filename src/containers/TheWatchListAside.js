@@ -19,6 +19,10 @@ import tzmoment from 'moment-timezone'
 import { changeTimezone } from '@t0x1c3500/react-stockcharts/lib/utils'
 import AsyncSelect  from 'react-select/async'
 
+import {
+	getLatestWorkingDay
+} from '../views/charts/Utils/dateUtils';
+
 let watchlistPs = null,
     theWatchListViewEdit = [],
     filterSymbols = []
@@ -111,19 +115,8 @@ const TheWatchListAside = props => {
   }
 
   const getLatestValue = async(watchedSymbol) => {
-    let symbolDatabase = getDatabase(watchedSymbol),
-        requestDateOrigin = new Date(),
-        requestedMoment = tzmoment(requestDateOrigin).tz('America/New_York'),
-        requestDateEdited = ([0,6].includes(requestedMoment.day())) ? 
-          requestedMoment.subtract(
-            requestedMoment.day() == 0 ? 2 : 1, 
-            'days'
-          )
-          : (
-            ( requestedMoment.hour() < 9 || ( requestedMoment.hour() == 9 && requestedMoment.minutes() < 31 ) ) ? 
-              requestedMoment.subtract(1, 'days') : requestedMoment
-          ),
-        requestDate = requestDateEdited.format('YYYY_MM_DD')
+    const requestDate = await getLatestWorkingDay()
+    let symbolDatabase = getDatabase(watchedSymbol)
 
     React.firebase.firebase.database(React.firebase[symbolDatabase])
       .ref(`nanex/e${watchedSymbol}/${requestDate}`)

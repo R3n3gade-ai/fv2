@@ -33,6 +33,10 @@ import tzmoment from 'moment-timezone'
 import { changeTimezone } from '@t0x1c3500/react-stockcharts/lib/utils'
 import AsyncSelect  from 'react-select/async'
 
+import {
+	getLatestWorkingDay
+} from '../views/charts/Utils/dateUtils';
+
 const calcTime = () => {
     let d = new Date(),
         myDatetimeString = tzmoment(d).tz('America/New_York').format('YYYY-MM-DD hh:mm:ss a z')
@@ -64,20 +68,9 @@ const TheAside = props => {
   let tableWrapperRef = useRef(null),
       divergenceFirebaseRef = useRef(null)
 
-  useEffect(() => {
+  useEffect(async() => {
     if (divergenceFirebaseRef.current == null) {
-      let requestDateOrigin = new Date(),
-          requestedMoment = tzmoment(requestDateOrigin).tz('America/New_York'),
-          requestDateEdited = ([0,6].includes(requestedMoment.day())) ? 
-            requestedMoment.subtract(
-              requestedMoment.day() == 0 ? 2 : 1, 
-              'days'
-            )
-            : (
-              requestedMoment.hour() < 9 ? requestedMoment.subtract(1, 'days') : requestedMoment
-            ),
-          requestDate = requestDateEdited.format('YYYY_MM_DD')
-
+      const requestDate = await getLatestWorkingDay()
       divergenceFirebaseRef.current = React.firebase.firebase.database(React.firebase.tracking).ref(`${requestDate}/one/latest`)
     }
 

@@ -62,6 +62,10 @@ import HoverTextNearMouse from '@t0x1c3500/react-stockcharts/lib/interactive/com
 import Slider from 'react-rangeslider'
 import 'react-rangeslider/lib/index.css'
 
+import {
+	getLatestWorkingDay
+} from './/Utils/dateUtils';
+
 const getDatabase = (eSymbol) => {
 	let eSymbolCodeCharachter = eSymbol.charAt(0)
 	let eSymbolCode = (eSymbolCodeCharachter.toLowerCase()).charCodeAt( eSymbolCodeCharachter.length - 1 )
@@ -220,20 +224,10 @@ let ChartHolder = forwardRef((props, ref) => {
         blocksFirebaseRef = useRef(null),
         divergenceFirebaseRef = useRef(null)
 
-    useEffect(() => {
+    useEffect(async() => {
         if (liveFirebaseRef.current == null) {
-            let symbolDatabase = getDatabase(chartKey),
-                requestDateOrigin = new Date(),
-                requestedMoment = tzmoment(requestDateOrigin).tz('America/New_York'),
-                requestDateEdited = ([0,6].includes(requestedMoment.day())) ? 
-                    requestedMoment.subtract(
-                    requestedMoment.day() == 0 ? 2 : 1, 
-                    'days'
-                    )
-                    : (
-                        requestedMoment.hour() < 9 ? requestedMoment.subtract(1, 'days') : requestedMoment
-                    ),
-                requestDate = requestDateEdited.format('YYYY_MM_DD')
+            const requestDate = await getLatestWorkingDay()
+            let symbolDatabase = getDatabase(chartKey)
             
             liveFirebaseRef.current = React.firebase.firebase.database(React.firebase['l' + symbolDatabase]).ref(`liveTick/e${chartKey}`)
             data1mFirebaseRef.current = React.firebase.firebase.database(React.firebase[symbolDatabase]).ref(`nanex/e${chartKey}`).limitToLast(2)
@@ -1013,6 +1007,7 @@ let ChartHolder = forwardRef((props, ref) => {
                     opacity={0.1}
                     tickStroke={darkMode ? whiteColor : primaryLightBackground}
                     ticks={10}
+                    customLevels={[11, 12]}
                     {...xGrid} />
                 <YAxis 
                     axisAt='right' 
@@ -1178,18 +1173,6 @@ let ChartHolder = forwardRef((props, ref) => {
                         />
                     </>
                 }
-
-                <Annotate 
-                    with={LabelAnnotation}
-                    when={d => d.startOfDay}
-                    usingProps={{
-                        fontSize: 8,
-                        fill: "white",
-                        opacity: 1,
-                        text: "\u007C",
-                        y: ({ yScale, datum }) => yScale.range()[0],
-                        tooltip: d => timeFormat("%b %d, %H:%M")(d.date),
-                    }} />
 
                 <ZoomButtons
                     onReset={() => {

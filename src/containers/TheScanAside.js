@@ -89,6 +89,7 @@ const TheScanAside = props => {
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0)
 
     let TrendsDataRef = useRef([]),
+        TrendsDataCopyRef = useRef([]),
         firebaseRefs = useRef([]),
         alphaFirebaseRef = useRef(null)
 
@@ -111,7 +112,38 @@ const TheScanAside = props => {
         KeltsOdayScanstableWrapperRef.current && (KeltsOdayScansPs = new PerfectScrollbar('.option-table_wrapper-kelts_1d'))
         KeltsOweekScanstableWrapperRef.current && (KeltsOweekScansPs = new PerfectScrollbar('.option-table_wrapper-kelts_1w'))
         KeltsOmonthScanstableWrapperRef.current && (KeltsOmonthScansPs = new PerfectScrollbar('.option-table_wrapper-kelts_1m'))
-    }, [symbolFilters, onlyWatchlist, trendScansData])
+    }, [trendScansData])
+
+    useEffect(() => {
+        if (TrendsDataRef.current !== null) {
+            TrendsDataRef.current = JSON.parse(JSON.stringify(TrendsDataCopyRef.current))
+            if (onlyWatchlist) {
+                TrendsDataRef.current.map((currentTrendData,  currentTrendKey) => {
+                    const newCurrentTrendData = currentTrendData.data.filter(singleCurrentTrendData => {
+                        return watchList.find(SyElement => SyElement.symbol == singleCurrentTrendData.symbol)
+                    })
+
+                    TrendsDataRef.current[currentTrendKey].data = newCurrentTrendData
+                })
+            }
+
+            if (symbolFilters.length > 0) {
+                let filterSymbols = symbolFilters.map(Sy => {
+                    return Sy.value
+                })
+                
+                TrendsDataRef.current.map((currentTrendData,  currentTrendKey) => {
+                    const newCurrentTrendData = currentTrendData.data.filter(singleCurrentTrendData => {
+                        return filterSymbols.find(SyElement => SyElement == singleCurrentTrendData.symbol)
+                    })
+
+                    TrendsDataRef.current[currentTrendKey].data = newCurrentTrendData
+                })
+            }
+
+            forceUpdate()
+        }
+    }, [onlyWatchlist, symbolFilters])
     
     useEffect(() => {
         return () => {
@@ -187,7 +219,7 @@ const TheScanAside = props => {
 
             if (symbolFilters.length > 0) {
                 let filterSymbols = symbolFilters.map(Sy => {
-                return Sy.value
+                    return Sy.value
                 })
                 
                 if (!filterSymbols.find(SyElement => SyElement == currentSymbol)) return
@@ -353,10 +385,9 @@ const TheScanAside = props => {
         TrendsDataRef.current.map((trendTypeData, trendTypeDataIndex) => {
             trendTypeData.data.map((trendDetailsData, trendDetailsDataIndex) => {
                 if (trendDetailsData.symbol == symbol) {
-                    TrendsDataRef.current[trendTypeDataIndex].data[trendDetailsDataIndex].price = 
-                        val.val() !== null && val.val().C.toFixed(2) || '0'
-
-                    // forceUpdate()
+                    const trendLiveValue = val.val() !== null && val.val().C.toFixed(2) || '0'
+                    TrendsDataRef.current[trendTypeDataIndex].data[trendDetailsDataIndex].price = trendLiveValue
+                    TrendsDataCopyRef.current = JSON.parse(JSON.stringify(TrendsDataRef.current))
                 }
             })
         })
