@@ -64,6 +64,7 @@ export const EditMarket = (brandSymbol, brandUid, removeBrand, additionalSetting
             flowIndex: currentChart.chartSettings.flowIndex,
             blocksLine: currentChart.chartSettings.blocksLine,
             blocktradesDates: currentChart.chartSettings.blocktradesDates || 30,
+            flowIndexWidth: currentChart.chartSettings.flowIndexWidth || 1,
             showDivergence: currentChart.chartSettings.showDivergence,
             chartType: currentChart.chartSettings.chartType,
             ...additionalSettings
@@ -202,6 +203,7 @@ export const SetChartSettings = (
           blockTradesRegularPoolColor: newChartSettings.blockTradesRegularPoolColor || currentCharts[chartSettingIndex].chartSettings.blockTradesRegularPoolColor,
           backgroundColor: newChartSettings.backgroundColor || currentCharts[chartSettingIndex].chartSettings.backgroundColor,
           chartType: newChartSettings.chartType || currentCharts[chartSettingIndex].chartSettings.chartType,
+          flowIndexWidth: newChartSettings.flowIndexWidth || currentCharts[chartSettingIndex].chartSettings.flowIndexWidth,
         }).catch((e) => {
           console.log('error saving', e)
         })

@@ -12,7 +12,9 @@ import {
   CDropdownMenu,
   CDropdownItem,
 
-  CSwitch
+  CSwitch,
+
+  CInput
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 
@@ -90,7 +92,7 @@ const SubSettingsList = props => {
 
     return (
         <>
-          <CListGroupItem className='h5 mb-0 d-flex flex-direction-row align-items-center justify-content-between'>
+          {settingTitle && <CListGroupItem className='h5 mb-0 d-flex flex-direction-row align-items-center justify-content-between'>
             <div>
               {settingTitle}
             </div>
@@ -107,7 +109,7 @@ const SubSettingsList = props => {
                   onChange={() => updateProperty({applyToAllChart: !applyToAllChart})}
                 />
               </div>} */}
-          </CListGroupItem>
+          </CListGroupItem>}
           {settingType == 'multiple' &&
             settingAttribute.map((setting, i) => {
               return <CListGroupItem key={i} action active={(currentChartSettings[settingId] == setting.id)} className='pl-5 custom-active mb-0'
@@ -216,6 +218,28 @@ const SubSettingsList = props => {
                             ) } />
                         </div>
                       }
+                    </div>
+                  }
+                  { setting.input &&
+                    <div>
+                      <CInput 
+                        style={{width: '60px'}} size='xs' type='number' 
+                        value={setting.value || 1} onChange={(e) => {
+                          let newValue = e.target.value
+                          console.log(newValue)
+
+                          if (setting.maxValue || setting.minValue) {
+                            if (setting.maxValue && newValue > setting.maxValue ) return
+                            if (setting.minValue && newValue < setting.minValue) return
+                          }
+
+                          changeCurrentSetting(
+                            {
+                              id: newValue
+                            }, false, setting.id
+                          )
+                        }} 
+                      />
                     </div>
                   }
                   </CListGroupItem>

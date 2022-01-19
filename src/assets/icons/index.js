@@ -173,7 +173,9 @@ import {
   cilSad,
   cisUser,
   cisDocument,
-  cisListRich
+  cisListRich,
+  cisArrowThickBottom,
+  cisArrowThickTop
 } from './coreui-icons/js'
 
 export const icons = Object.assign({}, {
@@ -316,7 +318,9 @@ export const icons = Object.assign({}, {
   cilSad,
   cisUser,
   cisDocument,
-  cisListRich
+  cisListRich,
+  cisArrowThickBottom,
+  cisArrowThickTop
 }, {
   cifUs,
   cifBr,

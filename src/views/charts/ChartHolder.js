@@ -1151,23 +1151,28 @@ let ChartHolder = forwardRef((props, ref) => {
                     <>
                         <AreaSeries
                             key={`${chartUid}priceDown`}
-                            yAccessor={d => d.divergenceDetected && d.divergenceTrend == 'priceDown' && d.close}
+                            yAccessor={d => {
+                                if (d.divergenceDetected && d.divergenceTrend == 'priceDown') return d.close
+                            }}
                             strokeWidth={0}
                             strokeOpacity={0}
+                            upperArea={true}
                             canvasGradient={createVerticalLinearGradient([
-                                { stop: 0, color: hexToRGBA('#0ccf02', 0.025) },
-                                { stop: 0.5, color: hexToRGBA('#0ccf02', 0.15) },
-                                { stop: 1, color: hexToRGBA('#0ccf02', 0.85) }
+                                { stop: 0, color: hexToRGBA('#0ccf02', 0.85) },
+                                { stop: 0.5, color: hexToRGBA('#0ccf02', 0.35) },
+                                { stop: 1, color: hexToRGBA('#0ccf02', 0) }
                             ])}
                         />
                         <AreaSeries
                             key={`${chartUid}priceUp`}
-                            yAccessor={d => d.divergenceDetected && d.divergenceTrend == 'priceUp' && d.close}
+                            yAccessor={d => {
+                                if (d.divergenceDetected && d.divergenceTrend == 'priceUp') return d.close
+                            }}
                             strokeWidth={0}
                             strokeOpacity={0}
                             canvasGradient={createVerticalLinearGradient([
-                                { stop: 0, color: hexToRGBA('#d0021b', 0.025) },
-                                { stop: 0.5, color: hexToRGBA('#d0021b', 0.15) },
+                                { stop: 0, color: hexToRGBA('#d0021b', 0) },
+                                { stop: 0.5, color: hexToRGBA('#d0021b', 0.35) },
                                 { stop: 1, color: hexToRGBA('#d0021b', 0.85) }
                             ])}
                         />
@@ -1188,9 +1193,9 @@ let ChartHolder = forwardRef((props, ref) => {
                 yExtents={flowindex.accessor()}
                 padding={{ top: 10, bottom: 20 }}
             >
-                <LineSeries yAccessor={flowindex.accessor()} stroke={flowindex.stroke()}/>
+                <LineSeries yAccessor={flowindex.accessor()} stroke={flowindex.stroke()} strokeWidth={settings.flowIndexWidth}/>
                 { settings.showAverage &&
-                    <LineSeries yAccessor={flowindexavg.accessor()} stroke={flowindexavg.stroke()}/>}
+                    <LineSeries yAccessor={flowindexavg.accessor()} stroke={flowindexavg.stroke()} strokeWidth={settings.flowIndexWidth}/>}
 
                 <CurrentCoordinate yAccessor={flowindex.accessor()} fill={flowindex.stroke()} />
                 { settings.showAverage &&
