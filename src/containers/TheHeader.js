@@ -12,18 +12,17 @@ import CIcon from '@coreui/icons-react'
 // routes config
 import routes from '../routes'
 
-import {
-  TheHeaderDropdown,
-  TheHeaderDropdownMssg,
-  TheHeaderDropdownNotif,
-  TheHeaderDropdownTasks
-}  from './index'
+import TheHeaderDropdown from './TheHeaderDropdown'
+import TheHeaderDropdownMssg from './TheHeaderDropdownMssg'
+import TheHeaderDropdownNotif from './TheHeaderDropdownNotif'
+import TheHeaderDropdownTasks from './TheHeaderDropdownTasks'
 
 const TheHeader = props => {
   const {
     asideShow,
     scanAsideShow,
     watchlistAsideShow,
+    integrationsAsideShow,
     darkMode,
     sidebarShow,
     updateProperty
@@ -59,7 +58,7 @@ const TheHeader = props => {
         <CToggler
           inHeader
           className="d-md-down-none mr-3 second-step"
-          onClick={() => updateProperty({scanAsideShow: false, watchlistAsideShow: false, asideShow: !asideShow})}
+          onClick={() => updateProperty({scanAsideShow: false, watchlistAsideShow: false, integrationsAsideShow: false, asideShow: !asideShow})}
         >
           { asideShow && 
             <>
@@ -77,7 +76,7 @@ const TheHeader = props => {
         <CToggler
           inHeader
           className="d-md-down-none mr-3 third-step"
-          onClick={() => updateProperty({asideShow: false, watchlistAsideShow: false, scanAsideShow: !scanAsideShow})}
+          onClick={() => updateProperty({asideShow: false, watchlistAsideShow: false, integrationsAsideShow: false, scanAsideShow: !scanAsideShow})}
         >
           { scanAsideShow && 
             <>
@@ -96,7 +95,7 @@ const TheHeader = props => {
           inHeader
           className="d-md-down-none mr-3 fourth-step"
           onClick={() => updateProperty({
-            asideShow: false, scanAsideShow: false, watchlistAsideShow: !watchlistAsideShow})}
+            asideShow: false, scanAsideShow: false, integrationsAsideShow: false, watchlistAsideShow: !watchlistAsideShow})}
         >
           { watchlistAsideShow && 
             <>
@@ -108,6 +107,25 @@ const TheHeader = props => {
             <>
               <CIcon name="cil-queue" alt="Dashboard" />
               <span>&nbsp;Watchlist</span>
+            </>
+          }
+        </CToggler>
+        <CToggler
+          inHeader
+          className="d-md-down-none mr-3 fourth-step"
+          onClick={() => updateProperty({
+            asideShow: false, scanAsideShow: false, watchlistAsideShow: false, integrationsAsideShow: !integrationsAsideShow})}
+        >
+          { integrationsAsideShow &&
+            <>
+              <CIcon content={React.icons.cilApps} alt="Integrations" />
+              <span className='font-weight-bold'>&nbsp;Integrations</span>
+            </>
+          }
+          { !integrationsAsideShow &&
+            <>
+              <CIcon content={React.icons.cilApps} alt="Integrations" />
+              <span>&nbsp;Integrations</span>
             </>
           }
         </CToggler>
@@ -139,6 +157,7 @@ const mapStateToProps = (state) => {
     asideShow: state.charts.asideShow,
     scanAsideShow: state.charts.scanAsideShow,
     watchlistAsideShow: state.charts.watchlistAsideShow,
+    integrationsAsideShow: state.charts.integrationsAsideShow,
     darkMode: state.charts.darkMode,
     sidebarShow: state.charts.sidebarShow
   }

@@ -25,6 +25,7 @@ const TheContent = props => {
     changedAsideDivergenceBar,
     changedAsideScansBar,
     changedAsideWatchlistBar,
+    changedAsideIntegration,
     updateProperty
   } = props
 
@@ -83,7 +84,8 @@ const mapStateToProps = (state) => {
       changedFullScreenMode: state.charts.fullScreenMode,
       changedAsideDivergenceBar : state.charts.asideShow,
       changedAsideScansBar : state.charts.scanAsideShow,
-      changedAsideWatchlistBar : state.charts.watchlistAsideShow
+      changedAsideWatchlistBar : state.charts.watchlistAsideShow,
+      changedAsideIntegration: state.charts.integrationsAsideShow
   }
 }
 
