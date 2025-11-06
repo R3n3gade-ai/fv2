@@ -2,6 +2,8 @@
 
 This project is a Webpack-powered React app with Firebase emulators and optional Express static server.
 
+CI note: this line updates to trigger a deploy.
+
 Prereqs
 - Node.js 14.x (recommended 14.21.3). Newer Node versions (18/20/22/24) will fail due to node-sass from legacy deps.
 - npm 6/7/8 (comes with Node 14)
