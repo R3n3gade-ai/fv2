@@ -1,0 +1,1 @@
+export const cisGripLinesHorizontal = ["512 512","<rect width='480' height='48' x='16' y='176' fill='var(--ci-primary-color, currentColor)' class='ci-primary'/><rect width='480' height='48' x='16' y='288' fill='var(--ci-primary-color, currentColor)' class='ci-primary'/>"]

@@ -1,0 +1,1 @@
+export declare const cisWifiSignal4: any[];

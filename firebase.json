@@ -1,0 +1,66 @@
+{
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "runtime": "nodejs16"
+    }
+  ],
+  "hosting": [
+    {
+      "target": "fv2",
+      "public": "build",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    },
+    {
+      "target": "fv2-dev",
+      "public": "build",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  ],
+  "emulators": {
+    "auth": {
+      "port": 9099,
+       "host": "0.0.0.0"
+    },
+    "database": {
+      "port": 9001,
+      "host": "0.0.0.0"
+    },
+    "functions": {
+      "port": 9002,
+      "host": "0.0.0.0"
+    },
+    "firestore": {
+      "port": 8081,
+      "host": "0.0.0.0"
+    },
+    "ui": {
+      "enabled": true,
+      "port": 4001,
+      "host": "0.0.0.0"
+    }
+  }
+}

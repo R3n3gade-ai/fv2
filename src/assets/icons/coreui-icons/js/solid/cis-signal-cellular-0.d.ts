@@ -1,0 +1,1 @@
+export declare const cisSignalCellular0: any[];

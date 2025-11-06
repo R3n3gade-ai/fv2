@@ -1,0 +1,24 @@
+{
+  "name": "tickers-uploader",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/bigquery": "^7.9.1",
+    "adm-zip": "^0.5.16",
+    "axios": "^1.7.9",
+    "csv-parser": "^3.2.0",
+    "csv-stringify": "^6.5.2",
+    "execa": "^9.5.2",
+    "firebase-admin": "^12.6.0",
+    "moment-timezone": "^0.5.47",
+    "msgpackr": "^1.11.2",
+    "zlib": "^1.0.5"
+  }
+}

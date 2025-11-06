@@ -1,0 +1,42 @@
+// Header
+
+// Dark theme
+// scss-docs-start subheader-dark-themes
+$subheader-bg__dt:                     $bg-elevation-3 !default;
+$subheader-color__dt:                  rgba($white, .75) !default;
+$subheader-border__dt:                 ( bottom: 0 ) !default;
+$subheader-hover-color__dt:            rgba($white, .9) !default;
+$subheader-active-color__dt:           $white !default;
+$subheader-disabled-color__dt:         rgba($white, .25) !default;
+// scss-docs-end subheader-dark-themes
+
+$subheader-variants-map__dt: () !default;
+// stylelint-disable-next-line scss/dollar-variable-default
+$subheader-variants-map__dt: map-merge(
+  (
+    dark: (
+      "subheader-bg":                      $subheader-bg__dt,
+      "subheader-color":                   $subheader-color__dt,
+      "subheader-border":                  $subheader-border__dt,
+      "subheader-hover-color":             $subheader-hover-color__dt,
+      "subheader-active-color":            $subheader-active-color__dt,
+      "subheader-disabled-color":          $subheader-disabled-color__dt,
+    )
+  ),
+  $subheader-variants-map__dt
+);
+
+$subheader-default-variant__dt: "dark" !default;
+$subheader-variants__dt: (
+  default:  $subheader-default-variant__dt,
+  map:      $subheader-variants-map__dt
+) !default;
+
+// stylelint-disable-next-line scss/dollar-variable-default
+$subheader-theme-map: map-merge(
+  $subheader-theme-map,
+  (
+    dark:  $subheader-variants__dt
+  )
+);
+

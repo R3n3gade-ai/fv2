@@ -1,0 +1,1 @@
+export declare const cisVerticalAlignBottom: any[];

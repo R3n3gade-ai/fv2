@@ -1,0 +1,28 @@
+{
+  "name": "Flowtrade Dev (Node 14)",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:0-14",
+  "remoteUser": "node",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "11"
+    }
+  },
+  "updateRemoteUserUID": false,
+  "postCreateCommand": "npm config set fund false && npm config set audit false && npm install --legacy-peer-deps && npm install --prefix functions --legacy-peer-deps && npm i -g firebase-tools http-server",
+  "postStartCommand": "npm run dev:all",
+  "forwardPorts": [8080, 3000, 4001, 8081, 9001, 9002, 9099],
+  "portsAttributes": {
+    "8080": { "label": "App (webpack dev server)", "onAutoForward": "openBrowser" },
+    "4001": { "label": "Firebase Emulator UI", "onAutoForward": "openBrowser" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "Firebase.firebase-vscode",
+        "ms-vscode.vscode-typescript-next"
+      ]
+    }
+  }
+}

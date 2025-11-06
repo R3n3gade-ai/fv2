@@ -1,0 +1,5 @@
+.DS_Store
+.git
+_old
+node_modules
+*.zip

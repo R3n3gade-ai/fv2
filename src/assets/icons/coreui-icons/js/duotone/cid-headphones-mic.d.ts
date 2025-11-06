@@ -1,0 +1,1 @@
+export declare const cidHeadphonesMic: any[];

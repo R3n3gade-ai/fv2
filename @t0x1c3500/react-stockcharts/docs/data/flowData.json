@@ -1,0 +1,58 @@
+[
+    {
+        "id": "-Mt8ipoJXrtGPn70S_AR",
+        "startTimeStamp": "1641895620000",
+        "endTimeStamp": "1641896520000",
+        "fill": "#0ccf02",
+        "trend": "priceDown",
+        "opacity": 0.1,
+        "startLine": {
+            "stroke": "#0ccf02",
+            "strokeWidth": 1,
+            "strokeOpacity": 0.7,
+            "strokeDasharray": "ShortDash"
+        }
+    },
+    {
+        "id": "-Mt9BMxOwCxS7AEAiBx1",
+        "startTimeStamp": "1641903360000",
+        "endTimeStamp": "1641904260000",
+        "fill": "#0ccf02",
+        "trend": "priceDown",
+        "opacity": 0.1,
+        "startLine": {
+            "stroke": "#0ccf02",
+            "strokeWidth": 1,
+            "strokeOpacity": 0.7,
+            "strokeDasharray": "ShortDash"
+        }
+    },
+    {
+        "id": "-Mt9uNkMgOYeTP8oSGwu",
+        "startTimeStamp": "1641915480000",
+        "endTimeStamp": "1641916320000",
+        "fill": "#0ccf02",
+        "trend": "priceDown",
+        "opacity": 0.1,
+        "startLine": {
+            "stroke": "#0ccf02",
+            "strokeWidth": 1,
+            "strokeOpacity": 0.7,
+            "strokeDasharray": "ShortDash"
+        }
+    },
+    {
+        "id": "-Mt8w6g-T9czvMim-0IB",
+        "startTimeStamp": "1641898200000",
+        "endTimeStamp": "1641900000000",
+        "fill": "#d0021b",
+        "trend": "priceUp",
+        "opacity": 0.1,
+        "startLine": {
+            "stroke": "#d0021b",
+            "strokeWidth": 1,
+            "strokeOpacity": 0.7,
+            "strokeDasharray": "ShortDash"
+        }
+    }
+]

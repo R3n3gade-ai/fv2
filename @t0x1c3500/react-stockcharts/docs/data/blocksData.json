@@ -1,0 +1,2952 @@
+[
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-12 11:23",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 148.4565,
+        "id": "kNoPFvQ0A",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-12 11:23 | 148.46"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-12 14:20",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 148.5,
+        "id": "HokVFM4Ov2",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-12 14:20 | 148.50"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-13 09:31",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149,
+        "id": "RqVD0JUAU9",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-13 09:31 | 149.00"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-13 09:54",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149,
+        "id": "jBhq-y-1Xx",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-13 09:54 | 149.00"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-13 09:58",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149,
+        "id": "YoTDuhUfYz",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-13 09:58 | 149.00"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-13 10:14",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 148.97,
+        "id": "b0oV7g7oYK",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-13 10:14 | 148.97"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-16 09:31",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 148.6,
+        "id": "R74stobLhR",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-16 09:31 | 148.60"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-16 11:10",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 147.35500000000002,
+        "id": "PJteCcmUcF",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-16 11:10 | 147.36"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-16 13:11",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149.49,
+        "id": "9e6-WV7KKW",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-16 13:11 | 149.49"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-16 15:56",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 151,
+        "id": "k6dCvI2zTL",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-16 15:56 | 151.00"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-17 09:31",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 150.21,
+        "id": "Ya1ysNipBy",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-17 09:31 | 150.21"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-17 10:00",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 150.44,
+        "id": "HYjjxpcNwH",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-17 10:00 | 150.44"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-17 11:42",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 150.555,
+        "id": "sY9e1my4U7",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-17 11:42 | 150.56"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-17 13:57",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149.2896,
+        "id": "xRSWGLnv--",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-17 13:57 | 149.29"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-17 15:45",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149.87990000000002,
+        "id": "PN8o8sGyBJ",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-17 15:45 | 149.88"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-18 09:31",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149.82,
+        "id": "lSpYCcVNyj",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-18 09:31 | 149.82"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-18 09:46",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149.82,
+        "id": "nOX7HUmp_IK",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-18 09:46 | 149.82"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-18 09:50",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149.84,
+        "id": "vUb01DM_SSI",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-18 09:50 | 149.84"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-18 10:50",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149.3,
+        "id": "XCqQWmXHNI5",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-18 10:50 | 149.30"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-18 10:50",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149.4,
+        "id": "NtiZ6dV1Msz",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-18 10:50 | 149.40"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-19 09:31",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 145,
+        "id": "n4JThC22euj",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-19 09:31 | 145.00"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-19 09:56",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 145.28,
+        "id": "O3k3hAR26RJ",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-19 09:56 | 145.28"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-19 12:35",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 147.87,
+        "id": "aICPSTJiTlk",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-19 12:35 | 147.87"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-19 13:52",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 147.21800000000002,
+        "id": "47n4E5X4YWx",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-19 13:52 | 147.22"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-19 14:29",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 146.55,
+        "id": "8cvFkxDX4CT",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-19 14:29 | 146.55"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-20 09:31",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 147.53,
+        "id": "-99vgNRu5f-",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-20 09:31 | 147.53"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-20 11:46",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 147.455,
+        "id": "uBqCcylAsPk",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-20 11:46 | 147.46"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-20 13:32",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 147.955,
+        "id": "s8n_TOH2Ovs",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-20 13:32 | 147.96"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-20 14:26",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 147.76,
+        "id": "1H1r1CwWfEW",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-20 14:26 | 147.76"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-20 15:48",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 148.1,
+        "id": "2iYiJ7Pm3Ij",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-20 15:48 | 148.10"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-23 09:31",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 148.20000000000002,
+        "id": "FO96TmyJUN2",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-23 09:31 | 148.20"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-23 10:19",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 148.98,
+        "id": "0zB2LCa01yd",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-23 10:19 | 148.98"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-23 15:34",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 150.05,
+        "id": "hI45cTqdrmO",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-23 15:34 | 150.05"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-24 09:31",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149.5,
+        "id": "KZBNMXOsd9_",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-24 09:31 | 149.50"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-24 09:58",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149.5,
+        "id": "uYgK5x3gzJX",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-24 09:58 | 149.50"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-24 11:05",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149.78,
+        "id": "3yiG5W3iyPt",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-24 11:05 | 149.78"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-24 15:44",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149.704,
+        "id": "db6gSqKKn2w",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-24 15:44 | 149.70"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-25 09:31",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149.71,
+        "id": "FMz3IT-1ufP",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-25 09:31 | 149.71"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-25 10:03",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 149.38,
+        "id": "fbynGUjEniD",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-25 10:03 | 149.38"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-25 10:56",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 148.425,
+        "id": "2elK8FRG5Io",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-25 10:56 | 148.43"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-25 12:17",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 148.16500000000002,
+        "id": "jE_YT4QOGM-",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-25 12:17 | 148.17"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-25 13:08",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 148.3625,
+        "id": "tS-XtjpzFqN",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-25 13:08 | 148.36"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-26 09:31",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 148.35,
+        "id": "ldKUYzpReQI",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-26 09:31 | 148.35"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-26 10:50",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 148.0345,
+        "id": "CdWDJFnqpib",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-26 10:50 | 148.03"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-27 09:31",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 147.31,
+        "id": "zgpR2JCYDRW",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-27 09:31 | 147.31"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-27 09:42",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 147.62,
+        "id": "uUfM8CmNNEw",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-27 09:42 | 147.62"
+        }
+    },
+    {
+        "bgFill": "#d0021b",
+        "bgOpacity": 1,
+        "stroke": "#d0021b",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-27 09:48",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#d0021b",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 147.31,
+        "id": "a2SmGCKmfEF",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#d0021b",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-27 09:48 | 147.31"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-27 12:21",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 148.245,
+        "id": "jzQ_dbC5kPM",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-27 12:21 | 148.25"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-27 12:23",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 148.215,
+        "id": "TOcWqHAy7ix",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-27 12:23 | 148.22"
+        }
+    },
+    {
+        "bgFill": "#4a90e2",
+        "bgOpacity": 1,
+        "stroke": "#4a90e2",
+        "strokeOpacity": 1,
+        "strokeDasharray": "ShortDash2",
+        "strokeWidth": 1,
+        "textFill": "#ffffff",
+        "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "fontSize": 9,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+        "text": "08-27 12:26",
+        "textBox": {
+            "height": 15,
+            "left": 0,
+            "show": false,
+            "fontSize": 9,
+            "padding": {
+                "left": 0,
+                "right": 5
+            },
+            "closeIcon": {
+                "padding": {
+                    "left": 5,
+                    "right": 8
+                },
+                "width": 0
+            }
+        },
+        "edge": {
+            "stroke": "#6574CD",
+            "strokeOpacity": 0,
+            "strokeWidth": 0,
+            "fill": "#4a90e2",
+            "fillOpacity": 1,
+            "orient": "right",
+            "at": "right",
+            "arrowWidth": 0,
+            "dx": 0,
+            "rectWidth": 25,
+            "rectHeight": 15,
+            "rectRadius": 7
+        },
+        "yValue": 148.315,
+        "id": "nt89wblEw2Q",
+        "draggable": false,
+        "hoverText": {
+            "fontFamily": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "fontSize": 12,
+            "fill": "#ffffff",
+            "bgFill": "#4a90e2",
+            "bgOpacity": 1,
+            "enable": true,
+            "bgHeight": 18,
+            "bgWidth": 120,
+            "text": "08-27 12:26 | 148.31"
+        }
+    }
+]

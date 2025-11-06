@@ -1,0 +1,20 @@
+{
+    "require": {
+        "guzzlehttp/guzzle": "^7.4",
+        "ext-json": "*",
+        "thingengineer/mysqli-database-class": "dev-master",
+        "aws/aws-sdk-php": "^3.215",
+        "gmostafa/php-graphql-client": "^1.13",
+        "amphp/websocket-client": "^1.0",
+        "kreait/firebase-php": "^5.19",
+        "amphp/parallel": "^1.4",
+        "cboden/ratchet": "^0.4.4",
+        "react/zmq": "^0.4.0",
+        "google/cloud-firestore": "^1.22"
+    },
+    "autoload": {
+        "psr-4": {
+            "MyApp\\": "WebSocket/"
+        }
+    }
+}

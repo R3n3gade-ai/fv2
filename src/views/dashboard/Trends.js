@@ -1,0 +1,10 @@
+import React from 'react'
+
+const Trends = props => {
+  return (
+    <iframe src="https://embed.chatterquant.com/flowtrade/stocktrends?t=1234567890&g=flowtradepublic&h=G6E4Nmlb0hZzqysYyin5lXoy0CWsUR/fO15rKgVojbE=" 
+      style={{position:'absolute', top:0, left:0, bottom:0, right:0, width:'100%', height:'100%', border:'none', margin:0, padding:0, overflow:'hidden'}} />
+  )
+}
+
+export default Trends

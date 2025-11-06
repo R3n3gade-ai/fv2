@@ -1,0 +1,1 @@
+export declare const cisBattery3: any[];

@@ -1,0 +1,40 @@
+// Buttons + Forms
+//
+// Shared variables that are reassigned to `$input-` and `$btn-` specific variables.
+
+// Dark theme
+$input-bg__dt:                        rgba($white, .05) !default;
+$input-disabled-bg__dt:               rgba($white, .1) !default;
+$input-color__dt:                     $body-color__dt !default;
+$input-border-color__dt:              rgba($white, .09) !default;
+$input-focus-bg__dt:                  rgba($white, .05) !default;
+$input-focus-border-color__dt:        rgba($white, .2) !default;
+$input-focus-color__dt:               $body-color__dt !default;
+$input-placeholder-color__dt:         $text-medium-emphasis__dt !default;
+$input-plaintext-color__dt:           $body-color__dt !default;
+$input-group-addon-color__dt:         $body-color__dt !default;
+$input-group-addon-bg__dt:            rgba($white, .09) !default;
+$input-group-addon-border-color__dt:  rgba($white, .09) !default;
+$select-option-bg__dt:                $bg-elevation-8 !default;
+
+// stylelint-disable-next-line scss/dollar-variable-default
+$form-theme-map: map-merge(
+  $form-theme-map,
+  (
+    dark: (
+      "input-bg":                        $input-bg__dt,
+      "input-disabled-bg":               $input-disabled-bg__dt,
+      "input-color":                     $input-color__dt,
+      "input-border-color":              $input-border-color__dt,
+      "input-focus-bg":                  $input-focus-bg__dt,
+      "input-focus-border-color":        $input-focus-border-color__dt,
+      "input-focus-color":               $input-focus-color__dt,
+      "input-placeholder-color":         $input-placeholder-color__dt,
+      "input-plaintext-color":           $input-plaintext-color__dt,
+      "input-group-addon-color":         $input-group-addon-color__dt,
+      "input-group-addon-bg":            $input-group-addon-bg__dt,
+      "input-group-addon-border-color":  $input-group-addon-border-color__dt,
+      "select-option-bg":                $select-option-bg__dt
+    )
+  )
+);

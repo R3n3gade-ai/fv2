@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "trade-flow-4a5d8"
+  },
+  "targets": {
+    "trade-flow-4a5d8": {
+      "hosting": {
+        "fv2": [
+          "trade-flow-4a5d8"
+        ],
+        "fv2-dev": [
+          "trade-flow-4a5d8"
+        ]
+      }
+    }
+  }
+}

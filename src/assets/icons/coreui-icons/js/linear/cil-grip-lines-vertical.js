@@ -1,0 +1,1 @@
+export const cilGripLinesVertical = ["512 512","<rect width='32' height='480' x='184' y='16' fill='var(--ci-primary-color, currentColor)' class='ci-primary'/><rect width='32' height='480' x='296' y='16' fill='var(--ci-primary-color, currentColor)' class='ci-primary'/>"]

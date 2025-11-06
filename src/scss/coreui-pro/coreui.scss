@@ -1,0 +1,85 @@
+/*!
+ * CoreUI PRO - HTML, CSS, and JavaScript UI Components Library
+ * @version v3.4.2
+ * @link https://coreui.io/pro/
+ * Copyright (c) 2020 creativeLabs Łukasz Holeczek
+ * License (https://coreui.io/pro/license/)
+ */
+
+// scss-docs-start import-stack
+@import "functions";
+@import "variables";
+@import "themes";
+@import "mixins";
+@import "root";
+@import "app";
+@import "reboot";
+
+// Vendors
+@import "vendors";
+
+// Components
+@import "alert";
+@import "avatars";
+@import "badge";
+@import "breadcrumb-menu";
+@import "breadcrumb";
+@import "button-group";
+@import "buttons";
+@import "callout";
+@import "card";
+@import "carousel";
+@import "charts";
+@import "close";
+@import "code";
+@import "custom-forms";
+@import "dropdown";
+@import "footer";
+@import "forms";
+@import "grid";
+@import "header";
+@import "icon";
+@import "input-group";
+@import "images";
+@import "jumbotron";
+@import "list-group";
+@import "media";
+@import "modal";
+@import "nav";
+@import "navbar";
+@import "pagination";
+@import "popover";
+@import "progress";
+@import "progress-group";
+@import "sidebar";
+@import "spinners";
+@import "subheader";
+@import "switches";
+@import "tables";
+@import "toasts";
+@import "tooltip";
+@import "transitions";
+@import "type";
+@import "widgets";
+
+// PRO Components
+@import "loading-button";
+@import "multi-select";
+
+// Layout Options
+@import "layouts";
+
+// Utility classes
+@import "utilities";
+
+// Right-to-left
+@import "rtl";
+
+// Apps
+@import "apps";
+
+// Custom Properties support for Internet Explorer
+@import "ie-custom-properties";
+
+@import "print";
+// scss-docs-end import-stack
