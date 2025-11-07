@@ -1,5 +1,8 @@
 import React from 'react'; 
-import firebase from 'firebase';
+// Use namespaced v8 API explicitly to avoid tree/version mismatches
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
 
 // --- base Firebase config (same as before) ---
 const config = {
