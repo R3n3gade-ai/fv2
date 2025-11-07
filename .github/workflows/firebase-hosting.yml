@@ -21,7 +21,7 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies (no lifecycle scripts)
-        run: npm ci --ignore-scripts --legacy-peer-deps
+        run: npm install --ignore-scripts --legacy-peer-deps
 
       - name: Build
         run: npm run build
