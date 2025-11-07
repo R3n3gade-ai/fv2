@@ -30,10 +30,12 @@ for (var key in localStorage) {
 //   tracesSampleRate: 1.0,
 // });
 
-const store = createStore(rootReducer,
+const store = createStore(
+  rootReducer,
   compose(
     applyMiddleware(thunk.withExtraArgument({ getFirebase })),
-    reactReduxFirebase(firebaseInstance.primary, {userProfile: 'users'})
+    // Pass the Firebase SDK object (not an app instance) to react-redux-firebase
+    reactReduxFirebase(firebaseInstance.firebase || firebaseInstance, { userProfile: 'users' })
   )
 );
 
