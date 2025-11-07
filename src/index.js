@@ -42,9 +42,49 @@ const store = createStore(
 React.icons = icons
 React.firebase = firebaseInstance;
 
+// Basic runtime ErrorBoundary to reveal crashes instead of a white screen
+class RootErrorBoundary extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = { error: null, info: null };
+  }
+  componentDidCatch(error, info){
+    this.setState({ error, info });
+    // eslint-disable-next-line no-console
+    console.error('[Runtime ErrorBoundary]', error, info);
+  }
+  render(){
+    const { error, info } = this.state;
+    if (error) {
+      return (
+        <div style={{ padding: '1rem', fontFamily: 'monospace' }}>
+          <h2 style={{ color: '#b50000' }}>Application Error</h2>
+          <pre style={{ whiteSpace: 'pre-wrap' }}>{String(error.stack || error)}</pre>
+          {info && <pre>{JSON.stringify(info, null, 2)}</pre>}
+          <p>Remove <code>RootErrorBoundary</code> in <code>src/index.js</code> to disable this overlay.</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('error', (e) => {
+    // eslint-disable-next-line no-console
+    console.error('[window.error]', e.error || e.message);
+  });
+  window.addEventListener('unhandledrejection', (e) => {
+    // eslint-disable-next-line no-console
+    console.error('[window.unhandledrejection]', e.reason);
+  });
+}
+
 ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
+  <RootErrorBoundary>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </RootErrorBoundary>,
   document.getElementById('root')
 )
