@@ -4,6 +4,10 @@ import 'core-js';
 import './polyfill'
 import React from 'react';
 import ReactDOM from 'react-dom';
+// Direct firebase SDK import to ensure react-redux-firebase receives the proper library object with SDK_VERSION
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
 import App from './App';
 //import * as serviceWorker from './serviceWorker';
 
@@ -30,16 +34,19 @@ for (var key in localStorage) {
 //   tracesSampleRate: 1.0,
 // });
 
+// Choose the firebase library object explicitly for react-redux-firebase to avoid undefined SDK_VERSION crash
+const firebaseLib = firebase; // v8 namespaced SDK object has SDK_VERSION
+
 const store = createStore(
   rootReducer,
   compose(
     applyMiddleware(thunk.withExtraArgument({ getFirebase })),
-    // Pass the Firebase SDK object (not an app instance) to react-redux-firebase
-    reactReduxFirebase(firebaseInstance.firebase || firebaseInstance, { userProfile: 'users' })
+    reactReduxFirebase(firebaseLib, { userProfile: 'users' })
   )
 );
 
 React.icons = icons
+// Keep legacy global references
 React.firebase = firebaseInstance;
 
 // Basic runtime ErrorBoundary to reveal crashes instead of a white screen
