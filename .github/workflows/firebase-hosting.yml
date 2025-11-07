@@ -25,6 +25,12 @@ jobs:
 
       - name: Build
         run: npm run build
+      # Switch to Node 20.x for Firebase CLI (firebase-tools >=14.24 requires Node >=20)
+      - name: Setup Node 20.x for deploy
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       # Deploy production (main/master) using Firebase Hosting action + service account
       - name: Deploy Hosting (production live)
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
