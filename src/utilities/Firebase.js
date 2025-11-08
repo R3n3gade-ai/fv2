@@ -4,6 +4,28 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 
+// Defensive global wiring: some bundled modules expect a global `firebase` with SDK_VERSION
+if (typeof window !== 'undefined') {
+  try {
+    // ensure the library object is globally accessible
+    window.firebase = window.firebase || firebase;
+  } catch (e) {
+    // noop
+  }
+}
+
+// Provide a conservative SDK_VERSION fallback so modules reading it don't crash
+try {
+  if (!firebase || typeof firebase !== 'object') {
+    // nothing to do
+  } else if (!firebase.SDK_VERSION) {
+    // prefer a realistic v8 value; this prevents "reading 'SDK_VERSION' of undefined" errors
+    firebase.SDK_VERSION = '8.10.1';
+  }
+} catch (e) {
+  // ignore
+}
+
 // --- base Firebase config (same as before) ---
 const config = {
   apiKey: "AIzaSyBxhqjaqeU5_DWyf7JEhAU_kM51lG36QsI",
