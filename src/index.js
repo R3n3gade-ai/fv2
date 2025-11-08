@@ -50,11 +50,14 @@ if (!firebaseLib.SDK_VERSION) {
 // eslint-disable-next-line no-console
 console.debug('[init] firebaseLib keys:', Object.keys(firebaseLib || {}));
 
+// Wrap the library into an object with `firebase_` to satisfy rrf v2 shape check
+const firebaseForRRF = { firebase_: firebaseLib };
+
 const store = createStore(
   rootReducer,
   compose(
     applyMiddleware(thunk.withExtraArgument({ getFirebase })),
-    reactReduxFirebase(firebaseLib, { userProfile: 'users' })
+    reactReduxFirebase(firebaseForRRF, { userProfile: 'users' })
   )
 );
 
