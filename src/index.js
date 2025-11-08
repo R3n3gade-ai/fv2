@@ -18,7 +18,7 @@ import { Provider } from 'react-redux'
 import { createStore, applyMiddleware, compose } from 'redux'
 import rootReducer from './store/reducers/rootReducer'
 import thunk from 'redux-thunk'
-import { reactReduxFirebase, getFirebase } from 'react-redux-firebase';
+// Removed react-redux-firebase due to persistent SDK_VERSION crash; implementing manual listeners.
 import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
 
@@ -48,25 +48,35 @@ if (!firebase.SDK_VERSION) {
 console.debug('[init] firebase keys:', Object.keys(firebase || {}));
 
 // Safe wrapper around reactReduxFirebase to prevent hard crash during bootstrap
-function initReactReduxFirebase() {
-  try {
-    // Pass firebase directly (library object has SDK_VERSION and database())
-    return reactReduxFirebase(firebase, { userProfile: 'users' });
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('[bootstrap] reactReduxFirebase failed:', err);
-    if (typeof window !== 'undefined') window.__RRF_INIT_FAILED__ = String(err?.message || err);
-    return (next) => next; // graceful degrade
-  }
+// Manual Firebase auth/data syncing into firebaseLiteReducer
+function attachFirebaseListeners(store) {
+  firebase.auth().onAuthStateChanged(user => {
+    store.dispatch({ type: 'FIREBASE_AUTH_UPDATE', payload: user });
+    if (!user) return;
+    try {
+      firebase.database().ref(`users/${user.uid}`).once('value').then(snap => {
+        store.dispatch({ type: 'FIREBASE_PROFILE_UPDATE', payload: snap.val() || {} });
+      });
+      ['favoritesv2','defaultv2','cancelledv2'].forEach(path => {
+        firebase.database().ref(`${path}/${user.uid}`).once('value').then(snap => {
+          store.dispatch({ type: 'FIREBASE_DATA_UPDATE', payload: { [path]: snap.val() } });
+        });
+      });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('[firebase] data load error', e);
+    }
+  });
 }
 
 const store = createStore(
   rootReducer,
   compose(
-    applyMiddleware(thunk.withExtraArgument({ getFirebase })),
-  initReactReduxFirebase()
+    applyMiddleware(thunk)
   )
 );
+
+attachFirebaseListeners(store);
 
 React.icons = icons
 // Keep legacy global references
