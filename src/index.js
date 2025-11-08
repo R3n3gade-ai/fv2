@@ -4,8 +4,8 @@ import 'core-js';
 import './polyfill'
 import React from 'react';
 import ReactDOM from 'react-dom';
-// Direct firebase SDK import to ensure react-redux-firebase receives the proper library object with SDK_VERSION
-import firebase from 'firebase/app';
+// Import as namespace and resolve default to avoid bundler interop issues
+import * as firebaseNS from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 import App from './App';
@@ -35,7 +35,9 @@ for (var key in localStorage) {
 // });
 
 // Choose the firebase library object explicitly for react-redux-firebase to avoid undefined SDK_VERSION crash
-const firebaseLib = firebase; // v8 namespaced SDK object has SDK_VERSION
+const firebaseLib = (firebaseNS && (firebaseNS.default || firebaseNS)); // supports CJS/ESM interop
+// eslint-disable-next-line no-console
+console.debug('[init] firebaseLib resolved:', typeof firebaseLib, firebaseLib && Object.keys(firebaseLib));
 
 const store = createStore(
   rootReducer,
