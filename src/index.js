@@ -34,10 +34,21 @@ for (var key in localStorage) {
 //   tracesSampleRate: 1.0,
 // });
 
-// Choose the firebase library object explicitly for react-redux-firebase to avoid undefined SDK_VERSION crash
-const firebaseLib = (firebaseNS && (firebaseNS.default || firebaseNS)); // supports CJS/ESM interop
+// Choose firebase library object; unwrap default export if present
+let firebaseLib = (firebaseNS && (firebaseNS.default || firebaseNS));
+try {
+  if (firebaseLib && firebaseLib.default && !firebaseLib.SDK_VERSION) {
+    firebaseLib = firebaseLib.default;
+  }
+} catch (_) {}
+// Force SDK_VERSION fallback to prevent enhancer crash
+if (!firebaseLib.SDK_VERSION) {
+  firebaseLib.SDK_VERSION = '8.10.1';
+  // eslint-disable-next-line no-console
+  console.warn('[bootstrap] Injected fallback SDK_VERSION on firebaseLib');
+}
 // eslint-disable-next-line no-console
-console.debug('[init] firebaseLib resolved:', typeof firebaseLib, firebaseLib && Object.keys(firebaseLib));
+console.debug('[init] firebaseLib keys:', Object.keys(firebaseLib || {}));
 
 const store = createStore(
   rootReducer,
