@@ -53,11 +53,26 @@ console.debug('[init] firebaseLib keys:', Object.keys(firebaseLib || {}));
 // Wrap the library into an object with `firebase_` to satisfy rrf v2 shape check
 const firebaseForRRF = { firebase_: firebaseLib };
 
+// Safe wrapper around reactReduxFirebase to prevent hard crash during bootstrap
+function safeReactReduxFirebase(param, config){
+  try {
+    return reactReduxFirebase(param, config);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('[bootstrap] reactReduxFirebase init failed, continuing without RRF:', err);
+    if (typeof window !== 'undefined') {
+      window.__RRF_INIT_FAILED__ = String(err && err.message || err);
+    }
+    // no-op enhancer
+    return (next) => next;
+  }
+}
+
 const store = createStore(
   rootReducer,
   compose(
     applyMiddleware(thunk.withExtraArgument({ getFirebase })),
-    reactReduxFirebase(firebaseForRRF, { userProfile: 'users' })
+    safeReactReduxFirebase(firebaseForRRF, { userProfile: 'users' })
   )
 );
 
