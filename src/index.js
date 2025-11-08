@@ -5,7 +5,7 @@ import './polyfill'
 import React from 'react';
 import ReactDOM from 'react-dom';
 // Import as namespace and resolve default to avoid bundler interop issues
-import * as firebaseNS from 'firebase/app';
+import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 import App from './App';
@@ -35,36 +35,28 @@ for (var key in localStorage) {
 // });
 
 // Choose firebase library object; unwrap default export if present
-let firebaseLib = (firebaseNS && (firebaseNS.default || firebaseNS));
-try {
-  if (firebaseLib && firebaseLib.default && !firebaseLib.SDK_VERSION) {
-    firebaseLib = firebaseLib.default;
-  }
-} catch (_) {}
-// Force SDK_VERSION fallback to prevent enhancer crash
-if (!firebaseLib.SDK_VERSION) {
-  firebaseLib.SDK_VERSION = '8.10.1';
+// Direct firebase import; expose globally early for any legacy modules
+if (typeof window !== 'undefined') {
+  window.firebase = firebase;
+}
+if (!firebase.SDK_VERSION) {
+  firebase.SDK_VERSION = '8.10.1';
   // eslint-disable-next-line no-console
-  console.warn('[bootstrap] Injected fallback SDK_VERSION on firebaseLib');
+  console.warn('[bootstrap] set fallback SDK_VERSION on firebase');
 }
 // eslint-disable-next-line no-console
-console.debug('[init] firebaseLib keys:', Object.keys(firebaseLib || {}));
-
-// Wrap the library into an object with `firebase_` to satisfy rrf v2 shape check
-const firebaseForRRF = { firebase_: firebaseLib };
+console.debug('[init] firebase keys:', Object.keys(firebase || {}));
 
 // Safe wrapper around reactReduxFirebase to prevent hard crash during bootstrap
-function safeReactReduxFirebase(param, config){
+function initReactReduxFirebase() {
   try {
-    return reactReduxFirebase(param, config);
+    // Pass firebase directly (library object has SDK_VERSION and database())
+    return reactReduxFirebase(firebase, { userProfile: 'users' });
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error('[bootstrap] reactReduxFirebase init failed, continuing without RRF:', err);
-    if (typeof window !== 'undefined') {
-      window.__RRF_INIT_FAILED__ = String(err && err.message || err);
-    }
-    // no-op enhancer
-    return (next) => next;
+    console.error('[bootstrap] reactReduxFirebase failed:', err);
+    if (typeof window !== 'undefined') window.__RRF_INIT_FAILED__ = String(err?.message || err);
+    return (next) => next; // graceful degrade
   }
 }
 
@@ -72,7 +64,7 @@ const store = createStore(
   rootReducer,
   compose(
     applyMiddleware(thunk.withExtraArgument({ getFirebase })),
-    safeReactReduxFirebase(firebaseForRRF, { userProfile: 'users' })
+  initReactReduxFirebase()
   )
 );
 

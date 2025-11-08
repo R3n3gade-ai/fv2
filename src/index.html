@@ -7,6 +7,10 @@
         <title>FlowTrade</title>
         <base href="/">
     </head>
+    <!-- Load Firebase v8 UMD builds before our bundle to guarantee global firebase + SDK_VERSION -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EN0H0JLQQP"></script>
 <script>
