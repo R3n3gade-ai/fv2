@@ -34,16 +34,7 @@ for (var key in localStorage) {
 //   tracesSampleRate: 1.0,
 // });
 
-// Choose firebase library object; unwrap default export if present
-// Direct firebase import; expose globally early for any legacy modules
-if (typeof window !== 'undefined') {
-  window.firebase = firebase;
-}
-if (!firebase.SDK_VERSION) {
-  firebase.SDK_VERSION = '8.10.1';
-  // eslint-disable-next-line no-console
-  console.warn('[bootstrap] set fallback SDK_VERSION on firebase');
-}
+// Firebase SDK_VERSION is already initialized in Firebase.js
 // eslint-disable-next-line no-console
 console.debug('[init] firebase keys:', Object.keys(firebase || {}));
 

@@ -51,16 +51,7 @@ module.exports = (_, argv) => {
                 template: path.join(__dirname, "src", "index.html"),
                 inject: 'body'
             }),
-            // Inject firebase shim at the very top of bundle to prevent SDK_VERSION crashes
-            new webpack.BannerPlugin({
-                banner: `/* Firebase SDK_VERSION shim - aggressive early injection */
-if (typeof window !== 'undefined') {
-  window.firebase = window.firebase || {};
-  window.firebase.SDK_VERSION = window.firebase.SDK_VERSION || '8.10.1';
-}`,
-                raw: true,
-                entryOnly: true
-            }),
+            // Firebase SDK_VERSION is now handled in Firebase.js before any firebase modules load
             new webpack.ProvidePlugin({
                 process: 'process/browser',
             }),
