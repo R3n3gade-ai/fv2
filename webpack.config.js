@@ -53,9 +53,10 @@ module.exports = (_, argv) => {
             }),
             // Inject firebase shim at the very top of bundle to prevent SDK_VERSION crashes
             new webpack.BannerPlugin({
-                banner: `/* Firebase SDK_VERSION shim */
-if (typeof window !== 'undefined' && !window.firebase) {
-  window.firebase = { SDK_VERSION: '8.10.1' };
+                banner: `/* Firebase SDK_VERSION shim - aggressive early injection */
+if (typeof window !== 'undefined') {
+  window.firebase = window.firebase || {};
+  window.firebase.SDK_VERSION = window.firebase.SDK_VERSION || '8.10.1';
 }`,
                 raw: true,
                 entryOnly: true
