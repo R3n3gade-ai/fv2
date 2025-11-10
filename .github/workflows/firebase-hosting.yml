@@ -20,6 +20,9 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Clean install cache
+        run: rm -rf node_modules package-lock.json
+
       - name: Install dependencies (no lifecycle scripts)
         run: npm install --ignore-scripts --legacy-peer-deps
 
