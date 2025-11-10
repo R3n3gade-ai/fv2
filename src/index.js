@@ -4,6 +4,8 @@ import 'core-js';
 import './polyfill'
 import React from 'react';
 import ReactDOM from 'react-dom';
+// CRITICAL: Import Firebase.js FIRST so SDK_VERSION initialization happens before firebase/app loads
+import { firebaseInstance } from './utilities/Firebase'
 // Import as namespace and resolve default to avoid bundler interop issues
 import firebase from 'firebase/app';
 import 'firebase/auth';
@@ -12,7 +14,6 @@ import App from './App';
 //import * as serviceWorker from './serviceWorker';
 
 import { icons } from './assets/icons'
-import { firebaseInstance } from './utilities/Firebase'
 
 import { Provider } from 'react-redux'
 import { createStore, applyMiddleware, compose } from 'redux'
