@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import  { Redirect } from 'react-router-dom'
-import { compose } from 'redux'
 import { connect } from 'react-redux'
-import { firebaseConnect } from 'react-redux-firebase'
 
 import { updateProperty } from '../store/actions/StylesActions'
 import { EditProfile } from '../store/actions/UserActions'

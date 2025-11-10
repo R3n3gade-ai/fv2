@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { compose } from 'redux'
 import { connect } from 'react-redux'
-import { firebaseConnect } from 'react-redux-firebase'
 import { updateProperty } from '../../store/actions/StylesActions'
 
 import FtAsyncSelect from '../components/common/FtAsyncSelect'

@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { compose } from 'redux'
 import { connect } from 'react-redux'
-import { firebaseConnect } from 'react-redux-firebase'
 import { updateProperty } from '../../../store/actions/StylesActions'
 import { SearchSymbol } from '../../../store/actions/ChartActions'
 import PerfectScrollbar from 'perfect-scrollbar'
@@ -297,13 +295,7 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  ),
-  firebaseConnect((props) => ([
-      // `users#limitToLast=100`
-      `users`
-  ]))
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
 )(AdminUsers)

@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { compose } from 'redux'
 import { connect } from 'react-redux'
 import moment from 'moment'
-import { firebaseConnect } from 'react-redux-firebase'
 import classNames from 'classnames'
 import CIcon from '@coreui/icons-react'
 import {
@@ -525,10 +523,7 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  ),
-  firebaseConnect((props) => ([]))
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
 )(CalendarPage)

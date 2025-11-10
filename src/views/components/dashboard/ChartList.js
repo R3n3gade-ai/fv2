@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState, useRef, useLayoutEffect } from "react"
-import { compose } from 'redux'
 import { connect } from 'react-redux'
-import { firebaseConnect } from 'react-redux-firebase'
 
 import { updateProperty } from '../../../store/actions/StylesActions'
 import { EditWatchList, SetChartSettings, EditMarket, SearchSymbol } from '../../../store/actions/ChartActions'

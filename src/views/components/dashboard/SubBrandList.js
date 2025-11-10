@@ -1,7 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { compose } from 'redux'
 import { connect } from 'react-redux'
-import { firebaseConnect } from 'react-redux-firebase'
 
 import { EditMarket } from '../../../store/actions/ChartActions'
 import { updateProperty } from '../../../store/actions/StylesActions'

@@ -1,7 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react'
-import { compose } from 'redux'
 import { connect } from 'react-redux'
-import { firebaseConnect } from 'react-redux-firebase'
 import { updateProperty } from '../store/actions/StylesActions'
 import {
     CSidebar,

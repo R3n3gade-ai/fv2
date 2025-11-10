@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
-import { compose } from 'redux'
 import { connect } from 'react-redux'
-import { firebaseConnect } from 'react-redux-firebase'
 import { SearchSymbol } from '../../../store/actions/ChartActions'
 
 import AsyncSelect  from 'react-select/async'
