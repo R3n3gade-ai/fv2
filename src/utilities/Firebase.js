@@ -1,13 +1,23 @@
 import React from 'react'; 
-// Use namespaced v8 API explicitly to avoid tree/version mismatches
-import firebase from 'firebase/app';
+// Use default import for firebase/app to ensure r.default is defined
+import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
+
+// CRITICAL: Ensure firebase.default exists for firebase/database to consume
+if (typeof firebase.default === 'undefined') {
+  // Create the default export that firebase/database expects
+  firebase.default = firebase;
+}
 
 // CRITICAL: Set SDK_VERSION before any other Firebase code runs
 if (firebase && !firebase.SDK_VERSION) {
   firebase.SDK_VERSION = '8.10.1';
   console.log('[Firebase.js] SDK_VERSION set to 8.10.1');
+}
+
+if (firebase.default && !firebase.default.SDK_VERSION) {
+  firebase.default.SDK_VERSION = '8.10.1';
 }
 
 // Defensive global wiring: some bundled modules expect a global `firebase` with SDK_VERSION
