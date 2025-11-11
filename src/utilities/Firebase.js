@@ -1,8 +1,8 @@
 import React from 'react'; 
-// Firebase v8 compat mode - import the whole firebase namespace
-import firebase from '@firebase/app-compat';
-import '@firebase/auth-compat';
-import '@firebase/database-compat';
+// Firebase v8 - use the main firebase package
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
 
 // --- base Firebase config (same as before) ---
 const config = {
