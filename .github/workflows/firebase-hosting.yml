@@ -20,14 +20,11 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Clean install cache
+      - name: Clean install - remove all cached dependencies
         run: rm -rf node_modules package-lock.json
 
-      - name: Install dependencies (no lifecycle scripts)
+      - name: Install dependencies (clean install, no lifecycle scripts)
         run: npm install --ignore-scripts --legacy-peer-deps
-
-      - name: Remove extraneous packages
-        run: npm prune
 
       - name: Build
         run: npm run build
