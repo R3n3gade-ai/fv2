@@ -9,7 +9,13 @@ module.exports = (_, argv) => {
         entry: path.join(__dirname, "src", "index.js"),
         output: { path: path.join(__dirname, "build"), filename: "index.bundle.js" },
         mode: process.env.NODE_ENV || "development",
-        resolve: { modules: [path.resolve(__dirname, "src"), "node_modules"] },
+        externals: {
+        // Use Firebase from CDN instead of bundling it
+        'firebase/app': 'firebase',
+        'firebase/auth': 'firebase',
+        'firebase/database': 'firebase'
+    },
+    resolve: { modules: [path.resolve(__dirname, "src"), "node_modules"] },
         devServer: {
             static: { directory: path.join(__dirname, "src") },
             historyApiFallback: { index: '/index.html' }
