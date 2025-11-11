@@ -342,25 +342,7 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  ),
-  firebaseConnect((props) => {
-    // Use demo uid when demo mode is on; otherwise require real auth uid
-    let demo = false;
-    try {
-      const qs = new URLSearchParams(window.location.search);
-      demo = qs.get('demo') === '1' || localStorage.getItem('DEMO') === '1';
-    } catch (_) {}
-
-    const uid = demo ? 'demo' : props.auth && props.auth.uid;
-    if (!uid) return [];
-    return [
-      `favoritesv2/${uid}`,
-      `defaultv2/${uid}`,
-      `cancelledv2/${uid}`
-    ];
-  })
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
 )(TheLayout)

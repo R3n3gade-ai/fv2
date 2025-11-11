@@ -80,10 +80,7 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default React.memo(compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  ),
-  firebaseConnect((props) => ([]))
+export default React.memo(connect(
+  mapStateToProps,
+  mapDispatchToProps
 )(TheIntegrationsAside))

@@ -123,48 +123,7 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default compose(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps
-    ),
-    firebaseConnect((props) => {
-        if (props.searchQuery != '') {
-            if (props.selectedSecurity == 'stocks') {
-                return ([
-                    { path: '/polySymbols', queryParams: [
-                        'orderByKey',
-                        'limitToFirst=100',
-                        'startAt=' + (props.searchQuery).toUpperCase(),
-                        'endAt=' + (props.searchQuery).toUpperCase() + "\uf8ff"
-                    ] }
-                ])
-            } else {
-                return ([
-                    { path: '/futuresSymbols', queryParams: [
-                        'orderByKey',
-                        'limitToFirst=100',
-                        'startAt=' + (props.searchQuery).toUpperCase(),
-                        'endAt=' + (props.searchQuery).toUpperCase() + "\uf8ff"
-                    ] }
-                ])
-            }
-        } else {
-            if (props.selectedSecurity == 'stocks') {
-                return ([
-                    { path: '/polySymbols', queryParams: [
-                        'orderByKey',
-                        'limitToFirst=100'
-                    ] }
-                ])
-            } else {
-                return ([
-                    { path: '/futuresSymbols', queryParams: [
-                        'orderByKey',
-                        'limitToFirst=100'
-                    ] }
-                ])
-            }
-        }
-    })
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
 )(SubBrandList)

@@ -752,16 +752,7 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  ),
-  firebaseConnect((props) => {
-    return ([
-      { path: `mySymbols/${props.auth.uid}`, queryParams: [
-          'orderByKey'
-      ] }
-    ])
-  })
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
 )(ChartList)

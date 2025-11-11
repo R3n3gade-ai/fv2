@@ -222,21 +222,7 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default compose(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps
-    ),
-    firebaseConnect((props) => {
-        return ([
-            { path: '/polySymbols', queryParams: [
-                'orderByKey',
-                'limitToFirst=100'
-            ] },
-            { path: '/futuresSymbols', queryParams: [
-                'orderByKey',
-                'limitToFirst=100'
-            ] }
-        ])
-    })
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
 )(FtAsyncSelect)

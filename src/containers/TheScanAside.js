@@ -551,15 +551,7 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default React.memo(compose(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps
-    ),
-    firebaseConnect((props) => ([
-        `scansTest#limitToLast=1`,
-        { path: `mySymbols/${props.auth.uid}`, queryParams: [
-            'orderByKey'
-        ] }
-    ]))
+export default React.memo(connect(
+  mapStateToProps,
+  mapDispatchToProps
 )(TheScanAside))
